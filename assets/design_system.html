@@ -1,0 +1,1484 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nova Lei de Improbidade Administrativa | Imersão Plenum Brasil</title>
+    <meta name="description"
+        content="Imersão completa na Nova Lei de Improbidade Administrativa. 14 e 15 de Maio em Brasília. Aprenda com Ministros do STJ e especialistas.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Bricolage+Grotesque:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: #e7f99a;
+            --primary-alt: #e1ff69;
+            --primary-dim: #e7f99a33;
+            --primary-glow: #e7f99a0d;
+            --dark-900: #0d0d0d;
+            --dark-800: #111111;
+            --dark-700: #161616;
+            --dark-600: #1a1a1a;
+            --dark-500: #1e1e1e;
+            --dark-400: #222;
+            --dark-300: #2a2a2a;
+            --dark-200: #333;
+            --dark-100: #444;
+            --white: #fff;
+            --white-50: #ffffff80;
+            --white-20: #ffffff33;
+            --white-10: #ffffff1a;
+            --white-05: #ffffff0d;
+            --light-100: #f5f5f5;
+            --light-200: #f1f1f1;
+            --border-subtle: #ffffff12;
+            --border-medium: #ffffff1a;
+            --font-heading: 'Bricolage Grotesque', sans-serif;
+            --font-body: 'Inter', sans-serif;
+            --max-w: 1200px;
+            --radius-xl: 24px;
+            --radius-lg: 16px;
+            --radius-full: 100px;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--dark-900);
+            color: var(--white);
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        img {
+            max-width: 100%;
+            display: block;
+        }
+
+        /* ── NAV ── */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 16px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(13, 13, 13, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .nav__logo {
+            font-family: var(--font-heading);
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--white);
+            letter-spacing: -0.02em;
+        }
+
+        .nav__logo span {
+            color: var(--primary);
+        }
+
+        .nav__links {
+            display: flex;
+            gap: 32px;
+        }
+
+        .nav__links a {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--white-50);
+            transition: color 0.2s;
+            letter-spacing: 0.02em;
+        }
+
+        .nav__links a:hover {
+            color: var(--primary);
+        }
+
+        .nav__cta {
+            background: var(--primary);
+            color: #000;
+            font-size: 13px;
+            font-weight: 700;
+            padding: 10px 24px;
+            border-radius: var(--radius-full);
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .nav__cta:hover {
+            background: var(--primary-alt);
+            transform: translateY(-1px);
+        }
+
+        /* ── HERO ── */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: flex-end;
+            padding: 48px 48px 80px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero__bg {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, #0a0a12 0%, #0d0d1a 30%, #111118 70%, #0a0a0f 100%);
+            z-index: 0;
+        }
+
+        .hero__bg::after {
+            content: '';
+            position: absolute;
+            top: -40%;
+            right: -20%;
+            width: 700px;
+            height: 700px;
+            background: radial-gradient(circle, rgba(231, 249, 154, 0.06) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .hero__inner {
+            position: relative;
+            z-index: 2;
+            max-width: var(--max-w);
+            width: 100%;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            gap: 48px;
+        }
+
+        .hero__text {
+            max-width: 620px;
+        }
+
+        .hero__tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            border-radius: var(--radius-full);
+            border: 1px solid var(--primary-dim);
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 24px;
+            backdrop-filter: blur(8px);
+        }
+
+        .hero__tag-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--primary);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.4;
+            }
+        }
+
+        .hero__title {
+            font-family: var(--font-heading);
+            font-size: clamp(40px, 5.5vw, 72px);
+            font-weight: 800;
+            line-height: 0.95;
+            letter-spacing: -0.03em;
+            color: var(--white);
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        .hero__title span {
+            color: var(--primary);
+        }
+
+        .hero__subtitle {
+            font-size: 17px;
+            color: var(--white-50);
+            line-height: 1.6;
+            max-width: 500px;
+            margin-bottom: 16px;
+            font-weight: 400;
+        }
+
+        .hero__date {
+            font-family: var(--font-heading);
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--white);
+            margin-bottom: 32px;
+            letter-spacing: -0.01em;
+        }
+
+        .hero__date em {
+            font-style: normal;
+            color: var(--primary);
+        }
+
+        .hero__ctas {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--primary);
+            color: #000;
+            font-size: 15px;
+            font-weight: 700;
+            padding: 16px 36px;
+            border-radius: var(--radius-full);
+            border: none;
+            cursor: pointer;
+            transition: all 0.25s;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-alt);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 40px rgba(231, 249, 154, 0.2);
+        }
+
+        .btn-outline {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: transparent;
+            color: var(--white);
+            font-size: 15px;
+            font-weight: 600;
+            padding: 16px 36px;
+            border-radius: var(--radius-full);
+            border: 1px solid var(--border-medium);
+            cursor: pointer;
+            transition: all 0.25s;
+        }
+
+        .btn-outline:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .hero__info {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            max-width: 340px;
+        }
+
+        .hero__info-card {
+            border: 1px solid var(--border-medium);
+            border-radius: var(--radius-lg);
+            padding: 20px 24px;
+            backdrop-filter: blur(8px);
+            background: var(--white-05);
+        }
+
+        .hero__info-card h4 {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--white);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        .hero__info-card p {
+            font-size: 13px;
+            color: var(--white-50);
+            line-height: 1.5;
+        }
+
+        /* ── MARQUEE ── */
+        .marquee-wrap {
+            background: #000;
+            padding: 20px 0;
+            overflow: hidden;
+            border-top: 1px solid var(--border-subtle);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .marquee {
+            display: flex;
+            gap: 48px;
+            animation: scroll 20s linear infinite;
+            white-space: nowrap;
+        }
+
+        .marquee span {
+            font-family: var(--font-heading);
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--white-50);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        @keyframes scroll {
+            from {
+                transform: translateX(0);
+            }
+
+            to {
+                transform: translateX(-50%);
+            }
+        }
+
+        /* ── SECTION COMMON ── */
+        .section {
+            padding: 100px 48px;
+        }
+
+        .section__inner {
+            max-width: var(--max-w);
+            margin: 0 auto;
+        }
+
+        .section__header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            gap: 32px;
+            margin-bottom: 56px;
+        }
+
+        .section__header--center {
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .section__title {
+            font-family: var(--font-heading);
+            font-size: clamp(32px, 4vw, 56px);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1;
+        }
+
+        .section__title span {
+            color: var(--primary);
+        }
+
+        .section__desc {
+            font-size: 17px;
+            color: var(--white-50);
+            max-width: 480px;
+            line-height: 1.6;
+        }
+
+        /* ── ABOUT (light bg) ── */
+        .about {
+            background: var(--light-100);
+            color: #000;
+        }
+
+        .about .section__title {
+            color: #000;
+        }
+
+        .about .section__desc {
+            color: #000000b3;
+        }
+
+        .about__grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        .about__image {
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            position: relative;
+            grid-row: span 2;
+        }
+
+        .about__image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .about__text {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 16px;
+        }
+
+        .about__text p {
+            font-size: 17px;
+            color: #000000b3;
+            line-height: 1.7;
+        }
+
+        /* ── FEATURES GRID ── */
+        .features {
+            background: var(--light-100);
+        }
+
+        .features .section__title {
+            color: #000;
+        }
+
+        .features .section__desc {
+            color: #000000b3;
+        }
+
+        .features__grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        .feature-card {
+            background: var(--dark-900);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-xl);
+            padding: 40px 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            min-height: 280px;
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            border-color: var(--primary-dim);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .feature-card__icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: var(--dark-300);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+        }
+
+        .feature-card__title {
+            font-family: var(--font-heading);
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--white);
+            letter-spacing: -0.01em;
+            line-height: 1.3;
+        }
+
+        .feature-card__text {
+            font-size: 14px;
+            color: var(--white-50);
+            line-height: 1.6;
+        }
+
+        /* ── PROGRAM (dark) ── */
+        .program {
+            background: var(--dark-900);
+        }
+
+        .program__blocks {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        .program__block {
+            background: var(--dark-700);
+            border: 1px solid var(--primary-glow);
+            border-radius: var(--radius-xl);
+            padding: 40px;
+            display: flex;
+            gap: 32px;
+        }
+
+        .program__block-left {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .program__block-right {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .program__tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: var(--radius-full);
+            border: 1px solid var(--border-medium);
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--primary);
+            width: fit-content;
+            background: var(--primary-glow);
+            backdrop-filter: blur(8px);
+        }
+
+        .program__block-title {
+            font-family: var(--font-heading);
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.15;
+        }
+
+        .program__block-desc {
+            font-size: 15px;
+            color: var(--white-50);
+            line-height: 1.7;
+        }
+
+        .program__item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 4px 0;
+        }
+
+        .program__item-icon {
+            width: 28px;
+            height: 28px;
+            flex-shrink: 0;
+            border-radius: 8px;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            margin-top: 2px;
+        }
+
+        .program__item-text {
+            font-size: 14px;
+            color: var(--white);
+            line-height: 1.5;
+            font-weight: 500;
+        }
+
+        /* ── SPEAKERS ── */
+        .speakers {
+            background: var(--dark-800);
+        }
+
+        .speakers__grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .speaker-card {
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            border: 1px solid var(--border-subtle);
+            background: var(--dark-700);
+            transition: all 0.3s;
+        }
+
+        .speaker-card:hover {
+            border-color: var(--primary-dim);
+            transform: translateY(-4px);
+        }
+
+        .speaker-card__photo {
+            width: 100%;
+            aspect-ratio: 4/5;
+            object-fit: cover;
+            filter: grayscale(100%);
+            transition: filter 0.5s;
+        }
+
+        .speaker-card:hover .speaker-card__photo {
+            filter: grayscale(0%);
+        }
+
+        .speaker-card__info {
+            padding: 24px;
+        }
+
+        .speaker-card__name {
+            font-family: var(--font-heading);
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 4px;
+        }
+
+        .speaker-card__role {
+            font-size: 13px;
+            color: var(--primary);
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+
+        .speaker-card__bio {
+            font-size: 13px;
+            color: var(--white-50);
+            line-height: 1.6;
+        }
+
+        /* ── AUDIENCE (light) ── */
+        .audience {
+            background: var(--light-200);
+            color: #000;
+        }
+
+        .audience .section__title {
+            color: #000;
+        }
+
+        .audience .section__desc {
+            color: #000000b3;
+        }
+
+        .audience__grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .audience-card {
+            background: var(--white);
+            border: 1px solid #0000000d;
+            border-radius: var(--radius-xl);
+            padding: 40px 32px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            transition: all 0.3s;
+        }
+
+        .audience-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.08);
+        }
+
+        .audience-card__icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            background: var(--dark-900);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+        }
+
+        .audience-card__title {
+            font-family: var(--font-heading);
+            font-size: 18px;
+            font-weight: 600;
+            color: #000;
+        }
+
+        /* ── STATS BAR ── */
+        .stats {
+            background: var(--dark-900);
+            border-top: 1px solid var(--border-subtle);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .stats__inner {
+            max-width: var(--max-w);
+            margin: 0 auto;
+            display: flex;
+            border: 1px solid var(--border-medium);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+        }
+
+        .stats__item {
+            flex: 1;
+            padding: 36px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--white);
+            background: var(--white-05);
+        }
+
+        .stats__item+.stats__item {
+            border-left: 1px solid var(--border-medium);
+        }
+
+        .stats__item-icon {
+            font-size: 22px;
+        }
+
+        /* ── INVESTMENT ── */
+        .investment {
+            background: var(--dark-900);
+        }
+
+        .invest__grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+        }
+
+        .invest__benefits {
+            background: var(--dark-700);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-xl);
+            padding: 48px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .invest__benefits h3 {
+            font-family: var(--font-heading);
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .invest__benefits ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .invest__benefits li {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            font-size: 16px;
+            color: var(--white);
+            font-weight: 500;
+        }
+
+        .invest__benefits li::before {
+            content: '✓';
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: rgba(231, 249, 154, 0.15);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .invest__pricing {
+            background: linear-gradient(135deg, var(--dark-700) 0%, rgba(231, 249, 154, 0.05) 100%);
+            border: 1px solid var(--primary-dim);
+            border-radius: var(--radius-xl);
+            padding: 48px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .invest__pricing-badge {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: var(--primary);
+            color: #000;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 6px 16px;
+            border-radius: var(--radius-full);
+        }
+
+        .invest__pricing h3 {
+            font-family: var(--font-heading);
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 4px;
+        }
+
+        .invest__pricing-sub {
+            font-size: 14px;
+            color: var(--white-50);
+            margin-bottom: 32px;
+        }
+
+        .invest__price {
+            margin-bottom: 32px;
+        }
+
+        .invest__price-currency {
+            font-size: 22px;
+            color: var(--white-50);
+            font-weight: 700;
+            vertical-align: top;
+        }
+
+        .invest__price-value {
+            font-family: var(--font-heading);
+            font-size: 64px;
+            font-weight: 800;
+            color: var(--white);
+            letter-spacing: -0.03em;
+            line-height: 1;
+        }
+
+        .invest__price-cents {
+            font-size: 22px;
+            color: var(--white-50);
+            font-weight: 700;
+        }
+
+        .invest__price-installment {
+            font-size: 14px;
+            color: var(--primary);
+            margin-top: 8px;
+            font-weight: 600;
+        }
+
+        .invest__methods {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 32px;
+            flex-grow: 1;
+        }
+
+        .invest__method {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 18px;
+            border-radius: 12px;
+            background: var(--white-05);
+            border: 1px solid var(--border-subtle);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .invest__method span:last-child {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* ── FAQ ── */
+        .faq {
+            background: var(--dark-800);
+        }
+
+        .faq__list {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .faq__item {
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            background: var(--dark-700);
+        }
+
+        .faq__question {
+            width: 100%;
+            padding: 20px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: transparent;
+            border: none;
+            color: var(--white);
+            font-family: var(--font-body);
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: left;
+        }
+
+        .faq__question::after {
+            content: '+';
+            font-size: 22px;
+            color: var(--primary);
+            font-weight: 300;
+            transition: transform 0.3s;
+        }
+
+        .faq__item.active .faq__question::after {
+            transform: rotate(45deg);
+        }
+
+        .faq__answer {
+            padding: 0 24px 20px;
+            font-size: 14px;
+            color: var(--white-50);
+            line-height: 1.7;
+            display: none;
+        }
+
+        .faq__item.active .faq__answer {
+            display: block;
+        }
+
+        /* ── FOOTER ── */
+        .footer {
+            background: #000;
+            padding: 48px;
+            text-align: center;
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        .footer__logo {
+            font-family: var(--font-heading);
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 12px;
+        }
+
+        .footer__logo span {
+            color: var(--primary);
+        }
+
+        .footer p {
+            font-size: 13px;
+            color: var(--white-50);
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 1024px) {
+            .hero__inner {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .hero__info {
+                flex-direction: row;
+                max-width: 100%;
+            }
+
+            .features__grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .program__block {
+                flex-direction: column;
+            }
+
+            .speakers__grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .invest__grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .section {
+                padding: 72px 24px;
+            }
+
+            .hero {
+                padding: 32px 24px 60px;
+            }
+
+            .nav__links {
+                display: none;
+            }
+
+            .features__grid {
+                grid-template-columns: 1fr;
+            }
+
+            .speakers__grid {
+                grid-template-columns: 1fr;
+            }
+
+            .audience__grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .about__grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero__info {
+                flex-direction: column;
+            }
+
+            .stats__inner {
+                flex-direction: column;
+            }
+
+            .stats__item+.stats__item {
+                border-left: none;
+                border-top: 1px solid var(--border-medium);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAV -->
+    <nav class="nav">
+        <div class="nav__logo">PLENUM <span>BRASIL</span></div>
+        <div class="nav__links">
+            <a href="#sobre">Sobre</a>
+            <a href="#programacao">Programação</a>
+            <a href="#docentes">Docentes</a>
+            <a href="#investimento">Investimento</a>
+            <a href="#faq">FAQ</a>
+        </div>
+        <button class="nav__cta"
+            onclick="document.getElementById('investimento').scrollIntoView({behavior:'smooth'})">Inscreva-se</button>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero__bg"></div>
+        <div class="hero__inner">
+            <div class="hero__text">
+                <div class="hero__tag"><span class="hero__tag-dot"></span> Imersão Presencial em Brasília</div>
+                <h1 class="hero__title">Nova Lei de<br><span>Improbidade</span><br>Administrativa</h1>
+                <p class="hero__subtitle">O evento consolidado como referência para juristas e gestores. Debate técnico
+                    e estratégico em um ambiente imersivo e inovador.</p>
+                <div class="hero__date">📅 <em>14 e 15 de Maio</em> · Brasília - DF</div>
+                <div class="hero__ctas">
+                    <a href="#investimento" class="btn-primary">Garantir meu lugar →</a>
+                    <a href="#programacao" class="btn-outline">Ver Programação</a>
+                </div>
+            </div>
+            <div class="hero__info">
+                <div class="hero__info-card">
+                    <h4>🤝 Networking Premium</h4>
+                    <p>Conecte-se com líderes, juristas e profissionais do Direito Público em ambiente exclusivo.</p>
+                </div>
+                <div class="hero__info-card">
+                    <h4>📋 Conteúdo Prático</h4>
+                    <p>16 horas-aula com análise detalhada de casos, jurisprudência e estratégias processuais.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MARQUEE -->
+    <div class="marquee-wrap">
+        <div class="marquee">
+            <span>⚖️ STF</span><span>⚖️ STJ</span><span>⚖️ TSE</span><span>📜 Lei 14.230/2021</span><span>🏛️
+                Improbidade Administrativa</span><span>📋 16 Horas-Aula</span><span>📍 Brasília - DF</span><span>📅 14 e
+                15 de Maio</span>
+            <span>⚖️ STF</span><span>⚖️ STJ</span><span>⚖️ TSE</span><span>📜 Lei 14.230/2021</span><span>🏛️
+                Improbidade Administrativa</span><span>📋 16 Horas-Aula</span><span>📍 Brasília - DF</span><span>📅 14 e
+                15 de Maio</span>
+        </div>
+    </div>
+
+    <!-- ABOUT -->
+    <section class="section about" id="sobre">
+        <div class="section__inner">
+            <div class="section__header">
+                <div>
+                    <h2 class="section__title">O que vamos<br><span>aprender</span></h2>
+                </div>
+                <p class="section__desc">A "Nova Lei de Improbidade Administrativa" representa um marco para a atuação
+                    de todos que militam na área pública.</p>
+            </div>
+            <div class="about__grid">
+                <div class="about__image">
+                    <img src="https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&q=80&w=800"
+                        alt="Direito Administrativo">
+                </div>
+                <div class="about__text">
+                    <p>É imprescindível uma completa atualização de todos os profissionais da área para uma atuação
+                        técnica e segura, com o completo alinhamento com as diretrizes assentadas pelas Cortes de
+                        uniformização da Constituição Federal e da legislação federal.</p>
+                    <p>Entenda a complexidade das <strong>192 alterações formais</strong> realizadas pela Lei
+                        n.14.230/2021 e as novas interpretações jurisprudenciais dos Tribunais Superiores (STF, STJ e
+                        TSE).</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FEATURES GRID -->
+    <section class="section features">
+        <div class="section__inner">
+            <div class="section__header section__header--center">
+                <h2 class="section__title">Por que participar desta <span>imersão?</span></h2>
+            </div>
+            <div class="features__grid">
+                <div class="feature-card">
+                    <div class="feature-card__icon">📘</div>
+                    <div class="feature-card__title">Atualização Completa</div>
+                    <div class="feature-card__text">Entenda a complexidade das 192 alterações formais realizadas pela
+                        Lei n.14.230/2021.</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card__icon">⚖️</div>
+                    <div class="feature-card__title">Jurisprudência Recente</div>
+                    <div class="feature-card__text">Novas interpretações dos Tribunais Superiores (STF, STJ e TSE) sobre
+                        Improbidade Administrativa.</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card__icon">🗳️</div>
+                    <div class="feature-card__title">Reflexos Eleitorais</div>
+                    <div class="feature-card__text">Abordagem aprofundada sobre os reflexos eleitorais da Nova Lei de
+                        Improbidade para as Eleições de 2026.</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card__icon">📜</div>
+                    <div class="feature-card__title">Recurso Especial</div>
+                    <div class="feature-card__text">O juízo de admissibilidade perante o STJ, limites de cognição da
+                        Corte e impugnações cabíveis.</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card__icon">🔍</div>
+                    <div class="feature-card__title">Novo Ato de Improbidade</div>
+                    <div class="feature-card__text">Definição e contornos jurídicos, com ênfase nos critérios exigidos
+                        para acusação e condenação.</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card__icon">🏛️</div>
+                    <div class="feature-card__title">Julgamento das Ações</div>
+                    <div class="feature-card__text">Procedimentos judiciais e administrativos para o julgamento das
+                        ações de improbidade.</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card__icon">📂</div>
+                    <div class="feature-card__title">Procedimentos do MP</div>
+                    <div class="feature-card__text">Taxonomia e regime jurídico dos procedimentos investigatórios do
+                        Ministério Público.</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card__icon">⚠️</div>
+                    <div class="feature-card__title">Abuso de Autoridade</div>
+                    <div class="feature-card__text">Nova Lei do Abuso de Autoridade e sua interpretação jurisprudencial
+                        atualizada.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- STATS -->
+    <section class="section stats" style="padding: 48px;">
+        <div class="stats__inner">
+            <div class="stats__item"><span class="stats__item-icon">📹</span> 16 Horas-Aula</div>
+            <div class="stats__item"><span class="stats__item-icon">📅</span> 2 Dias de Imersão</div>
+            <div class="stats__item"><span class="stats__item-icon">📄</span> Material Exclusivo</div>
+            <div class="stats__item"><span class="stats__item-icon">🎓</span> Certificado Incluso</div>
+        </div>
+    </section>
+
+    <!-- PROGRAM -->
+    <section class="section program" id="programacao">
+        <div class="section__inner">
+            <div class="section__header">
+                <div>
+                    <h2 class="section__title">Programação<br><span>do Curso</span></h2>
+                </div>
+                <p class="section__desc">Carga horária de 16 horas-aula, das 09:00 às 18:00 horas, nos dias 14 e 15 de
+                    Maio.</p>
+            </div>
+            <div class="program__blocks">
+                <!-- Block 1 -->
+                <div class="program__block">
+                    <div class="program__block-left">
+                        <div class="program__tag">📅 Dia 1 — 14 de Maio</div>
+                        <h3 class="program__block-title">Fundamentos e Retrospectiva Jurisprudencial</h3>
+                        <p class="program__block-desc">Visão geral da tutela constitucional e análise detalhada das
+                            decisões mais relevantes dos Tribunais Superiores.</p>
+                    </div>
+                    <div class="program__block-right">
+                        <div class="program__item">
+                            <div class="program__item-icon">✓</div>
+                            <div class="program__item-text">Visão Geral da Tutela Constitucional, Convencional e Legal
+                                da Probidade</div>
+                        </div>
+                        <div class="program__item">
+                            <div class="program__item-icon">✓</div>
+                            <div class="program__item-text">Retrospectiva dos principais julgados do STF, STJ e TSE
+                                (2022–2025)</div>
+                        </div>
+                        <div class="program__item">
+                            <div class="program__item-icon">✓</div>
+                            <div class="program__item-text">O novo ato de improbidade: definição e contornos jurídicos
+                            </div>
+                        </div>
+                        <div class="program__item">
+                            <div class="program__item-icon">✓</div>
+                            <div class="program__item-text">Estudo dos artigos da Lei separados por temas</div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Block 2 -->
+                <div class="program__block">
+                    <div class="program__block-left">
+                        <div class="program__tag">📅 Dia 2 — 15 de Maio</div>
+                        <h3 class="program__block-title">Procedimentos, Eleições e Abuso de Autoridade</h3>
+                        <p class="program__block-desc">Aprofundamento em procedimentos investigatórios, reflexos
+                            eleitorais e a Nova Lei do Abuso de Autoridade.</p>
+                    </div>
+                    <div class="program__block-right">
+                        <div class="program__item">
+                            <div class="program__item-icon">✓</div>
+                            <div class="program__item-text">Julgamento das ações de improbidade administrativa</div>
+                        </div>
+                        <div class="program__item">
+                            <div class="program__item-icon">✓</div>
+                            <div class="program__item-text">Eleições 2026 e a Nova Lei de Improbidade</div>
+                        </div>
+                        <div class="program__item">
+                            <div class="program__item-icon">✓</div>
+                            <div class="program__item-text">O Recurso Especial e a Nova Lei perante o STJ</div>
+                        </div>
+                        <div class="program__item">
+                            <div class="program__item-icon">✓</div>
+                            <div class="program__item-text">Procedimentos investigatórios do Ministério Público</div>
+                        </div>
+                        <div class="program__item">
+                            <div class="program__item-icon">✓</div>
+                            <div class="program__item-text">Nova Lei do Abuso de Autoridade e interpretação
+                                jurisprudencial</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SPEAKERS -->
+    <section class="section speakers" id="docentes">
+        <div class="section__inner">
+            <div class="section__header section__header--center">
+                <h2 class="section__title">Palestrantes <span>Confirmados</span></h2>
+                <p class="section__desc">Aprenda com quem faz acontecer — Ministros do STJ e especialistas em
+                    Improbidade Administrativa.</p>
+            </div>
+            <div class="speakers__grid">
+                <div class="speaker-card">
+                    <img class="speaker-card__photo"
+                        src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=500"
+                        alt="Teodoro Silva Santos">
+                    <div class="speaker-card__info">
+                        <div class="speaker-card__name">Teodoro Silva Santos</div>
+                        <div class="speaker-card__role">Ministro do Superior Tribunal de Justiça</div>
+                        <div class="speaker-card__bio">Doutor e mestre em Direito pela UNIFOR, com pós-doutoramento na
+                            Escola de Direito da Universidade do Minho.</div>
+                    </div>
+                </div>
+                <div class="speaker-card">
+                    <img class="speaker-card__photo"
+                        src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=500"
+                        alt="Paulo Sérgio Domingues">
+                    <div class="speaker-card__info">
+                        <div class="speaker-card__name">Paulo Sérgio Domingues</div>
+                        <div class="speaker-card__role">Ministro do Superior Tribunal de Justiça</div>
+                        <div class="speaker-card__bio">Mestrado em Direito pela Johann Wolfgang Goethe Universität
+                            (Frankfurt am Main, Alemanha). Professor e magistrado em Brasília.</div>
+                    </div>
+                </div>
+                <div class="speaker-card">
+                    <img class="speaker-card__photo"
+                        src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=500"
+                        alt="Igor Pereira Pinheiro">
+                    <div class="speaker-card__info">
+                        <div class="speaker-card__name">Igor Pereira Pinheiro</div>
+                        <div class="speaker-card__role">Promotor de Justiça do MP/CE</div>
+                        <div class="speaker-card__bio">Doutorando, Mestre e Especialista em Ciências Jurídicas pela
+                            Universidade de Lisboa. Autor do livro "Nova Lei de Improbidade Administrativa Comentada".
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TARGET AUDIENCE -->
+    <section class="section audience">
+        <div class="section__inner">
+            <div class="section__header section__header--center">
+                <h2 class="section__title">Pra quem é essa <span>imersão?</span></h2>
+                <p class="section__desc">Destinado a profissionais que atuam na área do Direito Administrativo e Direito
+                    Eleitoral.</p>
+            </div>
+            <div class="audience__grid">
+                <div class="audience-card">
+                    <div class="audience-card__icon">👤</div>
+                    <div class="audience-card__title">Agentes Públicos</div>
+                </div>
+                <div class="audience-card">
+                    <div class="audience-card__icon">💼</div>
+                    <div class="audience-card__title">Advogados e Assessores</div>
+                </div>
+                <div class="audience-card">
+                    <div class="audience-card__icon">🏛️</div>
+                    <div class="audience-card__title">Procuradores</div>
+                </div>
+                <div class="audience-card">
+                    <div class="audience-card__icon">⚖️</div>
+                    <div class="audience-card__title">Promotores de Justiça</div>
+                </div>
+                <div class="audience-card">
+                    <div class="audience-card__icon">🔨</div>
+                    <div class="audience-card__title">Magistrados</div>
+                </div>
+                <div class="audience-card">
+                    <div class="audience-card__icon">🎓</div>
+                    <div class="audience-card__title">Pós-graduandos</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- INVESTMENT -->
+    <section class="section investment" id="investimento">
+        <div class="section__inner">
+            <div class="section__header section__header--center">
+                <h2 class="section__title">Benefícios e <span>Investimento</span></h2>
+                <p class="section__desc">Invista na sua carreira com a melhor atualização jurídica do mercado.</p>
+            </div>
+            <div class="invest__grid">
+                <div class="invest__benefits">
+                    <h3>O que está incluso</h3>
+                    <ul>
+                        <li>Material didático exclusivo</li>
+                        <li>Certificado de 16 horas-aula</li>
+                        <li>Acesso a grupo VIP para networking</li>
+                        <li>Coffee break nos dois dias de curso</li>
+                        <li>Interação direta com os professores</li>
+                        <li>Atualização focada na jurisprudência recente</li>
+                    </ul>
+                </div>
+                <div class="invest__pricing">
+                    <span class="invest__pricing-badge">Vagas Limitadas</span>
+                    <h3>Investimento</h3>
+                    <p class="invest__pricing-sub">Lote atual disponível</p>
+                    <div class="invest__price">
+                        <span class="invest__price-currency">R$</span>
+                        <span class="invest__price-value">1.997</span>
+                        <span class="invest__price-cents">,00</span>
+                        <p class="invest__price-installment">Em até 12x no cartão de crédito</p>
+                    </div>
+                    <div class="invest__methods">
+                        <div class="invest__method"><span>Cartão de Crédito</span><span>Até 12x</span></div>
+                        <div class="invest__method"><span>PIX</span><span>5% de desconto</span></div>
+                        <div class="invest__method"><span>Boleto Bancário</span><span>À vista</span></div>
+                    </div>
+                    <a href="#" class="btn-primary" style="justify-content: center; width: 100%;">Realizar Inscrição
+                        Agora →</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="section faq" id="faq">
+        <div class="section__inner">
+            <div class="section__header section__header--center">
+                <h2 class="section__title">Perguntas <span>Frequentes</span></h2>
+            </div>
+            <div class="faq__list">
+                <div class="faq__item"><button class="faq__question">Qual a carga horária do curso?</button>
+                    <div class="faq__answer">O curso possui carga horária de 16 horas-aula, distribuídas em 2 dias (14 e
+                        15 de Maio), das 09:00 às 18:00 horas.</div>
+                </div>
+                <div class="faq__item"><button class="faq__question">Onde será realizado o evento?</button>
+                    <div class="faq__answer">O evento será realizado presencialmente em Brasília - DF. O local exato
+                        será informado após a confirmação da inscrição.</div>
+                </div>
+                <div class="faq__item"><button class="faq__question">Haverá certificado?</button>
+                    <div class="faq__answer">Sim! Todos os participantes receberão certificado de conclusão de 16
+                        horas-aula ao final do curso.</div>
+                </div>
+                <div class="faq__item"><button class="faq__question">Quais as formas de pagamento?</button>
+                    <div class="faq__answer">Aceitamos cartão de crédito (em até 12x), PIX (com 5% de desconto) e boleto
+                        bancário (à vista).</div>
+                </div>
+                <div class="faq__item"><button class="faq__question">O coffee break está incluso?</button>
+                    <div class="faq__answer">Sim, o coffee break está incluso nos dois dias de curso, sem custo
+                        adicional.</div>
+                </div>
+                <div class="faq__item"><button class="faq__question">Posso cancelar minha inscrição?</button>
+                    <div class="faq__answer">Sim, cancelamentos podem ser solicitados até 15 dias antes do evento, com
+                        reembolso integral. Após esse prazo, consulte nossa política de cancelamento.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer__logo">PLENUM <span>BRASIL</span></div>
+        <p>© 2025 Plenum Brasil. Todos os direitos reservados.</p>
+    </footer>
+
+    <script>
+        // FAQ Accordion
+        document.querySelectorAll('.faq__question').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const item = btn.parentElement;
+                const wasActive = item.classList.contains('active');
+                document.querySelectorAll('.faq__item').forEach(i => i.classList.remove('active'));
+                if (!wasActive) item.classList.add('active');
+            });
+        });
+    </script>
+</body>
+
+</html>
