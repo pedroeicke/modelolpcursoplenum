@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Download, CheckCircle2, ArrowRight } from 'lucide-react';
+import { Download, CheckCircle2, ArrowRight, CreditCard, Info, Building2, MapPin, Phone, Globe, Mail, FileText, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/neon-button';
 import Grainient from './Grainient';
 
@@ -13,6 +13,8 @@ export default function FolderForm() {
   const sectionRef = useRef<HTMLElement>(null);
   const [submitted, setSubmitted] = useState(false);
   const [ctaSubmitted, setCtaSubmitted] = useState(false);
+  const [openCancelamento, setOpenCancelamento] = useState(false);
+  const [openEmpresa, setOpenEmpresa] = useState(false);
   const [form, setForm] = useState({
     nome: '',
     email: '',
@@ -25,6 +27,7 @@ export default function FolderForm() {
     nome: '',
     email: '',
     whatsapp: '',
+    orgao: '',
   });
 
   useEffect(() => {
@@ -144,7 +147,7 @@ export default function FolderForm() {
               {/* Glow behind form */}
               <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-[#3b82f6]/5 to-[#60a5fa]/3 blur-2xl scale-105 pointer-events-none" />
 
-              <div className="relative rounded-3xl p-8 md:p-10 bg-white/[0.04] border border-white/[0.08] hover:border-white/[0.12] transition-colors">
+              <div className="relative rounded-3xl p-8 md:p-10 bg-[#0b1a30] border border-white/[0.08] hover:border-white/[0.12] transition-colors">
                 {submitted ? (
                   <div className="text-center py-16 flex flex-col items-center gap-4">
                     <div className="w-16 h-16 rounded-full bg-[#3b82f6]/10 flex items-center justify-center">
@@ -203,7 +206,7 @@ export default function FolderForm() {
                         <input type="text" name="captcha" required value={form.captcha} onChange={handleChange} placeholder="Responda o número" className={inputClasses} />
                       </div>
 
-                      <button type="submit" className="w-full mt-2 inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-[#3b82f6] text-[#0a0a0a] text-sm font-bold hover:bg-[#60a5fa] hover:shadow-[0_0_30px_rgba(59,130,246,0.3)] transition-all duration-300">
+                      <button type="submit" className="w-full mt-2 inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-[#3b82f6] text-white text-sm font-bold hover:bg-[#60a5fa] hover:shadow-[0_0_30px_rgba(59,130,246,0.3)] transition-all duration-300">
                         <Download className="w-4 h-4" />
                         Baixar Agora
                       </button>
@@ -216,16 +219,133 @@ export default function FolderForm() {
         </div>
       </div>
 
+      {/* ── Info Cards ── */}
+      <div className="max-w-[1200px] mx-auto relative z-10 mt-10 flex flex-col gap-3">
+
+        {/* 1. Formas de Pagamento */}
+        <div className="flex flex-col md:flex-row items-center gap-6 rounded-2xl border border-white/[0.08] bg-[#0b1a30] px-6 py-5">
+          <div className="flex items-center gap-4 flex-1">
+            <div className="w-11 h-11 rounded-xl bg-[#3b82f6]/10 border border-[#3b82f6]/20 text-[#3b82f6] flex items-center justify-center shrink-0">
+              <CreditCard className="w-5 h-5" />
+            </div>
+            <div>
+              <p className="text-white font-bold text-sm uppercase tracking-wider mb-0.5">Formas de Pagamento</p>
+              <p className="text-white/45 text-sm leading-relaxed">Boleto bancário, transferência, cheque ou dinheiro.<br className="hidden md:block" />Depósito, TED ou ordem bancária.</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-4 shrink-0">
+            <div className="hidden md:block w-px h-10 bg-white/[0.08]" />
+            <div className="text-center">
+              <p className="text-white/35 text-[10px] uppercase tracking-widest mb-1">Solicite informações no financeiro:</p>
+              <a
+                href="https://wa.me/553125311776"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block px-6 py-2.5 rounded-full bg-[#3b82f6] text-white text-xs font-bold uppercase tracking-widest hover:bg-[#60a5fa] transition-colors"
+              >
+                Setor Financeiro
+              </a>
+            </div>
+            <div className="hidden md:block w-px h-10 bg-white/[0.08]" />
+            <div className="text-center">
+              <p className="text-white font-bold text-sm">PIX</p>
+              <p className="text-white/35 text-[10px] uppercase tracking-widest">Consulte</p>
+            </div>
+          </div>
+        </div>
+
+        {/* 2. Política de Cancelamento */}
+        <div className="rounded-2xl border border-white/[0.08] bg-[#0b1a30] overflow-hidden">
+          <button
+            onClick={() => setOpenCancelamento(!openCancelamento)}
+            className="w-full flex items-center justify-between px-6 py-5 text-left"
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-11 h-11 rounded-xl bg-[#3b82f6]/10 border border-[#3b82f6]/20 text-[#3b82f6] flex items-center justify-center shrink-0">
+                <Info className="w-5 h-5" />
+              </div>
+              <p className="text-white font-bold text-sm uppercase tracking-wider">Política de Cancelamento</p>
+            </div>
+            <ChevronDown className={`w-5 h-5 text-white/40 transition-transform duration-300 ${openCancelamento ? 'rotate-180' : ''}`} />
+          </button>
+          {openCancelamento && (
+            <div className="px-6 pb-6 space-y-4">
+              <div className="rounded-xl border border-[#3b82f6]/10 bg-[#3b82f6]/5 p-4">
+                <p className="text-white/60 text-sm leading-relaxed italic">
+                  "O não comparecimento ao curso no qual você tem inscrição confirmada irá gerar a cobrança de{' '}
+                  <strong className="text-white not-italic">50% do valor</strong> para custeio do material utilizado,
+                  exceto se houver o cancelamento até{' '}
+                  <strong className="text-[#3b82f6] not-italic">72 horas antes</strong> do início."
+                </p>
+              </div>
+              <p className="text-white/45 text-sm leading-relaxed">
+                O Instituto Plenum Brasil reserva-se o direito de cancelar qualquer evento em caso fortuito, por força maior, ou por falta de quórum.
+              </p>
+              <div className="flex items-start gap-3 rounded-xl border border-[#3b82f6]/10 bg-[#3b82f6]/5 p-4">
+                <Info className="w-4 h-4 text-[#3b82f6] shrink-0 mt-0.5" />
+                <p className="text-white/55 text-sm leading-relaxed">
+                  <strong className="text-white">Atenção:</strong> Confirme, previamente, a realização do curso antes de efetuar a compra de passagens aéreas e o pagamento da hospedagem.
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* 3. Dados da Empresa */}
+        <div className="rounded-2xl border border-white/[0.08] bg-[#0b1a30] overflow-hidden">
+          <button
+            onClick={() => setOpenEmpresa(!openEmpresa)}
+            className="w-full flex items-center justify-between px-6 py-5 text-left"
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-11 h-11 rounded-xl bg-[#3b82f6]/10 border border-[#3b82f6]/20 text-[#3b82f6] flex items-center justify-center shrink-0">
+                <Building2 className="w-5 h-5" />
+              </div>
+              <p className="text-white font-bold text-sm uppercase tracking-wider">Dados da Empresa</p>
+            </div>
+            <ChevronDown className={`w-5 h-5 text-white/40 transition-transform duration-300 ${openEmpresa ? 'rotate-180' : ''}`} />
+          </button>
+          {openEmpresa && (
+            <div className="px-6 pb-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-1">
+                <p className="text-white/30 text-[10px] uppercase tracking-widest flex items-center gap-2"><MapPin className="w-3 h-3" /> Endereço</p>
+                <p className="text-white/65 text-sm leading-relaxed">Rua Espírito Santo, nº 1204, 2º andar – sala 1<br />Bairro Lourdes – BH/MG – CEP: 30.160-033</p>
+              </div>
+              <div className="space-y-1">
+                <p className="text-white/30 text-[10px] uppercase tracking-widest flex items-center gap-2"><Mail className="w-3 h-3" /> E-mails</p>
+                <p className="text-white/65 text-sm">plenumgestaooficial@gmail.com</p>
+                <p className="text-white/65 text-sm">financeiro@plenumbrasil.com</p>
+              </div>
+              <div className="space-y-1">
+                <p className="text-white/30 text-[10px] uppercase tracking-widest flex items-center gap-2"><Phone className="w-3 h-3" /> Contatos</p>
+                <p className="text-white/65 text-sm">31 2531-1776</p>
+                <p className="text-white/65 text-sm">31 2531-1750</p>
+              </div>
+              <div className="space-y-3">
+                <div className="space-y-1">
+                  <p className="text-white/30 text-[10px] uppercase tracking-widest flex items-center gap-2"><Globe className="w-3 h-3" /> Website</p>
+                  <a href="https://www.plenumbrasil.com.br" target="_blank" rel="noopener noreferrer" className="text-[#3b82f6] text-sm hover:text-[#60a5fa] transition-colors">www.plenumbrasil.com.br</a>
+                </div>
+                <div className="rounded-xl border border-[#3b82f6]/10 bg-[#3b82f6]/5 p-3">
+                  <p className="text-white font-bold text-xs flex items-center gap-2 mb-1"><FileText className="w-3 h-3 text-[#3b82f6]" /> Contratação</p>
+                  <p className="text-white/45 text-xs italic">"Solicite os documentos e demais informações para contratação."</p>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
       {/* ── EnrollCTA — Glass card, edge to edge, rounded top corners ── */}
-      <div id="notificacao" className="cta-content relative z-10 mt-24 md:mt-32 -mx-6 md:-mx-12">
+      <div id="notificacao" className="cta-content relative z-10 mt-10 -mx-6 md:-mx-12">
         <div className="relative rounded-t-[3.5rem] bg-white/[0.04] backdrop-blur-md border border-white/[0.08] border-b-0 p-8 md:p-16 overflow-hidden">
           <div className="relative z-10 max-w-[1200px] mx-auto flex flex-col lg:flex-row gap-12 lg:gap-20 items-center">
             <div className="lg:w-1/2 text-center lg:text-left">
               <h2 className="font-[var(--font-bricolage)] text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight leading-[1.05] text-white mb-5">
-                O curso não está com inscrições abertas agora?
+                Quero esse curso<br />no meu órgão
               </h2>
               <p className="text-white/50 text-base md:text-lg leading-relaxed max-w-[500px] mx-auto lg:mx-0">
-                Deixe seu contato e garanta prioridade na próxima turma antes de qualquer um.
+                Capacite toda sua equipe com uma formação personalizada. Montamos uma turma exclusiva para o seu município, câmara ou órgão estadual.
               </p>
             </div>
 
@@ -235,8 +355,8 @@ export default function FolderForm() {
                   <div className="w-16 h-16 rounded-full bg-[#3b82f6]/10 flex items-center justify-center">
                     <CheckCircle2 className="w-8 h-8 text-[#3b82f6]" />
                   </div>
-                  <h3 className="font-[var(--font-bricolage)] text-2xl font-bold text-white">Cadastro realizado!</h3>
-                  <p className="text-white/50 text-sm max-w-[280px]">Você será notificado assim que novas turmas forem abertas.</p>
+                  <h3 className="font-[var(--font-bricolage)] text-2xl font-bold text-white">Proposta solicitada!</h3>
+                  <p className="text-white/50 text-sm max-w-[280px]">Nossa equipe entrará em contato para montar a melhor proposta para o seu órgão.</p>
                 </div>
               ) : (
                 <form onSubmit={handleCtaSubmit} className="flex flex-col gap-4">
@@ -245,12 +365,12 @@ export default function FolderForm() {
                     <input type="text" name="nome" required value={ctaForm.nome} onChange={handleCtaChange} placeholder="Seu nome" className="w-full px-5 py-3.5 rounded-xl bg-white/[0.06] border border-white/[0.08] text-white text-sm placeholder:text-white/25 focus:outline-none focus:border-blue-500/40 focus:shadow-[0_0_20px_rgba(59,130,246,0.15)] transition-all" />
                   </div>
                   <div>
-                    <label className="text-white/60 text-[11px] uppercase font-bold tracking-widest block mb-2">E-mail</label>
-                    <input type="email" name="email" required value={ctaForm.email} onChange={handleCtaChange} placeholder="seu@email.com" className="w-full px-5 py-3.5 rounded-xl bg-white/[0.06] border border-white/[0.08] text-white text-sm placeholder:text-white/25 focus:outline-none focus:border-blue-500/40 focus:shadow-[0_0_20px_rgba(59,130,246,0.15)] transition-all" />
+                    <label className="text-white/60 text-[11px] uppercase font-bold tracking-widest block mb-2">Órgão / Instituição</label>
+                    <input type="text" name="orgao" required value={ctaForm.orgao} onChange={handleCtaChange} placeholder="Prefeitura, Câmara, Governo..." className="w-full px-5 py-3.5 rounded-xl bg-white/[0.06] border border-white/[0.08] text-white text-sm placeholder:text-white/25 focus:outline-none focus:border-blue-500/40 focus:shadow-[0_0_20px_rgba(59,130,246,0.15)] transition-all" />
                   </div>
                   <div>
                     <label className="text-white/60 text-[11px] uppercase font-bold tracking-widest block mb-2">WhatsApp</label>
-                    <input type="tel" name="whatsapp" value={ctaForm.whatsapp} onChange={handleCtaChange} placeholder="(00) 00000-0000" className="w-full px-5 py-3.5 rounded-xl bg-white/[0.06] border border-white/[0.08] text-white text-sm placeholder:text-white/25 focus:outline-none focus:border-blue-500/40 focus:shadow-[0_0_20px_rgba(59,130,246,0.15)] transition-all" />
+                    <input type="tel" name="whatsapp" required value={ctaForm.whatsapp} onChange={handleCtaChange} placeholder="(00) 00000-0000" className="w-full px-5 py-3.5 rounded-xl bg-white/[0.06] border border-white/[0.08] text-white text-sm placeholder:text-white/25 focus:outline-none focus:border-blue-500/40 focus:shadow-[0_0_20px_rgba(59,130,246,0.15)] transition-all" />
                   </div>
                   <Button
                     type="submit"
@@ -258,7 +378,7 @@ export default function FolderForm() {
                     size="lg"
                     className="mt-2 w-full inline-flex items-center justify-center gap-2 py-4 text-white text-sm font-medium"
                   >
-                    Quero ser avisado
+                    Solicitar proposta
                     <ArrowRight className="w-4 h-4" />
                   </Button>
                 </form>

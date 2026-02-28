@@ -1,130 +1,101 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { MapPin, Building, PhoneCall } from 'lucide-react';
-
-gsap.registerPlugin(ScrollTrigger);
+import { MapPin, Phone, Building2 } from 'lucide-react';
 
 export default function Location() {
-    const sectionRef = useRef<HTMLElement>(null);
+  return (
+    <section id="local" className="py-20 md:py-28 px-6 md:px-12 bg-[#010914] relative overflow-hidden">
+      <div className="max-w-[1100px] mx-auto">
+        <div className="flex flex-col lg:flex-row gap-12 lg:gap-20 items-center">
 
-    useEffect(() => {
-        if (!sectionRef.current) return;
-        const ctx = gsap.context(() => {
-            gsap.fromTo(
-                '.loc-anim',
-                { y: 30, autoAlpha: 0 },
-                {
-                    y: 0,
-                    autoAlpha: 1,
-                    duration: 0.8,
-                    stagger: 0.15,
-                    ease: 'power3.out',
-                    scrollTrigger: { trigger: sectionRef.current, start: 'top 75%' },
-                }
-            );
-        }, sectionRef);
-        return () => ctx.revert();
-    }, []);
-
-    return (
-        <section ref={sectionRef} id="local" className="py-24 md:py-32 px-6 md:px-12 bg-[#030d1f] border-t border-white/[0.03]">
-            <div className="max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-20 items-center">
-
-                {/* Left Column - Info */}
-                <div className="flex flex-col">
-                    <div className="loc-anim inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[#28a745]/30 text-[#28a745] bg-transparent w-fit mb-4">
-                        <MapPin className="w-4 h-4" />
-                        <span className="text-xs font-semibold tracking-wide">Localização Privilegiada</span>
-                    </div>
-
-                    <h2 className="loc-anim font-[var(--font-bricolage)] text-4xl sm:text-5xl md:text-6xl font-bold text-white tracking-tight leading-[1] mb-6">
-                        ONDE VAI <span className="text-[#28a745]">SER</span>
-                    </h2>
-
-                    <p className="loc-anim text-white/60 text-base md:text-lg leading-relaxed max-w-[480px] mb-12">
-                        Um espaço de excelência preparado para receber os maiores especialistas do país com conforto e acessibilidade no coração da capital federal.
-                    </p>
-
-                    <div className="flex flex-col gap-10 border-b border-white/[0.08] pb-12 mb-10">
-                        {/* Info Block 1 */}
-                        <div className="loc-anim flex items-start gap-6">
-                            <div className="w-14 h-14 rounded-2xl bg-white/[0.05] backdrop-blur-md border border-white/10 flex items-center justify-center shrink-0 shadow-lg shadow-black/20">
-                                <MapPin className="w-6 h-6 text-[#28a745]" />
-                            </div>
-                            <div className="pt-1">
-                                <h3 className="font-[var(--font-bricolage)] text-xl font-bold text-white tracking-tight mb-2 uppercase">
-                                    Edifício Morro Vermelho
-                                </h3>
-                                <p className="text-white/50 text-sm leading-relaxed">
-                                    SCS Quadra 01, Bloco H, 8° Andar<br />
-                                    Asa Sul, Brasília/DF • CEP 70.399-900
-                                </p>
-                            </div>
-                        </div>
-
-                        {/* Info Block 2 */}
-                        <div className="loc-anim flex items-start gap-6">
-                            <div className="w-14 h-14 rounded-2xl bg-white/[0.05] backdrop-blur-md border border-white/10 flex items-center justify-center shrink-0 shadow-lg shadow-black/20">
-                                <Building className="w-6 h-6 text-[#28a745]" />
-                            </div>
-                            <div className="pt-1">
-                                <h3 className="font-[var(--font-bricolage)] text-xl font-bold text-white tracking-tight mb-2 uppercase">
-                                    Hospedagem Parceira
-                                </h3>
-                                <p className="text-white/50 text-sm leading-relaxed max-w-[360px]">
-                                    Solicite a lista de hotéis parceiros com tarifas especiais para participantes de cursos do Instituto Plenum Brasil.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Contact Footer */}
-                    <div className="loc-anim flex flex-col sm:flex-row gap-8 sm:gap-16">
-                        <div className="flex items-center gap-4">
-                            <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center bg-white/[0.02]">
-                                <PhoneCall className="w-4 h-4 text-[#28a745]" />
-                            </div>
-                            <div>
-                                <p className="text-white/40 text-[10px] uppercase font-bold tracking-widest mb-0.5">Informações</p>
-                                <p className="font-[var(--font-bricolage)] text-white font-semibold">(31) 2531-1776</p>
-                            </div>
-                        </div>
-
-                        <div className="flex items-center gap-4">
-                            <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center bg-white/[0.02]">
-                                <PhoneCall className="w-4 h-4 text-[#28a745]" />
-                            </div>
-                            <div>
-                                <p className="text-white/40 text-[10px] uppercase font-bold tracking-widest mb-0.5">Atendimento</p>
-                                <p className="font-[var(--font-bricolage)] text-white font-semibold">(31) 99898-1776</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Right Column - Map */}
-                <div className="loc-anim relative w-full h-[500px] lg:h-[650px] rounded-[2rem] overflow-hidden border border-white/10 shadow-2xl shadow-black/80">
-                    <iframe
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3838.8!2d-47.8825!3d-15.7839!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTXCsDQ3JzAyLjAiUyA0N8KwNTInNTcuMCJX!5e0!3m2!1spt-BR!2sbr!4v1600000000000"
-                        className="absolute inset-0 w-full h-full border-0 transition-all duration-[1500ms]"
-                        allowFullScreen
-                        loading="lazy"
-                        referrerPolicy="no-referrer-when-downgrade"
-                        title="Local do evento"
-                    />
-
-                    {/* Floating Pill */}
-                    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 glass-panel-dark px-8 py-4 rounded-full border border-white/20 whitespace-nowrap shadow-xl">
-                        <span className="font-[var(--font-bricolage)] text-white font-bold tracking-wide">
-                            SEDE BRASÍLIA/DF
-                        </span>
-                    </div>
-                </div>
-
+          {/* Info — Left */}
+          <div className="lg:w-1/2 space-y-10 order-2 lg:order-1">
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 uppercase tracking-widest text-sm font-semibold text-[#3b82f6]">
+                <MapPin className="w-4 h-4" />
+                <span>Localização</span>
+              </div>
+              <h2 className="font-[var(--font-bricolage)] text-[52px] lg:text-[72px] font-bold tracking-tight leading-[1.05] bg-gradient-to-b from-white via-white/90 to-white/55 bg-clip-text text-transparent">
+                Onde vai ser
+              </h2>
+              <p className="text-white/50 text-lg leading-relaxed">
+                Um espaço de excelência preparado para receber os maiores especialistas do país com conforto e acessibilidade.
+              </p>
             </div>
-        </section>
-    );
+
+            <div className="space-y-4">
+              {/* Address */}
+              <div className="flex items-start gap-5 p-4 rounded-2xl border border-transparent bg-transparent hover:border-[#3b82f6]/25 hover:bg-[#3b82f6]/[0.06] hover:backdrop-blur-sm transition-all duration-300 group">
+                <div className="w-11 h-11 rounded-xl bg-[#3b82f6] text-white flex items-center justify-center shrink-0">
+                  <MapPin className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-lg text-white mb-1">Faculdade de Direito da UFMG</h3>
+                  <p className="text-white/45 leading-relaxed text-sm">
+                    Avenida João Pinheiro, 100 – Centro<br />
+                    Belo Horizonte / MG · CEP 30.130-180
+                  </p>
+                </div>
+              </div>
+
+              {/* Hotel */}
+              <div className="flex items-start gap-5 p-4 rounded-2xl border border-transparent bg-transparent hover:border-[#3b82f6]/25 hover:bg-[#3b82f6]/[0.06] hover:backdrop-blur-sm transition-all duration-300 group">
+                <div className="w-11 h-11 rounded-xl bg-[#3b82f6] text-white flex items-center justify-center shrink-0">
+                  <Building2 className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-lg text-white mb-1">Hospedagem Parceira</h3>
+                  <p className="text-white/45 leading-relaxed text-sm">
+                    Solicite a lista de hotéis parceiros com tarifas especiais para participantes de cursos do Instituto Plenum Brasil.
+                  </p>
+                </div>
+              </div>
+
+              {/* Phone */}
+              <div className="pt-4 flex flex-col sm:flex-row gap-6 border-t border-white/[0.06]">
+                <div className="flex items-center gap-4 group/phone">
+                  <div className="w-10 h-10 rounded-full bg-[#3b82f6] text-white flex items-center justify-center shrink-0">
+                    <Phone className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <p className="text-[10px] text-white/35 uppercase tracking-wider mb-0.5">Informações</p>
+                    <a href="tel:3125311776" className="font-bold text-white text-base hover:text-[#3b82f6] transition-colors">(31) 2531-1776</a>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4 group/phone2">
+                  <div className="w-10 h-10 rounded-full bg-[#3b82f6] text-white flex items-center justify-center shrink-0">
+                    <Phone className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <p className="text-[10px] text-white/35 uppercase tracking-wider mb-0.5">Atendimento</p>
+                    <a href="tel:3140034961" className="font-bold text-white text-base hover:text-[#3b82f6] transition-colors">(31) 4003-4961</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Map — Right */}
+          <div className="lg:w-1/2 h-[380px] lg:h-[480px] w-full rounded-3xl overflow-hidden relative border border-white/[0.08] shadow-[0_0_60px_rgba(0,0,0,0.5)] order-1 lg:order-2">
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3750.9649262321777!2d-43.94151851384342!3d-19.925882790365527!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xa699e686e23e61%3A0xfb45aeef3d8c0cd4!2sFaculdade%20de%20Direito%20da%20UFMG!5e0!3m2!1spt-BR!2sbr!4v1769994180604!5m2!1spt-BR!2sbr"
+              width="100%"
+              height="100%"
+              style={{ border: 0 }}
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#030d1f]/60 via-transparent to-transparent pointer-events-none" />
+            <div className="absolute bottom-6 left-6 z-20 pointer-events-none">
+              <div className="bg-white/[0.08] backdrop-blur-xl px-4 py-3 rounded-2xl border border-white/[0.15]">
+                <p className="text-white font-bold text-sm">Auditório Central UFMG</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  );
 }

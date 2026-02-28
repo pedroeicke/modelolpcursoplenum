@@ -74,8 +74,8 @@ export default function Program() {
   const [openSet, setOpenSet] = useState<Set<number>>(new Set([0, 1, 2, 3]));
 
   return (
-    <section id="programacao" className="pt-[66px] pb-24 md:pb-32 px-6 md:px-12 bg-[#030d1f] relative overflow-hidden">
-      <div className="absolute inset-0 z-0 blur-2xl opacity-40">
+    <section id="programacao" className="pt-[66px] pb-10 md:pb-14 px-6 md:px-12 bg-[#030d1f] relative overflow-hidden">
+<div className="absolute inset-0 z-0 blur-2xl opacity-40">
         <ColorBends
           rotation={0}
           speed={0.39}
@@ -131,15 +131,15 @@ export default function Program() {
                     {day.tag}
                   </span>
 
+                  {/* Title */}
+                  <span className="flex-1 text-white/90 text-base md:text-lg font-semibold leading-snug">
+                    {day.title}
+                  </span>
+
                   {/* Time */}
                   <span className="hidden sm:flex items-center gap-1.5 text-white/35 text-[12px] shrink-0">
                     <Clock className="w-3.5 h-3.5" />
                     {day.time}
-                  </span>
-
-                  {/* Title */}
-                  <span className="flex-1 text-white/90 text-base md:text-lg font-semibold leading-snug">
-                    {day.title}
                   </span>
 
                   {/* Chevron */}
@@ -152,10 +152,7 @@ export default function Program() {
 
                 {/* ── Expanded content ── */}
                 {isOpen && (
-                  <div className="px-6 pb-6 border-t border-white/[0.07] pt-5 grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-10">
-                    {/* Description */}
-                    <p className="text-white/40 text-sm leading-relaxed">{day.description}</p>
-
+                  <div className="px-6 pb-6 border-t border-white/[0.07] pt-5">
                     {/* Topics */}
                     <div className="flex flex-col gap-3">
                       {day.topics.map((topic, j) => (

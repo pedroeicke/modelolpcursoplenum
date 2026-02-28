@@ -4,8 +4,10 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Instagram } from 'lucide-react';
 gsap.registerPlugin(ScrollTrigger);
+
 export default function Teachers() {
   const sectionRef = useRef<HTMLElement>(null);
+
   useEffect(() => {
     if (!sectionRef.current) return;
     const ctx = gsap.context(() => {
@@ -24,57 +26,96 @@ export default function Teachers() {
     }, sectionRef);
     return () => ctx.revert();
   }, []);
+
   return (
-    <section ref={sectionRef} id="instrutor" className="relative w-full bg-[#030d1f] overflow-hidden flex flex-col lg:flex-row min-h-[80vh] lg:h-[720px]">
-      {/* Left Column - Text Info */}
-      <div className="w-full lg:w-1/2 px-8 md:px-16 lg:px-24 py-16 lg:py-0 flex flex-col justify-center border-t border-b lg:border-b-0 lg:border-r border-white/5 relative z-10 h-full">
-        {/* Heading */}
-        <div className="speaker-anim mb-8">
+    <section
+      ref={sectionRef}
+      id="instrutor"
+      className="relative w-full bg-[#030d1f] overflow-hidden pt-10 pb-16 md:pt-14 md:pb-20 px-6 md:px-12"
+    >
+      {/* Gradient top — suaviza transição da Programação */}
+      <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-[#030d1f] via-[#0a1a3a]/30 to-transparent pointer-events-none z-0" />
+      {/* Subtle blue glow center */}
+      <div className="absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-[#1e3a6e]/10 to-transparent pointer-events-none z-0" />
+
+      <div className="max-w-[1000px] mx-auto relative z-10">
+        {/* Heading — top center */}
+        <div className="speaker-anim mb-14 text-center">
           <h2 className="font-[var(--font-bricolage)] text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight leading-[1.05] bg-gradient-to-b from-white via-white/90 to-white/55 bg-clip-text text-transparent">
             Quem será<br />seu professor?
           </h2>
         </div>
-        {/* Huge Bio Text */}
-        <p className="speaker-anim font-[var(--font-bricolage)] text-2xl sm:text-3xl md:text-[2.2rem] lg:text-[2.5rem] font-medium text-white tracking-tight leading-[1.3] mb-12 max-w-[600px]">
-          Administrador Público e Consultor, Daniel Angotti atua em Captação de Recursos e Relacionamento Governamental, com vasta experiência em gestão pública e privada.
-        </p>
-        {/* Small Speaker Info */}
-        <div className="speaker-anim flex items-center gap-6 mb-16">
-          <div className="h-full w-0.5 bg-gradient-to-b from-[#3b82f6] to-transparent self-stretch" />
-          <div className="flex flex-col gap-1">
-            <div className="flex items-center gap-3">
-              <p className="font-[var(--font-bricolage)] text-lg font-bold text-white tracking-wide">Daniel Angotti</p>
-              <a
-                href="https://instagram.com/danielangotti"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white/60 hover:text-[#3b82f6] hover:bg-white/10 transition-colors"
-                title="Instagram"
-              >
-                <Instagram className="w-4 h-4" />
-              </a>
+
+        {/* Card — with photo extending out on the right */}
+        <div className="speaker-anim relative">
+          {/* Glass card */}
+          <div className="relative rounded-3xl border border-white/[0.1] bg-white/[0.04] backdrop-blur-md overflow-visible">
+            {/* Background glow */}
+            <div className="absolute -inset-2 rounded-3xl bg-[#3b82f6]/[0.04] blur-2xl -z-10" />
+
+            {/* Text content — left side, with right padding for image space on desktop */}
+            <div className="p-8 md:p-12 md:pr-[300px] text-center md:text-left">
+              <h3 className="font-[var(--font-bricolage)] text-2xl md:text-3xl font-bold text-white mb-2">
+                Daniel Angotti
+              </h3>
+              <p className="text-[#3b82f6] text-xs font-semibold uppercase tracking-widest mb-5">
+                Palestrante e Consultor Especialista
+              </p>
+              <p className="text-white/45 text-sm leading-relaxed mb-8 max-w-[480px] md:mx-0 mx-auto">
+                Administrador Público e Consultor em Captação de Recursos e
+                Relacionamento Governamental. Chefe da Unidade Regional
+                SEGOV-MG em Brasília. Diretor e professor universitário por
+                mais de 10 anos. Embaixador Liberta Minas e Formado no
+                RenovaBR.
+              </p>
+
+              {/* Instagram */}
+              <div className="flex md:justify-start justify-center">
+                <a
+                  href="https://instagram.com/danielangotti"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/[0.06] border border-white/[0.1] text-white/50 hover:text-[#3b82f6] hover:border-[#3b82f6]/30 transition-colors text-sm font-medium"
+                >
+                  <Instagram className="w-4 h-4" />
+                  @danielangotti
+                </a>
+              </div>
             </div>
-            <p className="text-white/40 text-sm font-medium">Palestrante e Consultor Especialista</p>
+
+            {/* Photo — glued to right edge, bottom aligned, head extends above card */}
+            <div className="hidden md:block absolute bottom-0 right-0 z-10">
+              <div
+                className="w-[280px] h-[430px] overflow-hidden"
+                style={{ borderRadius: '140px 140px 0 0' }}
+              >
+                <img
+                  src="/palestrantetste.png"
+                  alt="Daniel Angotti"
+                  className="w-full h-full object-cover object-top"
+                />
+              </div>
+              {/* Glow behind image */}
+              <div className="absolute inset-0 -z-10 blur-3xl bg-[#3b82f6]/10 scale-75" />
+            </div>
+
+            {/* Photo — mobile (centered above card) */}
+            <div className="md:hidden flex justify-center -mt-[100px] mb-0 absolute -top-[100px] left-1/2 -translate-x-1/2 z-10">
+              <div
+                className="w-[200px] h-[280px] overflow-hidden shadow-2xl"
+                style={{ borderRadius: '100px 100px 12px 12px' }}
+              >
+                <img
+                  src="/palestrantetste.png"
+                  alt="Daniel Angotti"
+                  className="w-full h-full object-cover object-top"
+                />
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-      {/* Right Column - Edge to Edge Image */}
-      <div className="w-full lg:w-1/2 relative min-h-[500px] h-full lg:rounded-l-[40px] overflow-hidden bg-[#030d1f]">
-        <img
-          src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=1200"
-          alt="Daniel Angotti"
-          className="absolute inset-0 w-full h-full object-cover object-[center_30%]"
-        />
-        {/* Gradient Overlay for bottom text readability */}
-        <div className="absolute inset-x-0 bottom-0 h-[60%] bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
-        {/* Floating Glass Bio Card */}
-        <div className="speaker-anim absolute bottom-8 md:bottom-12 left-1/2 -translate-x-1/2 w-[90%] md:w-[600px] md:h-[150px] z-20">
-          <div className="w-full h-full rounded-2xl md:rounded-3xl p-6 md:px-10 flex flex-col justify-center border border-white/20 shadow-2xl backdrop-blur-md bg-white/5 text-left">
-            <h3 className="font-[var(--font-bricolage)] text-2xl md:text-3xl font-bold text-white mb-2 md:mb-1">Daniel Angotti</h3>
-            <p className="text-white/80 text-xs md:text-sm leading-relaxed line-clamp-3">
-              Chefe da Unidade Regional SEGOV-MG em Brasília. Diretor e professor universitário por mais de 10 anos. Embaixador Liberta Minas e Formado no RenovaBR.
-            </p>
-          </div>
+
+          {/* Mobile: add top margin to make room for the photo extending above */}
+          <div className="md:hidden h-0 -mt-0" />
         </div>
       </div>
     </section>
