@@ -1,56 +1,112 @@
 'use client';
 
-import { motion } from 'motion/react';
-import { Users, Briefcase, Gavel, Scale, GraduationCap, Landmark } from 'lucide-react';
+import Image from 'next/image';
+import { Landmark, FileSpreadsheet, Shield, User } from 'lucide-react';
+import { GlowingEffect } from '@/components/ui/glowing-effect';
+import {
+  BentoGrid,
+  InverseContainerScroll,
+  InverseBentoCell,
+  InverseContainerScale,
+} from '@/components/blocks/hero-gallery-scroll-animation';
+
+const audiences = [
+  {
+    Icon: Landmark,
+    title: 'Prefeitos e Gestores',
+    description:
+      'Líderes municipais responsáveis pela captação, direcionamento e execução final dos recursos orçamentários.',
+  },
+  {
+    Icon: FileSpreadsheet,
+    title: 'Secretários de Finanças',
+    description:
+      'Profissionais encarregados do planejamento financeiro e alocação estratégica de emendas na gestão local.',
+  },
+  {
+    Icon: Shield,
+    title: 'Controladores e Auditores',
+    description:
+      'Focados em garantir a conformidade técnica, transparência e prestação de contas alinhada aos órgãos de controle.',
+  },
+  {
+    Icon: User,
+    title: 'Assessores Parlamentares',
+    description:
+      'Especialistas que articulam a destinação das emendas e precisam dominar as novas regras do STF para orientação segura.',
+  },
+];
+
+/* ── 5 images — default bento layout ──────────────────────────────────
+   Slot 1: large left  (col-span-6, row-span-3) → move left + up
+   Slot 2: top-right   (col-span-2, row-span-2) → move right + up
+   Slot 3: btm-right   (col-span-2, row-span-2) → move right + down
+   Slot 4: btm-left    (col-span-3, row 4)      → move left + down
+   Slot 5: btm-center  (col-span-3, row 4)      → move down
+──────────────────────────────────────────────────────────────────── */
+const cells = [
+  { src: '/imgses/photo-1498036882173-b41c28a8ba34.avif', xDir: -1, yDir: -1, sizes: '75vw' },
+  { src: '/imgses/photo-1503899036084-c55cdd92da26.avif', xDir:  1, yDir: -1, sizes: '25vw' },
+  { src: '/imgses/photo-1536098561742-ca998e48cbcc.avif', xDir:  1, yDir:  1, sizes: '25vw' },
+  { src: '/imgses/photo-1540959733332-eab4deabeeaf.avif', xDir: -1, yDir:  1, sizes: '37vw' },
+  { src: '/imgses/photo-1551641506-ee5bf4cb45f1.avif',   xDir:  0, yDir:  1, sizes: '37vw' },
+];
 
 export default function TargetAudience() {
-  const audiences = [
-    { icon: <Users className="w-8 h-8" />, title: "Agentes Públicos" },
-    { icon: <Briefcase className="w-8 h-8" />, title: "Advogados e Assessores" },
-    { icon: <Landmark className="w-8 h-8" />, title: "Procuradores" },
-    { icon: <Gavel className="w-8 h-8" />, title: "Promotores de Justiça" },
-    { icon: <Scale className="w-8 h-8" />, title: "Magistrados" },
-    { icon: <GraduationCap className="w-8 h-8" />, title: "Pós-graduandos" }
-  ];
-
   return (
-    <section className="py-24 relative bg-slate-900">
-      <div className="max-w-7xl mx-auto px-6 relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
-        >
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[#28a745]/30 text-[#28a745] bg-transparent w-fit mx-auto mb-5">
-            <Users className="w-4 h-4" />
-            <span className="text-xs font-semibold tracking-wide">Público-Alvo</span>
-          </div>
-          <h3 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight">PRA QUEM É ESSE CURSO?</h3>
-          <p className="text-lg text-slate-300 max-w-2xl mx-auto">
-            Destinado a profissionais que atuam na área do Direito Administrativo e Direito Eleitoral.
-          </p>
-        </motion.div>
+    <InverseContainerScroll id="publico">
 
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-          {audiences.map((item, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="glass-panel-dark border border-white/5 p-8 rounded-3xl flex flex-col items-center text-center gap-4 hover:bg-orange-900/10 hover:border-orange-500/30 transition-all duration-300 group"
-            >
-              <div className="w-16 h-16 rounded-full bg-slate-800 flex items-center justify-center text-orange-400 group-hover:scale-110 group-hover:text-orange-300 transition-all duration-300 shadow-lg border border-orange-500/20">
-                {item.icon}
+      {/* ── Gallery — asymmetric bento grid, cells spread out on scroll ── */}
+      <BentoGrid
+        variant="default"
+        className="absolute inset-0 h-full gap-4 p-4 [&>div]:rounded-2xl"
+      >
+        {cells.map(({ src, xDir, yDir, sizes }) => (
+          <InverseBentoCell key={src} xDir={xDir} yDir={yDir}>
+            <Image
+              src={src}
+              alt=""
+              fill
+              className="object-cover"
+              sizes={sizes}
+              priority
+            />
+          </InverseBentoCell>
+        ))}
+      </BentoGrid>
+
+      {/* ── Center content — fades in as gallery opens ── */}
+      <InverseContainerScale>
+        <div className="pointer-events-auto w-full max-w-[1300px]">
+          <div className="text-center mb-12">
+            <span className="inline-block text-sm uppercase font-semibold tracking-[0.2em] text-white/35 mb-5">
+              Público-Alvo
+            </span>
+            <h2 className="font-[var(--font-bricolage)] text-5xl sm:text-6xl md:text-[72px] font-bold tracking-tight leading-[1.06] bg-gradient-to-b from-white via-white/90 to-white/55 bg-clip-text text-transparent">
+              Para quem é<br />esta imersão?
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
+            {audiences.map(({ Icon, title, description }) => (
+              <div
+                key={title}
+                className="relative bg-[#030d1f]/85 backdrop-blur-md border border-white/[0.09] rounded-2xl p-7 md:p-9 flex flex-col gap-5"
+              >
+                <GlowingEffect disabled={false} spread={40} proximity={60} borderWidth={1.5} />
+                <div className="w-13 h-13 rounded-xl bg-white/[0.06] border border-white/[0.1] flex items-center justify-center text-white/55">
+                  <Icon className="w-6 h-6" />
+                </div>
+                <div>
+                  <p className="text-white/85 text-base font-semibold leading-snug">{title}</p>
+                  <p className="text-white/35 text-sm leading-relaxed mt-2">{description}</p>
+                </div>
               </div>
-              <h4 className="text-lg font-bold text-white tracking-wide">{item.title}</h4>
-            </motion.div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
-    </section>
+      </InverseContainerScale>
+
+    </InverseContainerScroll>
   );
 }

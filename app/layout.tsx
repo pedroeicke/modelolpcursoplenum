@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Relacionamento Governamental e Captação de Recursos | Plenum Brasil',
-  description: 'Como Transformar Agendas em Brasília em Recursos, Convênios e Resultados para o Município. 10 a 13 de Março 2026, Presencial em Brasília/DF.',
+  title: 'Emendas Parlamentares 2026 na Prática | Plenum Brasil',
+  description: 'Execução, Transparência e Prestação de Contas (pós-mudanças do STF). Imersão presencial em Brasília/DF. 09 a 13 de Março de 2026.',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

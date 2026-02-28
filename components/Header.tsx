@@ -10,13 +10,12 @@ export default function Header() {
   const headerRef = useRef<HTMLElement>(null);
 
   const navItems = [
-    { label: 'Por que participar', href: '#motivos' },
+    { label: 'Diferenciais', href: '#diferenciais' },
+    { label: 'Para quem é', href: '#publico' },
     { label: 'Programação', href: '#programacao' },
-    { label: 'Palestrante', href: '#instrutor' },
-    { label: 'Material Exclusivo', href: '#folder' },
-    { label: 'Localização', href: '#local' },
+    { label: 'Instrutora', href: '#instrutor' },
     { label: 'Investimento', href: '#investimento' },
-    { label: 'Depoimentos', href: '#depoimentos' },
+    { label: 'Material', href: '#folder' },
   ];
 
   useEffect(() => {
@@ -29,8 +28,7 @@ export default function Header() {
     const handleScroll = () => setScrolled(window.scrollY > 60);
     window.addEventListener('scroll', handleScroll);
 
-    // Intersection Observer for dynamic header color
-    const headerHeight = 80; // Approximate height
+    const headerHeight = 80;
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -44,7 +42,6 @@ export default function Header() {
       }
     );
 
-    // Observe all sections to detect background changes
     document.querySelectorAll('section').forEach((section) => {
       observer.observe(section);
     });
@@ -65,9 +62,9 @@ export default function Header() {
         {/* Desktop pill header */}
         <div className={`hidden lg:flex items-center justify-between h-[80px] rounded-full border px-6 transition-all duration-500 ${scrolled
           ? isLightBackground
-            ? 'bg-white/80 border-black/10 backdrop-blur-xl shadow-[0_8px_40px_rgba(0,0,0,0.08)]' // Light scrolled
-            : 'bg-white/10 border-white/20 backdrop-blur-xl shadow-[0_8px_40px_rgba(0,0,0,0.3)]'  // Dark scrolled
-          : 'bg-white/5 border-white/10 backdrop-blur-lg' // Not scrolled (always dark initially due to hero)
+            ? 'bg-white/80 border-black/10 backdrop-blur-xl shadow-[0_8px_40px_rgba(0,0,0,0.08)]'
+            : 'bg-white/10 border-white/20 backdrop-blur-xl shadow-[0_8px_40px_rgba(0,0,0,0.3)]'
+          : 'bg-white/5 border-white/10 backdrop-blur-lg'
           }`}>
           <a href="#" className="flex items-center shrink-0">
             <img
@@ -93,13 +90,13 @@ export default function Header() {
           </nav>
 
           <a
-            href="https://materiais.plenumbrasil.com.br/presencial-df-relacionamento-governamental-e-captacao-de-recursos-marco-2026"
-            target="_blank"
-            rel="noopener"
-            className="inline-flex items-center justify-center gap-1.5 px-6 py-2.5 rounded-full bg-[#28a745] text-[#0a0a0a] text-[13px] font-semibold uppercase hover:bg-[#d4e680] transition-colors"
+            href="#inscricao"
+            className="relative group inline-flex items-center justify-center gap-1.5 px-7 py-2 rounded-full border border-blue-500/20 bg-blue-500/5 hover:bg-blue-500/0 text-white text-[13px] font-semibold uppercase transition-all"
           >
-            Fazer Inscrição
+            <span className="absolute h-px opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out inset-x-0 inset-y-0 bg-gradient-to-r w-3/4 mx-auto from-transparent via-blue-600 to-transparent" />
+            Quero me inscrever
             <ArrowRight className="w-3.5 h-3.5" />
+            <span className="absolute group-hover:opacity-30 transition-all duration-500 ease-in-out inset-x-0 h-px -bottom-px bg-gradient-to-r w-3/4 mx-auto from-transparent via-blue-600 to-transparent" />
           </a>
         </div>
 
@@ -138,12 +135,12 @@ export default function Header() {
             </a>
           ))}
           <a
-            href="https://materiais.plenumbrasil.com.br/presencial-df-relacionamento-governamental-e-captacao-de-recursos-marco-2026"
-            target="_blank"
-            rel="noopener"
-            className="mt-4 w-full text-center block px-6 py-3 bg-[#28a745] text-[#0a0a0a] rounded-full font-semibold text-sm uppercase tracking-wide"
+            href="#inscricao"
+            className="relative group mt-4 w-full inline-flex items-center justify-center px-10 py-3 rounded-full border border-blue-500/20 bg-blue-500/5 hover:bg-blue-500/0 text-white text-sm font-semibold uppercase tracking-wide transition-all"
           >
-            Fazer Inscrição
+            <span className="absolute h-px opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out inset-x-0 inset-y-0 bg-gradient-to-r w-3/4 mx-auto from-transparent via-blue-600 to-transparent" />
+            Quero me inscrever
+            <span className="absolute group-hover:opacity-30 transition-all duration-500 ease-in-out inset-x-0 h-px -bottom-px bg-gradient-to-r w-3/4 mx-auto from-transparent via-blue-600 to-transparent" />
           </a>
         </div>
       )}
