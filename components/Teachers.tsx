@@ -42,7 +42,7 @@ export default function Teachers() {
         {/* Heading — top center */}
         <div className="speaker-anim mb-14 text-center">
           <h2 className="font-[var(--font-bricolage)] text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight leading-[1.05] bg-gradient-to-b from-white via-white/90 to-white/55 bg-clip-text text-transparent">
-            Quem será<br />seu professor?
+            Quem sera<br />o instrutor?
           </h2>
         </div>
 
