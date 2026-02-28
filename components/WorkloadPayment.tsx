@@ -37,9 +37,9 @@ export default function WorkloadPayment() {
               </p>
 
               {/* Label */}
-              <p className="text-white/35 text-[11px] uppercase font-bold tracking-widest mb-5">
+              <span className="inline-block px-4 py-1.5 rounded-full bg-[#3b82f6]/10 border border-[#3b82f6]/20 text-[#3b82f6] text-[11px] uppercase font-bold tracking-widest mb-5">
                 O que está incluso
-              </p>
+              </span>
 
               {/* Items */}
               <div className="flex flex-col gap-3.5 mb-8">

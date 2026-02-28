@@ -29,10 +29,10 @@ export default function Home() {
         />
       </div>
       <Teachers />
+      <WorkloadPayment />
+      <FolderForm />
       <Location />
       <SocialProof />
-      <WorkloadPayment />
-<FolderForm />
       <Footer />
 
       {/* WhatsApp floating button */}

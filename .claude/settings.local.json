@@ -2,7 +2,36 @@
   "permissions": {
     "allow": [
       "Bash(npm install)",
-      "mcp__Claude_Preview__preview_start"
+      "mcp__Claude_Preview__preview_start",
+      "Bash(echo \"EXIT: $?\")",
+      "Bash(npx next build)",
+      "Bash(netstat -ano)",
+      "Bash(taskkill //PID 20648 //F)",
+      "WebFetch(domain:unsplash.com)",
+      "WebFetch(domain:images.unsplash.com)",
+      "Bash(findstr \":3000\")",
+      "Bash(taskkill //PID 32720 //F)",
+      "Bash(git stash)",
+      "Bash(findstr LISTENING)",
+      "Bash(taskkill //PID 33224 //F)",
+      "Bash(npm install lenis motion)",
+      "Bash(awk 'NR==1 || NR==50 || NR==100 || NR==150 || NR==180')",
+      "Bash(node -e \"require\\(''class-variance-authority''\\)\")",
+      "Bash(npm install three @react-three/fiber --legacy-peer-deps)",
+      "Bash(npx shadcn@latest add @react-bits/ColorBends-TS-TW --yes)",
+      "Bash(del \"D:\\\\Pastel\\\\Plenum Projeto\\\\plenum-brasil---curso-improbidade-administrativa\\\\components\\\\GarantaVaga.tsx\")",
+      "Bash(npm ls class-variance-authority)",
+      "Bash(npx shadcn@latest add https://21st.dev/r/cybergaz/neon-button)",
+      "Bash(npm ls ogl)",
+      "Bash(git add app/globals.css app/layout.tsx app/page.tsx components/About.tsx components/EnrollCTA.tsx components/FolderForm.tsx components/Footer.tsx components/Header.tsx components/Hero.tsx components/Program.tsx components/TargetAudience.tsx components/Teachers.tsx components/WorkloadPayment.tsx package-lock.json package.json components.json components/ColorBends.tsx components/Stats.tsx components/blocks/ components/stacking-card.tsx components/ui/ public/1x/ public/bgvg.png public/bgvgb.png public/card1.png public/card2.png public/card3.png public/icon.svg public/imgses/)",
+      "Bash(git commit:*)",
+      "Bash(git push origin main)",
+      "Bash(git add types/three.d.ts)",
+      "Bash(git add package.json)",
+      "Bash(git add components/ColorBends.tsx components/ui/Silk.tsx next.config.ts)",
+      "Bash(git add app/globals.css app/page.tsx components/About.tsx components/FolderForm.tsx components/Hero.tsx components/Location.tsx components/Program.tsx components/Stats.tsx components/Teachers.tsx components/WorkloadPayment.tsx components/SocialProof.tsx public/bgvg.png public/fundodepo.png public/palestrantetste.png)",
+      "Bash(git add components/Teachers.tsx components/About.tsx components/Hero.tsx components/Program.tsx)",
+      "Bash(git add components/Teachers.tsx)"
     ]
   }
 }
