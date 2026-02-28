@@ -159,7 +159,7 @@ export default function Program() {
                         <div key={j}>
                           <div className="flex items-start gap-3">
                             <CheckCircle2 className="w-4 h-4 text-[#5b9cf6] shrink-0 mt-0.5" />
-                            <span className="text-white/70 text-sm leading-relaxed">{topic.text}</span>
+                            <span className="text-white/70 text-base leading-relaxed">{topic.text}</span>
                           </div>
                           {topic.children && (
                             <div className="ml-7 mt-2 flex flex-col gap-1.5 pl-3 border-l border-white/[0.07]">

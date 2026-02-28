@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { ShieldCheck, Eye, FileCheck } from 'lucide-react';
+import { ShieldCheck, Eye, FileCheck, Scale, BookOpen, Users } from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -25,6 +25,24 @@ const cards = [
     title: 'Prestação de Contas',
     description:
       'Técnicas práticas para organização documental e aprovação célere de contas, garantindo a viabilidade de repasses futuros para o seu município.',
+  },
+  {
+    icon: Scale,
+    title: 'Conformidade Legal',
+    description:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ut enim ad minim.',
+  },
+  {
+    icon: BookOpen,
+    title: 'Capacitação Prática',
+    description:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo.',
+  },
+  {
+    icon: Users,
+    title: 'Gestão Colaborativa',
+    description:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
   },
 ];
 

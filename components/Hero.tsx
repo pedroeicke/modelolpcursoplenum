@@ -127,7 +127,7 @@ export default function Hero() {
       <div className="relative z-10 flex-1 flex flex-col items-center justify-center px-6 md:px-12 pt-36 pb-16 max-w-[1200px] mx-auto w-full">
 
         {/* ── Category label ── */}
-        <span className="hero-anim inline-block text-[#3b82f6] text-xs sm:text-sm font-semibold tracking-[0.2em] uppercase mb-4">
+        <span className="hero-anim inline-block bg-white text-[#3b82f6] text-xs sm:text-sm font-bold tracking-[0.2em] uppercase mb-4 px-4 py-1.5 rounded-full">
           Imersão
         </span>
 
@@ -146,37 +146,53 @@ export default function Hero() {
         </p>
 
         {/* ── Info badges — pill ── */}
-        <div className="hero-anim relative z-20 inline-flex flex-col sm:flex-row items-center gap-3 sm:gap-5 mb-10 px-6 py-3 rounded-full bg-black/30 backdrop-blur-md border border-white/[0.08]">
-          {/* Brasília */}
-          <div className="flex items-center gap-2 text-white/60 text-sm">
-            <MapPin className="w-4 h-4 text-[#3b82f6]" />
-            <span>3 Dias de imersão em <strong className="text-white/80">Brasília | DF</strong></span>
+        <div className="hero-anim relative z-20 inline-flex flex-col sm:flex-row items-stretch mb-10 rounded-[999px] bg-black/30 backdrop-blur-md border border-white/[0.08] overflow-visible">
+
+          {/* Item 1 — Dias / Brasília */}
+          <div className="flex items-center gap-3 px-5 py-3">
+            <div className="w-9 h-9 rounded-full bg-white/[0.07] border border-white/[0.08] flex items-center justify-center shrink-0">
+              <MapPin className="w-4 h-4 text-[#3b82f6]" />
+            </div>
+            <div>
+              <p className="text-[#3b82f6] text-[11px] font-semibold uppercase tracking-wider mb-1">3 Dias de imersão em</p>
+              <p className="text-white font-bold text-sm">Brasília | DF</p>
+            </div>
           </div>
 
-          <span className="hidden sm:block w-px h-4 bg-white/15" />
+          <span className="hidden sm:block w-px bg-white/[0.08] self-stretch" />
+          <span className="sm:hidden h-px bg-white/[0.08]" />
 
-          {/* Vagas */}
-          <div className="flex items-center gap-2 text-white/60 text-sm">
-            <Users className="w-4 h-4 text-[#3b82f6]" />
-            <span>Vagas limitadas · Presencial ou Ao Vivo</span>
+          {/* Item 2 — Vagas */}
+          <div className="flex items-center gap-3 px-5 py-3">
+            <div className="w-9 h-9 rounded-full bg-white/[0.07] border border-white/[0.08] flex items-center justify-center shrink-0">
+              <Users className="w-4 h-4 text-[#3b82f6]" />
+            </div>
+            <div>
+              <p className="text-[#3b82f6] text-[11px] font-semibold uppercase tracking-wider mb-1">Vagas limitadas</p>
+              <p className="text-white font-bold text-sm">Presencial ou Ao Vivo</p>
+            </div>
           </div>
 
-          <span className="hidden sm:block w-px h-4 bg-white/15" />
+          <span className="hidden sm:block w-px bg-white/[0.08] self-stretch" />
+          <span className="sm:hidden h-px bg-white/[0.08]" />
 
-          {/* Próxima turma — clickable dropdown */}
-          <div className="flex items-center gap-2 text-white/60 text-sm">
-            <CalendarDays className="w-4 h-4 text-[#3b82f6] shrink-0" />
+          {/* Item 3 — Próxima turma */}
+          <div className="flex items-center gap-3 px-5 py-3">
+            <div className="w-9 h-9 rounded-full bg-white/[0.07] border border-white/[0.08] flex items-center justify-center shrink-0">
+              <CalendarDays className="w-4 h-4 text-[#3b82f6]" />
+            </div>
             <div className="relative">
+              <p className="text-[#3b82f6] text-[11px] font-semibold uppercase tracking-wider mb-1">Próxima turma</p>
               <button
                 onClick={() => setTurmaOpen(!turmaOpen)}
-                className="flex items-center gap-1.5 hover:text-white/80 transition-colors cursor-pointer"
+                className="flex items-center gap-1 text-white font-bold text-sm hover:text-white/80 transition-colors cursor-pointer"
               >
-                <span>Próxima turma: <strong className="text-white/80">{turmas[selectedTurma]}</strong></span>
+                <span>{turmas[selectedTurma]}</span>
                 <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${turmaOpen ? 'rotate-180' : ''}`} />
               </button>
 
               {turmaOpen && (
-                <div className="absolute top-full left-0 mt-2 w-full rounded-xl bg-[#0a1a3a]/95 backdrop-blur-xl border border-white/10 shadow-2xl py-1.5 z-[999]">
+                <div className="absolute top-full left-0 mt-2 min-w-[220px] rounded-xl bg-[#0a1a3a]/95 backdrop-blur-xl border border-white/10 shadow-2xl py-1.5 z-[999]">
                   {turmas.map((turma, i) => (
                     <button
                       key={i}
@@ -194,6 +210,7 @@ export default function Hero() {
               )}
             </div>
           </div>
+
         </div>
 
         {/* ── CTAs ── */}
@@ -221,7 +238,7 @@ export default function Hero() {
 
         {/* ── Link to last section ── */}
         <a href="#folder" className="hero-anim text-white/40 text-sm hover:text-white/60 transition-colors mb-20 underline underline-offset-4 decoration-white/20 hover:decoration-white/40">
-          Quero fazer esse curso In Company
+          Solicitar curso In Company
         </a>
 
       </div>
