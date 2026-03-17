@@ -6,6 +6,8 @@ import { createClient } from '@/lib/supabase/server';
 const ALLOWED_ORIGINS = [
   'https://improbidadecurso.vercel.app',
   'https://plenumbrasil.com.br',
+  'https://www.improbidadeadministrativa.com',
+  'https://improbidadeadministrativa.com',
 ];
 
 function corsHeaders(origin: string | null) {
@@ -19,7 +21,7 @@ function corsHeaders(origin: string | null) {
 
 export async function OPTIONS(request: NextRequest) {
   const origin = request.headers.get('origin');
-  return NextResponse.json(null, { status: 204, headers: corsHeaders(origin) });
+  return new NextResponse(null, { status: 204, headers: corsHeaders(origin) });
 }
 
 export async function POST(request: NextRequest) {
