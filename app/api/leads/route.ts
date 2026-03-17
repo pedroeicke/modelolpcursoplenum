@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { createServiceClient } from '@/lib/supabase/server';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const supabase = await createClient();
+    const supabase = createServiceClient();
 
     // ── Check if lead already exists for this course + email ──
     const { data: existing } = await supabase
