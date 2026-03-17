@@ -180,6 +180,7 @@ function _programPage(
               display: 'flex',
               flexDirection: 'column',
               marginBottom: 8,
+              borderRadius: 12,
             },
           },
             h('div', {

@@ -3,8 +3,8 @@ import { getFontFamily } from '../fonts';
 import { getIcon } from '../icons';
 import type { FontData } from '../types';
 
-/** One day per page — matches reference PDF layout */
-const MAX_DAYS_PER_PAGE = 1;
+/** Two days per page to avoid blank space */
+const MAX_DAYS_PER_PAGE = 2;
 
 export function renderProgram(ctx: PdfContext, fonts: FontData[]): SatoriNode[] {
   const { courseDate, ds } = ctx;
@@ -88,7 +88,7 @@ function _programPage(
             : null,
         ),
 
-        // Day title — large and bold (main typography fix)
+        // Day title — large and bold
         h('div', {
           style: {
             display: 'flex',

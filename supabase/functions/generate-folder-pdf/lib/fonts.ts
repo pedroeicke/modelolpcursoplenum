@@ -45,27 +45,58 @@ async function fetchFont(url: string): Promise<ArrayBuffer> {
 async function loadInterFallback(weightsToLoad: number[]): Promise<FontData[]> {
   const fonts: FontData[] = [];
 
-  // ─── Strategy 1: Variable font TTF from GitHub ───────────────
-  console.log(`[${ts()}] [FONTS] Strategy 1: Fetching Inter variable font TTF from GitHub...`);
-  const variableFontUrl = 'https://raw.githubusercontent.com/google/fonts/main/ofl/inter/Inter%5Bopsz%2Cwght%5D.ttf';
-  try {
-    const data = await fetchFont(variableFontUrl);
-    console.log(`[${ts()}] [FONTS] ✓ Strategy 1 SUCCESS: Variable font loaded (${data.byteLength} bytes)`);
-    // Register the same variable font for each requested weight
-    for (const weight of weightsToLoad) {
-      fonts.push({ name: 'Inter', data, weight, style: 'normal' });
+  // ─── Strategy 1: Static TTF from jsDelivr CDN (fastest, satori-compatible) ──
+  // Only load 2 weights (400 + 700) to minimize download time.
+  // jsDelivr CDN is faster than raw.githubusercontent.com
+  const fontUrls: { weight: number; url: string }[] = [
+    { weight: 400, url: 'https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/inter/static/Inter_18pt-Regular.ttf' },
+    { weight: 700, url: 'https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/inter/static/Inter_18pt-Bold.ttf' },
+  ];
+
+  console.log(`[${ts()}] [FONTS] Strategy 1: Fetching ${fontUrls.length} Inter TTF from jsDelivr CDN...`);
+
+  // Fetch in parallel for speed
+  const results = await Promise.all(
+    fontUrls.map(async ({ weight, url }) => {
+      try {
+        const data = await fetchFont(url);
+        return { weight, data, ok: true as const };
+      } catch (e) {
+        console.warn(`[${ts()}] [FONTS] Strategy 1: weight ${weight} failed:`, e instanceof Error ? e.message : e);
+        return { weight, data: null, ok: false as const };
+      }
+    }),
+  );
+
+  for (const r of results) {
+    if (r.ok && r.data) {
+      fonts.push({ name: 'Inter', data: r.data, weight: r.weight, style: 'normal' });
     }
-    return fonts;
-  } catch (e) {
-    console.warn(`[${ts()}] [FONTS] Strategy 1 failed:`, e instanceof Error ? e.message : e);
   }
 
-  // ─── Strategy 2: Google Fonts CSS with Android 2.2 UA (TTF) ──
-  console.log(`[${ts()}] [FONTS] Strategy 2: Google Fonts CSS with Android 2.2 UA (TTF)...`);
+  // Register loaded fonts for additional requested weights (e.g. 600 → use 700, 800 → use 700)
+  if (fonts.length > 0) {
+    const loadedWeights = new Set(fonts.map((f) => f.weight));
+    for (const w of weightsToLoad) {
+      if (!loadedWeights.has(w)) {
+        // Find closest loaded font and register it for the missing weight
+        const closest = fonts.reduce((prev, curr) =>
+          Math.abs(curr.weight - w) < Math.abs(prev.weight - w) ? curr : prev
+        );
+        fonts.push({ name: 'Inter', data: closest.data, weight: w, style: 'normal' });
+      }
+    }
+    console.log(`[${ts()}] [FONTS] ✓ Strategy 1 SUCCESS: ${fonts.length} fonts registered`);
+    return fonts;
+  }
+  console.warn(`[${ts()}] [FONTS] Strategy 1 failed: no fonts loaded`);
+
+  // ─── Strategy 2 (fallback): Google Fonts CSS API ──
+  console.log(`[${ts()}] [FONTS] Strategy 2: Google Fonts CSS with IE11 UA (WOFF)...`);
   try {
     const urls = await fetchGoogleFontsCss(weightsToLoad,
-      'Mozilla/5.0 (Linux; U; Android 2.2; en-us; Nexus One Build/FRF91) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1',
-      'Android 2.2 (TTF)');
+      'Mozilla/5.0 (compatible; MSIE 11.0; Windows NT 6.1; Trident/7.0)',
+      'IE11 (WOFF)');
     if (urls.size > 0) {
       for (const weight of weightsToLoad) {
         const url = urls.get(weight);
@@ -84,32 +115,6 @@ async function loadInterFallback(weightsToLoad: number[]): Promise<FontData[]> {
     }
   } catch (e) {
     console.warn(`[${ts()}] [FONTS] Strategy 2 failed:`, e instanceof Error ? e.message : e);
-  }
-
-  // ─── Strategy 3: Google Fonts CSS with IE11 UA (WOFF) ────────
-  console.log(`[${ts()}] [FONTS] Strategy 3: Google Fonts CSS with IE11 UA (WOFF)...`);
-  try {
-    const urls = await fetchGoogleFontsCss(weightsToLoad,
-      'Mozilla/5.0 (compatible; MSIE 11.0; Windows NT 6.1; Trident/7.0)',
-      'IE11 (WOFF)');
-    if (urls.size > 0) {
-      for (const weight of weightsToLoad) {
-        const url = urls.get(weight);
-        if (!url) continue;
-        try {
-          const data = await fetchFont(url);
-          fonts.push({ name: 'Inter', data, weight, style: 'normal' });
-        } catch (e) {
-          console.warn(`[${ts()}] [FONTS] Strategy 3: Failed to load weight ${weight}:`, e instanceof Error ? e.message : e);
-        }
-      }
-      if (fonts.length > 0) {
-        console.log(`[${ts()}] [FONTS] ✓ Strategy 3 SUCCESS: ${fonts.length} fonts loaded`);
-        return fonts;
-      }
-    }
-  } catch (e) {
-    console.warn(`[${ts()}] [FONTS] Strategy 3 failed:`, e instanceof Error ? e.message : e);
   }
 
   throw new Error('All font loading strategies failed. Cannot load Inter font.');

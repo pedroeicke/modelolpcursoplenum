@@ -1,6 +1,4 @@
-import type { PdfContext } from './types.ts';
-
-export type ImageCache = Map<string, string>; // rawUrl → "data:image/jpeg;base64,..."
+import type { ImageCache, CourseData, CompanyData, InstructorData } from './types.ts';
 
 /**
  * Resolve a potentially relative URL to absolute using siteBaseUrl.
@@ -61,18 +59,27 @@ export async function fetchImageAsDataUri(
 }
 
 /**
- * Pre-load ALL images referenced in the PDF context in parallel.
+ * Pre-load ALL images referenced in the PDF in parallel.
  * Keys are raw URL strings from the data (before siteBaseUrl resolution).
- * Page renderers look up by raw URL: ctx.imageCache.get(rawUrl) ?? fallbackUrl
+ * Page renderers look up by raw URL via getImageSrc().
  */
-export async function preloadImages(ctx: PdfContext): Promise<ImageCache> {
-  const { company, instructors, course, siteBaseUrl } = ctx;
+export async function preloadImages(
+  course: CourseData,
+  company: CompanyData,
+  instructors: InstructorData[],
+  siteBaseUrl: string,
+): Promise<ImageCache> {
   const cache: ImageCache = new Map();
 
   // Collect every unique URL that appears in the PDF
   const rawUrls: string[] = [];
 
   if (company.logo_url) rawUrls.push(company.logo_url);
+
+  // Hero frame01 background
+  if (course.hero_frames_path) {
+    rawUrls.push(`${course.hero_frames_path}0001${course.hero_frame_ext || '.jpg'}`);
+  }
 
   for (const inst of instructors) {
     if (inst.photo_url) rawUrls.push(inst.photo_url);

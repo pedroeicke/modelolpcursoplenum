@@ -79,6 +79,36 @@ export async function fetchPdfData(
 
   if (!ds) throw new Error('Design system não encontrado');
 
+  // DS-level frames: use ds.hero_frames_path if present (from DB column),
+  // otherwise fall back to a known mapping by DS name.
+  const DS_FRAMES_MAP: Record<string, { path: string; ext: string }> = {
+    'Verde Esmeralda': {
+      path: 'https://jyackmnjhsdllfqqxund.supabase.co/storage/v1/object/public/course-covers/frames/gestao-de-projetos-do-zero-ao-avancado/frame_',
+      ext: '.jpg',
+    },
+    'Azul Original': {
+      path: '/frames/frame_',
+      ext: '.jpg',
+    },
+  };
+
+  const dsFrames = ds.hero_frames_path
+    ? { path: ds.hero_frames_path, ext: ds.hero_frame_ext || '.jpg' }
+    : DS_FRAMES_MAP[ds.name] || null;
+
+  if (dsFrames) {
+    console.log(`[PDF Data] Using DS frames: "${dsFrames.path}"`);
+    course.hero_frames_path = dsFrames.path;
+    course.hero_frame_ext = dsFrames.ext;
+  }
+
+  // Debug: log DS and course frame data
+  console.log(`[PDF Data] Course: "${course.title}" (${course.id})`);
+  console.log(`[PDF Data] DS id=${course.design_system_id}, name="${ds.name}"`);
+  console.log(`[PDF Data] DS color_primary="${ds.color_primary}", color_background="${ds.color_background}"`);
+  console.log(`[PDF Data] DS hero_frames_path="${ds.hero_frames_path}"`);
+  console.log(`[PDF Data] Final hero_frames_path="${course.hero_frames_path}", hero_frame_ext="${course.hero_frame_ext}"`);
+
   // Fetch company settings
   const { data: companyRow } = await supabase
     .from('company_settings')

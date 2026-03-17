@@ -1,9 +1,27 @@
+// ─── Image Cache ─────────────────────────────────────────
+export type ImageCache = Map<string, string>; // rawUrl → "data:image/jpeg;base64,..."
+
 // ─── PDF Constants ───────────────────────────────────────
 export const PAGE_W = 1240;  // A4 @ ~150dpi
 export const PAGE_H = 1754;
 export const PDF_W = 595.28; // A4 in points
 export const PDF_H = 841.89;
 export const PAD = 60;       // Default page padding
+
+/**
+ * Resolve an image URL from the cache.
+ * Returns base64 data URI if cached, null if fetch failed, or resolved URL if not cached.
+ */
+export function getImageSrc(
+  imageCache: ImageCache,
+  rawUrl: string | null | undefined,
+  siteBaseUrl: string,
+): string | null {
+  if (!rawUrl) return null;
+  const cached = imageCache.get(rawUrl);
+  if (cached !== undefined) return cached || null;
+  return rawUrl.startsWith('/') ? `${siteBaseUrl}${rawUrl}` : rawUrl;
+}
 
 // ─── Satori element helper (hyperscript) ─────────────────
 export function h(
@@ -53,6 +71,9 @@ export interface CourseData {
   partner_logos: { name: string; url: string; width?: number; height?: number }[];
   folder_pdf_url: string | null;
   cover_image_url: string | null;
+  hero_frames_path: string | null;
+  hero_frame_ext: string | null;
+  hero_badges: { icon: string; label: string; value: string }[];
 }
 
 export interface CourseDateData {
@@ -117,4 +138,5 @@ export interface PdfContext {
   ds: DesignSystemData;
   company: CompanyData;
   siteBaseUrl: string;
+  imageCache: ImageCache;
 }

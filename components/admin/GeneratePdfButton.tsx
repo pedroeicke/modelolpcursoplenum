@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import {
   Select,
@@ -33,10 +34,12 @@ export default function GeneratePdfButton({
   variant = 'compact',
   onGenerated,
 }: Props) {
+  const router = useRouter();
   const [turmas, setTurmas] = useState<TurmaOption[]>([]);
   const [selectedTurma, setSelectedTurma] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const [loadingTurmas, setLoadingTurmas] = useState(false);
+  const [progress, setProgress] = useState<string>('');
   const [result, setResult] = useState<{ success: boolean; url?: string; error?: string } | null>(null);
   const [showSelector, setShowSelector] = useState(false);
 
@@ -50,7 +53,6 @@ export default function GeneratePdfButton({
     setLoadingTurmas(true);
     try {
       const supabase = createClient();
-      // folder_pdf_url is a new column - cast to bypass stale generated types
       const { data } = await supabase
         .from('course_dates')
         .select('id, label, start_date, status, folder_pdf_url')
@@ -58,7 +60,6 @@ export default function GeneratePdfButton({
         .order('start_date', { ascending: false }) as { data: TurmaOption[] | null };
 
       setTurmas(data || []);
-      // Auto-select first open turma
       const firstOpen = data?.find((t) => t.status === 'open');
       if (firstOpen) setSelectedTurma(firstOpen.id);
       else if (data && data.length > 0) setSelectedTurma(data[0].id);
@@ -73,59 +74,72 @@ export default function GeneratePdfButton({
     if (!selectedTurma) return;
     setLoading(true);
     setResult(null);
+    setProgress('Iniciando...');
 
     try {
       const supabase = createClient();
 
-      // Force a session refresh to ensure we have a valid (non-expired) token
-      const { data: refreshData, error: refreshError } = await supabase.auth.refreshSession();
-      let accessToken: string;
+      // ─── Generate PDF in the browser (no Edge Function, no timeout!) ───
+      const { generateFolderPdf } = await import('@/lib/pdf-generator');
 
-      if (refreshError || !refreshData.session) {
-        console.warn('refreshSession failed, trying getSession...', refreshError?.message);
-        // Fallback: try cached session (may still work if not expired)
-        const { data: { session: cachedSession } } = await supabase.auth.getSession();
-        if (!cachedSession) {
-          throw new Error('Sessão expirada. Faça login novamente.');
-        }
-        accessToken = cachedSession.access_token;
-      } else {
-        accessToken = refreshData.session.access_token;
-      }
+      const pdfBytes = await generateFolderPdf({
+        courseId,
+        courseDateId: selectedTurma,
+        supabase,
+        siteBaseUrl: window.location.origin,
+        onProgress: (msg) => setProgress(msg),
+      });
 
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/generate-folder-pdf`,
-        {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${accessToken}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            course_id: courseId,
-            course_date_id: selectedTurma,
-          }),
-        },
-      );
+      // ─── Upload to Supabase Storage ───
+      setProgress('Enviando PDF para o servidor...');
 
-      const data = await res.json();
+      // Get course slug for filename
+      const { data: courseData } = await supabase
+        .from('courses')
+        .select('slug')
+        .eq('id', courseId)
+        .single();
 
-      if (!res.ok || !data.success) {
-        throw new Error(data.error || 'Erro ao gerar PDF');
-      }
+      const slug = courseData?.slug || 'curso';
+      const fileName = `${slug}-${selectedTurma.slice(0, 8)}-${Date.now()}.pdf`;
+      const filePath = `generated/${fileName}`;
 
-      setResult({ success: true, url: data.url });
+      const { error: uploadError } = await supabase.storage
+        .from('pdfs')
+        .upload(filePath, pdfBytes, {
+          contentType: 'application/pdf',
+          upsert: true,
+        });
+
+      if (uploadError) throw new Error(`Upload falhou: ${uploadError.message}`);
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('pdfs')
+        .getPublicUrl(filePath);
+
+      // Save URL to course_dates
+      await supabase
+        .from('course_dates')
+        .update({ folder_pdf_url: publicUrl })
+        .eq('id', selectedTurma);
+
+      setResult({ success: true, url: publicUrl });
+      setProgress('');
 
       // Update local turma data with new PDF URL
       setTurmas((prev) =>
         prev.map((t) =>
-          t.id === selectedTurma ? { ...t, folder_pdf_url: data.url } : t,
+          t.id === selectedTurma ? { ...t, folder_pdf_url: publicUrl } : t,
         ),
       );
 
-      onGenerated?.(data.url);
+      onGenerated?.(publicUrl);
+      router.refresh();
     } catch (err) {
+      console.error('PDF generation error:', err);
       setResult({ success: false, error: err instanceof Error ? err.message : 'Erro desconhecido' });
+      setProgress('');
     } finally {
       setLoading(false);
     }
@@ -183,8 +197,15 @@ export default function GeneratePdfButton({
           <span className="ml-1">{loading ? 'Gerando...' : existingPdfUrl ? 'Regerar' : 'Gerar'}</span>
         </Button>
 
+        {/* Progress indicator */}
+        {loading && progress && (
+          <span className="text-xs text-blue-500 max-w-48 truncate" title={progress}>
+            {progress}
+          </span>
+        )}
+
         {/* Show existing or just-generated PDF link */}
-        {(result?.success && result.url) || existingPdfUrl ? (
+        {!loading && ((result?.success && result.url) || existingPdfUrl) ? (
           <a
             href={result?.url || existingPdfUrl || '#'}
             target="_blank"
@@ -206,6 +227,7 @@ export default function GeneratePdfButton({
           onClick={() => {
             setShowSelector(false);
             setResult(null);
+            setProgress('');
           }}
         >
           ✕
@@ -215,7 +237,6 @@ export default function GeneratePdfButton({
   }
 
   // Full variant: for TabMidias
-  // Auto-fetch turmas on mount
   useEffect(() => { fetchTurmas(); }, [courseId]);
 
   return (
@@ -252,6 +273,14 @@ export default function GeneratePdfButton({
         </Button>
       </div>
 
+      {/* Progress bar */}
+      {loading && progress && (
+        <div className="text-sm text-blue-600 bg-blue-50 border border-blue-200 rounded-lg p-3 flex items-center gap-2">
+          <Loader2 className="w-4 h-4 animate-spin shrink-0" />
+          {progress}
+        </div>
+      )}
+
       {result?.error && (
         <div className="text-sm text-red-500 bg-red-50 border border-red-200 rounded-lg p-3">
           {result.error}
@@ -259,7 +288,7 @@ export default function GeneratePdfButton({
       )}
 
       {/* Show existing PDF for selected turma or just-generated */}
-      {(result?.success && result.url) || existingPdfUrl ? (
+      {!loading && ((result?.success && result.url) || existingPdfUrl) ? (
         <div className="flex items-center gap-3 p-3 bg-green-50 border border-green-200 rounded-lg">
           <CheckCircle className="w-5 h-5 text-green-500 shrink-0" />
           <div className="flex-1 min-w-0">

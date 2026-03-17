@@ -1,221 +1,253 @@
-import { h, PAGE_W, PAGE_H, PAD, type PdfContext, type SatoriNode } from '../lib/types.ts';
+import { h, PAGE_W, PAGE_H, type PdfContext, type SatoriNode } from '../lib/types.ts';
 import { getFontFamily } from '../lib/fonts.ts';
 import type { FontData } from '../lib/types.ts';
 
 /**
- * Page 1 — Cover
- * Large company logo, category label, title with colored parts,
- * subtitle, instructor card, bottom info bar
+ * Cover page — replicates the website hero section.
+ *
+ * Layout (top → bottom, all centered):
+ *   1. Company logo (text fallback)
+ *   2. Category pill (e.g. "IMERSÃO") — white bg, blue text
+ *   3. Title (large, bold) — accent parts in #3B82F6
+ *   4. Subtitle
+ *   5. 3 info badges (location, modality, date)
+ *   6. Background: radial gradient matching hero section
  */
 export function renderCover(ctx: PdfContext, fonts: FontData[]): SatoriNode {
-  const { course, courseDate, instructors, ds, company } = ctx;
+  const { course, courseDate, ds, company } = ctx;
   const heading = getFontFamily(ds, 'heading', fonts);
   const body = getFontFamily(ds, 'body', fonts);
-  const primary = ds.color_primary;
-  const accent = ds.color_accent || ds.color_primary_light;
-  const instructor = instructors[0];
 
-  // Format date range
-  const startDate = new Date(courseDate.start_date);
-  const endDate = new Date(courseDate.end_date);
-  const dateStr = `${startDate.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })} a ${endDate.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' })}`;
+  const ACCENT = '#3B82F6';
 
-  // Calculate total hours from program_days
-  const totalHours = courseDate.program_days?.length ? `${courseDate.program_days.length * 4}h` : '20h';
-
-  // Build title parts
+  // ── Title parts ──
   const titleParts = course.title_parts && course.title_parts.length > 0
     ? course.title_parts
     : [{ text: course.title, color: 'white' as const }];
 
-  return h('div', {
-    style: {
-      display: 'flex',
-      flexDirection: 'column',
-      width: PAGE_W,
-      height: PAGE_H,
-      backgroundColor: ds.color_background,
-      padding: PAD,
-      position: 'relative',
-    },
-  },
-    // Company Logo / Name at top
-    company.logo_url
-      ? h('img', {
-          src: company.logo_url.startsWith('/') ? `${ctx.siteBaseUrl}${company.logo_url}` : company.logo_url,
-          width: 280,
-          height: 80,
-          style: { objectFit: 'contain', alignSelf: 'center', marginTop: 30 },
-        })
-      : h('div', {
-          style: {
-            display: 'flex',
-            justifyContent: 'center',
-            marginTop: 30,
-            fontSize: 36,
-            fontFamily: heading,
-            fontWeight: 700,
-            color: '#ffffff',
-            letterSpacing: 4,
-          },
-        }, company.company_name.toUpperCase()),
+  // ── Date formatting ──
+  const startDate = new Date(courseDate.start_date);
+  const endDate = new Date(courseDate.end_date);
+  const dateStr = courseDate.label || `${startDate.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long' })} a ${endDate.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}`;
 
-    // Spacer
-    h('div', { style: { flexGrow: 1, display: 'flex', minHeight: 40 } }),
+  // ── Resolve hero_badges with dynamic values ──
+  const badges = (course.hero_badges || [])
+    .filter((b: { label?: string; value?: string }) => b.label || b.value)
+    .map((badge: { icon?: string; label: string; value: string }) => {
+      let value = badge.value;
+      if (value === 'dropdown') value = dateStr;
+      if (value === 'location_dynamic') value = courseDate.location_venue || 'A definir';
+      return { ...badge, value };
+    });
 
-    // Category label ("IMERSÃO")
+  // ── Content elements ──
+  const content: unknown[] = [];
+
+  // 1. Logo text — top center
+  content.push(
     h('div', {
       style: {
         display: 'flex',
         justifyContent: 'center',
-        fontSize: 56,
+        marginTop: 80,
+        fontSize: 28,
         fontFamily: heading,
-        fontWeight: 800,
-        color: primary,
-        letterSpacing: 8,
-        textTransform: 'uppercase',
-        marginBottom: 20,
+        fontWeight: 700,
+        color: '#ffffff',
+        letterSpacing: 4,
       },
-    }, (course.category_label || 'IMERSÃO').toUpperCase()),
+    }, company.company_name.toUpperCase()),
+  );
 
-    // Title with colored parts
+  // Spacer
+  content.push(h('div', { style: { flexGrow: 1, display: 'flex', minHeight: 80 } }));
+
+  // 2. Category pill — white bg, blue text
+  if (course.category_label) {
+    content.push(
+      h('div', {
+        style: {
+          display: 'flex',
+          justifyContent: 'center',
+          marginBottom: 32,
+        },
+      },
+        h('div', {
+          style: {
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            paddingLeft: 24,
+            paddingRight: 24,
+            paddingTop: 8,
+            paddingBottom: 8,
+            borderRadius: 50,
+            backgroundColor: '#ffffff',
+            fontSize: 14,
+            fontFamily: body,
+            fontWeight: 700,
+            color: ACCENT,
+            letterSpacing: 3,
+            textTransform: 'uppercase',
+          },
+        }, course.category_label.toUpperCase()),
+      ),
+    );
+  }
+
+  // 3. Title — large, centered, multipart with accent color
+  content.push(
     h('div', {
       style: {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        gap: 4,
-        marginBottom: 16,
+        marginBottom: 24,
+        paddingLeft: 60,
+        paddingRight: 60,
       },
     },
-      ...titleParts.map((part) =>
-        h('span', {
-          style: {
-            fontSize: 52,
-            fontFamily: heading,
-            fontWeight: 700,
-            color: part.color === 'accent' ? accent : '#ffffff',
-            textAlign: 'center',
-            lineHeight: 1.15,
-          },
-        }, part.text),
+      h('div', {
+        style: {
+          display: 'flex',
+          flexWrap: 'wrap',
+          justifyContent: 'center',
+          textAlign: 'center',
+          lineHeight: 1.05,
+        },
+      },
+        ...titleParts.map((part: { text: string; color: string }) =>
+          h('span', {
+            style: {
+              fontSize: 72,
+              fontFamily: heading,
+              fontWeight: 700,
+              color: part.color === 'accent' ? ACCENT : '#ffffff',
+            },
+          }, part.text),
+        ),
       ),
     ),
-
-    // Subtitle
-    course.subtitle
-      ? h('div', {
-          style: {
-            display: 'flex',
-            justifyContent: 'center',
-            fontSize: 24,
-            fontFamily: body,
-            fontWeight: 400,
-            color: '#ffffffcc',
-            textAlign: 'center',
-            marginBottom: 40,
-            paddingLeft: 40,
-            paddingRight: 40,
-            lineHeight: 1.4,
-          },
-        }, course.subtitle)
-      : h('div', { style: { marginBottom: 40 } }),
-
-    // Instructor Card
-    instructor
-      ? h('div', {
-          style: {
-            display: 'flex',
-            alignItems: 'center',
-            gap: 20,
-            alignSelf: 'center',
-            padding: '16px 32px',
-            borderRadius: 16,
-            backgroundColor: `${ds.color_surface}cc`,
-            border: `1px solid ${ds.color_primary}33`,
-            marginBottom: 40,
-          },
-        },
-          instructor.photo_url
-            ? h('img', {
-                src: instructor.photo_url.startsWith('/') ? `${ctx.siteBaseUrl}${instructor.photo_url}` : instructor.photo_url,
-                width: 72,
-                height: 72,
-                style: { borderRadius: '50%', objectFit: 'cover' },
-              })
-            : h('div', {
-                style: {
-                  width: 72,
-                  height: 72,
-                  borderRadius: '50%',
-                  backgroundColor: primary,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: 28,
-                  fontFamily: heading,
-                  fontWeight: 700,
-                  color: '#ffffff',
-                },
-              }, instructor.name.charAt(0)),
-          h('div', {
-            style: { display: 'flex', flexDirection: 'column', gap: 4 },
-          },
-            h('span', {
-              style: { fontSize: 12, fontFamily: body, color: '#ffffff88', textTransform: 'uppercase', letterSpacing: 2 },
-            }, 'Palestrante'),
-            h('span', {
-              style: { fontSize: 22, fontFamily: heading, fontWeight: 700, color: '#ffffff' },
-            }, instructor.name),
-            instructor.role
-              ? h('span', {
-                  style: { fontSize: 14, fontFamily: body, color: '#ffffffaa' },
-                }, instructor.role)
-              : null,
-          ),
-        )
-      : h('div', { style: { marginBottom: 40 } }),
-
-    // Spacer
-    h('div', { style: { flexGrow: 1, display: 'flex', minHeight: 20 } }),
-
-    // Bottom info bar
-    h('div', {
-      style: {
-        display: 'flex',
-        justifyContent: 'space-between',
-        gap: 16,
-        padding: '24px 32px',
-        borderRadius: 20,
-        backgroundColor: `${ds.color_surface}dd`,
-        border: `1px solid ${ds.color_primary}22`,
-      },
-    },
-      // Carga Horária
-      _infoColumn('Carga Horária', totalHours, body, primary),
-      // Local
-      _infoColumn('Local', courseDate.location_venue || 'A definir', body, primary),
-      // Data
-      _infoColumn('Data', dateStr, body, primary),
-    ),
   );
-}
 
-function _infoColumn(label: string, value: string, fontFamily: string, accentColor: string): SatoriNode {
+  // 4. Subtitle
+  if (course.subtitle) {
+    content.push(
+      h('div', {
+        style: {
+          display: 'flex',
+          justifyContent: 'center',
+          fontSize: 22,
+          fontFamily: body,
+          fontWeight: 400,
+          color: '#ffffff',
+          textAlign: 'center',
+          marginBottom: 48,
+          paddingLeft: 80,
+          paddingRight: 80,
+          lineHeight: 1.5,
+        },
+      }, course.subtitle),
+    );
+  }
+
+  // Spacer
+  content.push(h('div', { style: { flexGrow: 1, display: 'flex', minHeight: 40 } }));
+
+  // 5. Info badges row — glass-morphism style cards
+  if (badges.length > 0) {
+    content.push(
+      h('div', {
+        style: {
+          display: 'flex',
+          justifyContent: 'center',
+          gap: 16,
+          marginBottom: 80,
+          paddingLeft: 40,
+          paddingRight: 40,
+        },
+      },
+        ...badges.map((badge: { label: string; value: string }) =>
+          h('div', {
+            style: {
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              flex: 1,
+              maxWidth: 340,
+              paddingTop: 20,
+              paddingBottom: 20,
+              paddingLeft: 24,
+              paddingRight: 24,
+              borderRadius: 16,
+              backgroundColor: 'rgba(255,255,255,0.08)',
+              border: '1px solid rgba(255,255,255,0.12)',
+            },
+          },
+            badge.label
+              ? h('span', {
+                  style: {
+                    fontSize: 11,
+                    fontFamily: body,
+                    fontWeight: 700,
+                    color: ACCENT,
+                    textTransform: 'uppercase',
+                    letterSpacing: 1.5,
+                    marginBottom: 6,
+                  },
+                }, badge.label.toUpperCase())
+              : null,
+            h('span', {
+              style: {
+                fontSize: 16,
+                fontFamily: body,
+                fontWeight: 700,
+                color: '#ffffff',
+                textAlign: 'center',
+              },
+            }, badge.value),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // ── Page root with gradient background ──
   return h('div', {
     style: {
       display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      flex: 1,
-      gap: 6,
+      width: PAGE_W,
+      height: PAGE_H,
+      position: 'relative',
+      overflow: 'hidden',
+      // Hero-style radial gradient background
+      background: 'radial-gradient(ellipse 90% 60% at 50% 85%, #062060, #010814)',
     },
   },
-    h('span', {
-      style: { fontSize: 12, fontFamily, color: '#ffffff88', textTransform: 'uppercase', letterSpacing: 1.5 },
-    }, label),
-    h('span', {
-      style: { fontSize: 18, fontFamily, fontWeight: 700, color: accentColor, textAlign: 'center' },
-    }, value),
+    // Subtle accent glow orb at center
+    h('div', {
+      style: {
+        position: 'absolute',
+        top: '30%',
+        left: '25%',
+        width: '50%',
+        height: '40%',
+        borderRadius: '50%',
+        background: 'radial-gradient(circle, rgba(59,130,246,0.12) 0%, transparent 70%)',
+      },
+    }),
+    // Content column
+    h('div', {
+      style: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: PAGE_W,
+        height: PAGE_H,
+        display: 'flex',
+        flexDirection: 'column',
+        zIndex: 2,
+      },
+    }, ...content),
   );
 }

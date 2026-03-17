@@ -95,6 +95,12 @@ export async function preloadImages(ctx: PdfContext): Promise<ImageCache> {
     if (logo.url) rawUrls.push(logo.url);
   }
 
+  // Hero frame01 background image for cover page
+  if (course.hero_frames_path) {
+    const frame01Url = `${course.hero_frames_path}0001${course.hero_frame_ext || '.jpg'}`;
+    rawUrls.push(frame01Url);
+  }
+
   // Static promotional images (Gallery page — same in every PDF)
   for (const url of STATIC_PDF_IMAGES.eventPhotos) {
     if (url) rawUrls.push(url);

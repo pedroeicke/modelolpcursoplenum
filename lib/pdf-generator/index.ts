@@ -7,7 +7,6 @@ import type { PdfContext, SatoriNode } from './types';
 
 import { renderCover }        from './pages/cover';
 import { renderPresentation } from './pages/presentation';
-import { renderAbout }        from './pages/about';
 import { renderProgram }      from './pages/program';
 import { renderSpeakers }     from './pages/speaker';
 import { renderGallery }      from './pages/gallery';
@@ -70,14 +69,9 @@ export async function generateFolderPdf(opts: GeneratePdfOptions): Promise<Uint8
   const ctx: PdfContext = { ...data, siteBaseUrl, imageCache };
   const pageElements: SatoriNode[] = [];
 
-  // Pages 1-2: always present
+  // Pages 1-2: always present (page 2 = Sobre o Curso + Público-Alvo combined)
   pageElements.push(renderCover(ctx, fonts));
   pageElements.push(renderPresentation(ctx, fonts));
-
-  // Page 3: About (optional — only when about_cards are filled)
-  if (data.course.about_cards && data.course.about_cards.length > 0) {
-    pageElements.push(renderAbout(ctx, fonts));
-  }
 
   // Pages 4+: Programme (one per pair of days)
   const programPages = renderProgram(ctx, fonts);

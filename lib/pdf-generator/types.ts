@@ -76,6 +76,9 @@ export interface CourseData {
   partner_logos: { name: string; url: string; width?: number; height?: number }[];
   folder_pdf_url: string | null;
   cover_image_url: string | null;
+  hero_frames_path: string | null;
+  hero_frame_ext: string | null;
+  hero_badges: { icon: string; label: string; value: string }[];
 }
 
 export interface CourseDateData {
@@ -108,6 +111,7 @@ export interface InstructorData {
 }
 
 export interface DesignSystemData {
+  name: string;
   color_primary: string;
   color_primary_hover: string;
   color_primary_light: string;
@@ -121,6 +125,8 @@ export interface DesignSystemData {
   font_body: string;
   font_heading_urls: { weight: number; url: string; format: string }[];
   font_body_urls: { weight: number; url: string; format: string }[];
+  hero_frames_path: string | null;
+  hero_frame_ext: string | null;
 }
 
 export interface CompanyData {

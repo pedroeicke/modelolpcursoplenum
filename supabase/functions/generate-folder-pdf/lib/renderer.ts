@@ -10,56 +10,42 @@ function ts(): string {
 }
 
 /**
- * Initialize resvg WASM (once per cold start)
+ * Initialize resvg WASM (once per cold start).
+ * Uses jsDelivr CDN (fastest, globally distributed).
  */
-async function ensureWasm() {
-  if (wasmInitialized) {
-    console.log(`[${ts()}] [WASM] Already initialized, skipping`);
-    return;
-  }
+async function _initWasmOnce(): Promise<void> {
+  if (wasmInitialized) return;
 
   console.log(`[${ts()}] [WASM] Initializing resvg WASM...`);
-  const wasmUrl = 'https://unpkg.com/@resvg/resvg-wasm@2.6.2/index_bg.wasm';
-  console.log(`[${ts()}] [WASM] Fetching WASM from: ${wasmUrl}`);
+  // jsDelivr is much faster than unpkg for large binaries
+  const wasmUrl = 'https://cdn.jsdelivr.net/npm/@resvg/resvg-wasm@2.6.2/index_bg.wasm';
 
   const fetchStart = Date.now();
-  let wasmRes: Response;
-  try {
-    wasmRes = await fetch(wasmUrl);
-  } catch (fetchErr) {
-    console.error(`[${ts()}] [WASM] ✗ FETCH FAILED: Network error fetching WASM binary:`, fetchErr);
-    throw new Error(`Failed to fetch WASM binary: ${fetchErr instanceof Error ? fetchErr.message : fetchErr}`);
-  }
+  const wasmRes = await fetch(wasmUrl);
+  if (!wasmRes.ok) throw new Error(`WASM fetch failed: HTTP ${wasmRes.status}`);
 
-  const fetchMs = Date.now() - fetchStart;
-  console.log(`[${ts()}] [WASM] Fetch response: status=${wasmRes.status}, ok=${wasmRes.ok}, content-type=${wasmRes.headers.get('content-type')}, time=${fetchMs}ms`);
-
-  if (!wasmRes.ok) {
-    const responseText = await wasmRes.text().catch(() => 'unable to read response');
-    console.error(`[${ts()}] [WASM] ✗ FETCH FAILED: HTTP ${wasmRes.status} - ${responseText.slice(0, 200)}`);
-    throw new Error(`WASM fetch failed: HTTP ${wasmRes.status}`);
-  }
-
-  console.log(`[${ts()}] [WASM] Reading WASM buffer...`);
-  const bufStart = Date.now();
   const wasmBuf = await wasmRes.arrayBuffer();
-  const bufMs = Date.now() - bufStart;
-  console.log(`[${ts()}] [WASM] WASM buffer: ${wasmBuf.byteLength} bytes (${(wasmBuf.byteLength / 1024 / 1024).toFixed(2)} MB) read in ${bufMs}ms`);
+  console.log(`[${ts()}] [WASM] Fetched ${(wasmBuf.byteLength / 1024 / 1024).toFixed(2)} MB in ${Date.now() - fetchStart}ms`);
 
-  console.log(`[${ts()}] [WASM] Calling initWasm()...`);
-  const initStart = Date.now();
-  try {
-    await initWasm(wasmBuf);
-  } catch (initErr) {
-    console.error(`[${ts()}] [WASM] ✗ initWasm() FAILED:`, initErr);
-    throw new Error(`initWasm() failed: ${initErr instanceof Error ? initErr.message : initErr}`);
-  }
-  const initMs = Date.now() - initStart;
-  console.log(`[${ts()}] [WASM] ✓ initWasm() completed in ${initMs}ms`);
-
+  await initWasm(wasmBuf);
   wasmInitialized = true;
-  const totalMs = fetchMs + bufMs + initMs;
-  console.log(`[${ts()}] [WASM] ✓ WASM fully initialized (total: ${totalMs}ms)`);
+  console.log(`[${ts()}] [WASM] ✓ Initialized (total: ${Date.now() - fetchStart}ms)`);
+}
+
+/**
+ * Promise that starts WASM loading immediately at module import time.
+ * This overlaps with Deno's cold start, so WASM may already be ready
+ * by the time the first request arrives.
+ */
+export const wasmReady: Promise<void> = _initWasmOnce().catch((err) => {
+  console.error(`[${ts()}] [WASM] Module-level init failed, will retry on request:`, err.message);
+  wasmInitialized = false;
+});
+
+async function ensureWasm() {
+  if (wasmInitialized) return;
+  // Retry if module-level init failed
+  await _initWasmOnce();
 }
 
 /**

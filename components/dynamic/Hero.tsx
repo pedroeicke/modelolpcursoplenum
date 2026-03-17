@@ -128,7 +128,7 @@ export default function Hero({
           key={i}
           className={part.color === 'accent' ? 'text-[var(--ds-primary)]' : 'text-white'}
         >
-          {part.text}
+          {i > 0 && ' '}{part.text.trim()}
         </span>
       ));
     }

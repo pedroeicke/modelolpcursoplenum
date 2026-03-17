@@ -21,7 +21,7 @@ export async function createCourse(data: Record<string, unknown>) {
     return { error: error.message };
   }
 
-  revalidatePath('/admin');
+  revalidatePath('/admin', 'layout');
   return { data: result as unknown as { id: string; slug: string } };
 }
 
@@ -138,7 +138,7 @@ export async function cloneCourseDate(sourceTurmaId: string) {
 
   if (error) return { error: error.message };
 
-  revalidatePath('/admin');
+  revalidatePath('/admin', 'layout');
   return { data: result as unknown as { id: string } };
 }
 
@@ -155,7 +155,7 @@ export async function toggleCourseDateStatus(id: string, newStatus: string) {
 
   if (error) return { error: error.message };
 
-  revalidatePath('/admin');
+  revalidatePath('/admin', 'layout');
   revalidatePath('/cursos');
   return { success: true };
 }
