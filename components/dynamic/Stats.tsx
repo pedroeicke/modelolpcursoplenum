@@ -59,8 +59,8 @@ export default function Stats({
 
       <div className="max-w-[1200px] mx-auto w-full relative z-10 flex flex-col md:flex-row items-center gap-6 md:gap-10">
         {/* Left — text */}
-        <div className="shrink-0 w-full md:w-[320px] text-center md:text-left">
-          <h3 className="font-[var(--font-bricolage)] text-xl sm:text-2xl md:text-[28px] font-extrabold tracking-tight leading-snug bg-gradient-to-b from-white via-white/90 to-white/60 bg-clip-text text-transparent">
+        <div className="shrink-0 w-full md:w-[380px] text-center md:text-left">
+          <h3 className="font-[var(--font-bricolage)] text-2xl sm:text-3xl md:text-[36px] font-extrabold tracking-tight leading-snug bg-gradient-to-b from-white via-white/90 to-white/60 bg-clip-text text-transparent">
             {headingLines.map((line, i) => (
               <span key={i}>
                 {line}

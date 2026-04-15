@@ -10,6 +10,7 @@ import { Plus, Trash2, Upload, ImageIcon, X } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import type { IncludedItem } from '@/types/course';
 import type { UserRole } from '@/types/user-roles';
+import IconPicker from '../IconPicker';
 
 interface Props {
   investmentHeading: string; setInvestmentHeading: (v: string) => void;
@@ -278,12 +279,9 @@ export default function TabInvestimento({
         <CardContent className="space-y-3">
           {includedItems.map((item, i) => (
             <div key={i} className="flex items-center gap-2">
-              <Input
-                value={item.icon}
-                onChange={(e) => updateItem(i, 'icon', e.target.value)}
-                placeholder="Ícone"
-                className="w-36"
-              />
+              <div className="w-44">
+                <IconPicker value={item.icon} onChange={(v) => updateItem(i, 'icon', v)} />
+              </div>
               <Input
                 value={item.text}
                 onChange={(e) => updateItem(i, 'text', e.target.value)}

@@ -79,7 +79,7 @@ export default function GeneratePdfButton({
     try {
       const supabase = createClient();
 
-      // ─── Generate PDF in the browser (no Edge Function, no timeout!) ───
+      // ─── Generate PDF in the browser via Satori ───
       const { generateFolderPdf } = await import('@/lib/pdf-generator');
 
       const pdfBytes = await generateFolderPdf({
@@ -93,7 +93,6 @@ export default function GeneratePdfButton({
       // ─── Upload to Supabase Storage ───
       setProgress('Enviando PDF para o servidor...');
 
-      // Get course slug for filename
       const { data: courseData } = await supabase
         .from('courses')
         .select('slug')
@@ -113,12 +112,10 @@ export default function GeneratePdfButton({
 
       if (uploadError) throw new Error(`Upload falhou: ${uploadError.message}`);
 
-      // Get public URL
       const { data: { publicUrl } } = supabase.storage
         .from('pdfs')
         .getPublicUrl(filePath);
 
-      // Save URL to course_dates
       await supabase
         .from('course_dates')
         .update({ folder_pdf_url: publicUrl })
@@ -127,7 +124,6 @@ export default function GeneratePdfButton({
       setResult({ success: true, url: publicUrl });
       setProgress('');
 
-      // Update local turma data with new PDF URL
       setTurmas((prev) =>
         prev.map((t) =>
           t.id === selectedTurma ? { ...t, folder_pdf_url: publicUrl } : t,

@@ -14,6 +14,7 @@ import {
 import { Plus, Trash2 } from 'lucide-react';
 import type { TitlePart, HeroBadge } from '@/types/course';
 import type { UserRole } from '@/types/user-roles';
+import IconPicker from '../IconPicker';
 
 interface Props {
   titleParts: TitlePart[]; setTitleParts: (v: TitlePart[]) => void;
@@ -109,11 +110,7 @@ export default function TabHero({
             <div key={i} className="flex items-start gap-2 p-3 rounded-lg border bg-gray-50">
               <div className="flex-1 space-y-2">
                 <div className="grid grid-cols-3 gap-2">
-                  <Input
-                    value={badge.icon}
-                    onChange={(e) => updateBadge(i, 'icon', e.target.value)}
-                    placeholder="Ícone (MapPin)"
-                  />
+                  <IconPicker value={badge.icon} onChange={(v) => updateBadge(i, 'icon', v)} />
                   <Input
                     value={badge.label}
                     onChange={(e) => updateBadge(i, 'label', e.target.value)}

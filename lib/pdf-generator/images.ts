@@ -106,7 +106,18 @@ export async function preloadImages(ctx: PdfContext): Promise<ImageCache> {
     if (url) rawUrls.push(url);
   }
   if (STATIC_PDF_IMAGES.kitParticipant) rawUrls.push(STATIC_PDF_IMAGES.kitParticipant);
-  if (STATIC_PDF_IMAGES.logoUrl)        rawUrls.push(STATIC_PDF_IMAGES.logoUrl);
+  if (STATIC_PDF_IMAGES.logoUrl) rawUrls.push(STATIC_PDF_IMAGES.logoUrl);
+  if ((STATIC_PDF_IMAGES as any).logoWhite) rawUrls.push((STATIC_PDF_IMAGES as any).logoWhite);
+  if ((STATIC_PDF_IMAGES as any).partnerLogosBox) rawUrls.push((STATIC_PDF_IMAGES as any).partnerLogosBox);
+
+  // Testimonial photos
+  const testimonialPhotos = (STATIC_PDF_IMAGES as any).testimonials;
+  if (testimonialPhotos) {
+    Object.values(testimonialPhotos).forEach((url: any) => { if (url) rawUrls.push(url); });
+  }
+
+  // Company dark logo
+  if (company?.logo_dark_url) rawUrls.push(company.logo_dark_url);
 
   const unique = [...new Set(rawUrls)];
   if (unique.length === 0) return cache;

@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Plus, Trash2 } from 'lucide-react';
 import type { AudienceCard, AudienceImage } from '@/types/course';
 import type { UserRole } from '@/types/user-roles';
+import IconPicker from '../IconPicker';
 
 interface Props {
   audienceCards: AudienceCard[]; setAudienceCards: (v: AudienceCard[]) => void;
@@ -60,7 +61,7 @@ export default function TabPublico({
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
                   <Label className="text-xs">Ícone</Label>
-                  <Input value={card.icon} onChange={(e) => updateCard(i, 'icon', e.target.value)} placeholder="Landmark" />
+                  <IconPicker value={card.icon} onChange={(v) => updateCard(i, 'icon', v)} />
                 </div>
                 <div className="space-y-1">
                   <Label className="text-xs">Título</Label>

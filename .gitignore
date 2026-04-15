@@ -6,3 +6,21 @@ coverage/
 .env*
 !.env.example
 .mcp.json
+
+# Temporary/reference files
+cursosexcel/
+palestrantes/
+folder1 prof/
+folder3prof/
+materialneto*/
+reference-pages/
+Palestrantes-*/
+reference-folder.pdf
+db_full_dump.json
+dump_*.json
+scripts/all_*.json
+scripts/all_*.txt
+scripts/_tmp_query.sql
+scripts/parse-and-seed.mjs
+*.satori-backup.*
+D:/Passado/

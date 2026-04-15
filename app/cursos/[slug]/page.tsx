@@ -17,6 +17,8 @@ import WorkloadPayment from '@/components/dynamic/WorkloadPayment';
 import FolderForm from '@/components/dynamic/FolderForm';
 import Location from '@/components/dynamic/Location';
 import SocialProof from '@/components/dynamic/SocialProof';
+import Relevance from '@/components/dynamic/Relevance';
+import GeneralInfo from '@/components/dynamic/GeneralInfo';
 import Footer from '@/components/dynamic/Footer';
 
 // ─── ISR ───────────────────────────────────────────────
@@ -73,6 +75,20 @@ export default async function CoursePage({
   // Derive shader colors from design system
   const shaderColors = getShaderColors(designSystem);
 
+  // Build dynamic nav items based on course content
+  const navItems: Array<{ label: string; href: string }> = [];
+  if (course.about_cards?.length > 0) navItems.push({ label: 'Diferenciais', href: '#diferenciais' });
+  if (course.audience_cards?.length > 0) navItems.push({ label: 'Público-Alvo', href: '#publico' });
+  if (course.relevance_paragraphs?.length > 0) navItems.push({ label: 'Relevância', href: '#relevancia' });
+  navItems.push({ label: 'Programação', href: '#programacao' });
+  // Determine instructor label from actual data
+  const totalInstructors = course.dates?.reduce((acc, d) => acc + (d.instructors?.length || 0), 0) || 0;
+  navItems.push({ label: totalInstructors === 1 ? 'Instrutor' : 'Instrutores', href: '#instrutor' });
+  navItems.push({ label: 'Investimento', href: '#investimento' });
+  navItems.push({ label: 'Material', href: '#folder' });
+  if (course.modality !== 'online') navItems.push({ label: 'Local', href: '#local' });
+  if (course.general_info_items?.length > 0) navItems.push({ label: 'Informações', href: '#informacoes-gerais' });
+
   // Build WhatsApp URL
   const whatsappUrl = course.whatsapp_number
     ? `https://wa.me/${course.whatsapp_number.replace(/\D/g, '')}${course.whatsapp_message ? `?text=${encodeURIComponent(course.whatsapp_message)}` : ''}`
@@ -85,6 +101,7 @@ export default async function CoursePage({
           <Header
             logoUrl={company.logo_url || '/logo-plenum-aberta2.png'}
             logoDarkUrl={company.logo_dark_url || '/logo.svg'}
+            navItems={navItems}
           />
 
           <Hero
@@ -92,9 +109,9 @@ export default async function CoursePage({
             subtitle={course.subtitle}
             categoryLabel={course.category_label}
             titleParts={course.title_parts}
-            framesPath={course.hero_frames_path}
-            frameCount={course.hero_frame_count}
-            frameExt={course.hero_frame_ext}
+            framesPath={course.hero_frames_path || designSystem.hero_frames_path}
+            frameCount={course.hero_frame_count || designSystem.hero_frame_count}
+            frameExt={course.hero_frame_ext || designSystem.hero_frame_ext}
             folderPdfUrl={course.folder_pdf_url}
             ctaText="Quero me inscrever"
           />
@@ -116,6 +133,10 @@ export default async function CoursePage({
           />
 
           <div className="mt-[100px]" />
+
+          {course.relevance_paragraphs && course.relevance_paragraphs.length > 0 && (
+            <Relevance paragraphs={course.relevance_paragraphs} />
+          )}
 
           <Stats logos={course.partner_logos} />
 
@@ -164,6 +185,10 @@ export default async function CoursePage({
             whatsappUrl={whatsappUrl}
             grainientColors={shaderColors.grainient}
           />
+
+          {course.general_info_items && course.general_info_items.length > 0 && (
+            <GeneralInfo items={course.general_info_items} />
+          )}
 
           <Footer
             company={company}

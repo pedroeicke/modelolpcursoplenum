@@ -91,7 +91,7 @@ export default function TargetAudience({
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
-            {audiences.map(({ icon, title, description }) => {
+            {audiences.map(({ icon, title }) => {
               const IconComponent = getIcon(icon);
               return (
                 <div
@@ -105,7 +105,6 @@ export default function TargetAudience({
                   </div>
                   <div>
                     <p className="text-white/85 text-base font-semibold leading-snug">{title}</p>
-                    <p className="text-white/35 text-sm leading-relaxed mt-2">{description}</p>
                   </div>
                 </div>
               );

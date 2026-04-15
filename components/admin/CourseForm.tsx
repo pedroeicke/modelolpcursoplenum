@@ -7,10 +7,12 @@ import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Save, ExternalLink } from 'lucide-react';
 import { createCourse, updateCourse, revalidateCoursePage } from '@/lib/actions/courses';
-import type { Course } from '@/types/course';
+import type { Course, GeneralInfoItem } from '@/types/course';
 import type { UserRole } from '@/types/user-roles';
 
 import TabGeral from './course-tabs/TabGeral';
+import TabRelevancia from './course-tabs/TabRelevancia';
+import TabInfoGerais from './course-tabs/TabInfoGerais';
 import TabHero from './course-tabs/TabHero';
 import TabSobre from './course-tabs/TabSobre';
 import TabPublico from './course-tabs/TabPublico';
@@ -81,6 +83,12 @@ export default function CourseForm({ course, designSystems, role = 'dev' }: Prop
   const [coverImageUrl, setCoverImageUrl] = useState(course?.cover_image_url || '');
   const [folderBgUrl, setFolderBgUrl] = useState(course?.section_backgrounds?.folder || '');
 
+  // Relevância
+  const [relevanceParagraphs, setRelevanceParagraphs] = useState<string[]>(course?.relevance_paragraphs || []);
+
+  // Informações Gerais
+  const [generalInfoItems, setGeneralInfoItems] = useState<GeneralInfoItem[]>(course?.general_info_items || []);
+
   // SEO
   const [metaTitle, setMetaTitle] = useState(course?.meta_title || '');
   const [metaDescription, setMetaDescription] = useState(course?.meta_description || '');
@@ -111,6 +119,8 @@ export default function CourseForm({ course, designSystems, role = 'dev' }: Prop
       about_cards: aboutCards,
       audience_cards: audienceCards,
       audience_images: audienceImages,
+      relevance_paragraphs: relevanceParagraphs,
+      general_info_items: generalInfoItems,
       investment_heading: investmentHeading || null,
       investment_subtitle: investmentSubtitle || null,
       included_items: includedItems,
@@ -168,6 +178,8 @@ export default function CourseForm({ course, designSystems, role = 'dev' }: Prop
             <TabsTrigger value="hero">Hero</TabsTrigger>
             <TabsTrigger value="sobre">Sobre</TabsTrigger>
             <TabsTrigger value="publico">Público</TabsTrigger>
+            <TabsTrigger value="relevancia">Relevância</TabsTrigger>
+            <TabsTrigger value="info-gerais">Info Gerais</TabsTrigger>
             <TabsTrigger value="investimento">Investimento</TabsTrigger>
             <TabsTrigger value="depoimentos">Depoimentos</TabsTrigger>
             {role === 'dev' && <TabsTrigger value="midias">Mídias</TabsTrigger>}
@@ -229,6 +241,20 @@ export default function CourseForm({ course, designSystems, role = 'dev' }: Prop
             audienceCards={audienceCards} setAudienceCards={setAudienceCards}
             audienceImages={audienceImages} setAudienceImages={setAudienceImages}
             role={role}
+          />
+        </TabsContent>
+
+        <TabsContent value="relevancia">
+          <TabRelevancia
+            paragraphs={relevanceParagraphs}
+            setParagraphs={setRelevanceParagraphs}
+          />
+        </TabsContent>
+
+        <TabsContent value="info-gerais">
+          <TabInfoGerais
+            items={generalInfoItems}
+            setItems={setGeneralInfoItems}
           />
         </TabsContent>
 

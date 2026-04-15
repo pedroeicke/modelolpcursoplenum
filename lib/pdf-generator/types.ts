@@ -74,6 +74,9 @@ export interface CourseData {
   included_items: { icon: string; text: string }[];
   testimonials: { name: string; role?: string; thumbnail_url: string; youtube_id: string }[];
   partner_logos: { name: string; url: string; width?: number; height?: number }[];
+  relevance_paragraphs: string[];
+  general_info_items: { title: string; content: string }[];
+  product_image_url: string | null;
   folder_pdf_url: string | null;
   cover_image_url: string | null;
   hero_frames_path: string | null;

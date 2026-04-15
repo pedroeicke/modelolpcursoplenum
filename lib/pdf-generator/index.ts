@@ -5,13 +5,9 @@ import { preloadImages } from './images';
 import { renderPageToPng, assemblePdf } from './renderer';
 import type { PdfContext, SatoriNode } from './types';
 
-import { renderCover }        from './pages/cover';
-import { renderPresentation } from './pages/presentation';
-import { renderProgram }      from './pages/program';
-import { renderSpeakers }     from './pages/speaker';
-import { renderGallery }      from './pages/gallery';
-import { renderInvestment }   from './pages/investment';
-import { renderClosing }      from './pages/closing';
+import { renderCover } from './pages/cover';
+import { buildContentBlocks } from './blocks';
+import { packBlocksIntoPages, renderPackedPage } from './packer';
 
 export interface GeneratePdfOptions {
   courseId: string;
@@ -26,15 +22,9 @@ export interface GeneratePdfOptions {
 /**
  * Generate a PDF folder for a course + turma, entirely in the browser.
  *
- * Page order:
- *  1  Capa
- *  2  Apresentação + Público
- *  3  Sobre (optional)
- *  4+ Programação (one per pair of days)
- *  N  Palestrantes       ← dynamic, all instructors
- *  N+1 Fotos do Evento + Kit Participante  ← static promotional
- *  N+2 Investimento      ← two-column price + payment
- *  N+3 Depoimentos + Parceiros + Entre em Contato  ← closing
+ * Uses Satori block packing system:
+ *  1  Capa (full page)
+ *  2+ Content blocks packed into pages (fills each page before starting a new one)
  */
 export async function generateFolderPdf(opts: GeneratePdfOptions): Promise<Uint8Array> {
   const {
@@ -65,32 +55,27 @@ export async function generateFolderPdf(opts: GeneratePdfOptions): Promise<Uint8
   const imageCache = await preloadImages({ ...data, siteBaseUrl, imageCache: new Map() });
   report(`${imageCache.size} imagem(ns) carregada(s)`);
 
-  // ─── 4. Build page element trees ─────────────────────────
+  // ─── 4. Build content blocks and pack into pages ─────────
   const ctx: PdfContext = { ...data, siteBaseUrl, imageCache };
   const pageElements: SatoriNode[] = [];
 
-  // Pages 1-2: always present (page 2 = Sobre o Curso + Público-Alvo combined)
+  // Page 1: Cover (always full page)
   pageElements.push(renderCover(ctx, fonts));
-  pageElements.push(renderPresentation(ctx, fonts));
 
-  // Pages 4+: Programme (one per pair of days)
-  const programPages = renderProgram(ctx, fonts);
-  pageElements.push(...programPages);
+  // Pages 2+: Content blocks packed into pages
+  const blocks = buildContentBlocks(ctx, fonts);
+  report(`${blocks.length} blocos de conteúdo criados`);
 
-  // Page N: Speakers list
-  const speakersPage = renderSpeakers(ctx, fonts);
-  if (speakersPage) pageElements.push(speakersPage);
+  const packedPages = packBlocksIntoPages(blocks);
+  report(`${packedPages.length} página(s) de conteúdo empacotadas`);
 
-  // Page N+1: Static gallery + kit participante
-  pageElements.push(renderGallery(ctx, fonts));
+  for (const pageSpec of packedPages) {
+    pageElements.push(
+      renderPackedPage(pageSpec, ctx, fonts),
+    );
+  }
 
-  // Page N+2: Investimento (two-column)
-  pageElements.push(renderInvestment(ctx, fonts));
-
-  // Page N+3: Depoimentos + Parceiros + Contato
-  pageElements.push(renderClosing(ctx, fonts));
-
-  report(`${pageElements.length} página(s) planejada(s)`);
+  report(`${pageElements.length} página(s) total (capa + conteúdo)`);
 
   // ─── 5. Render each page to PNG ──────────────────────────
   const pngPages: Uint8Array[] = [];

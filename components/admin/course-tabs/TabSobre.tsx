@@ -7,6 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Plus, Trash2 } from 'lucide-react';
 import type { AboutCard } from '@/types/course';
+import IconPicker from '../IconPicker';
 
 interface Props {
   aboutHeading: string; setAboutHeading: (v: string) => void;
@@ -63,8 +64,8 @@ export default function TabSobre({
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <Label className="text-xs">Ícone (Lucide)</Label>
-                  <Input value={card.icon} onChange={(e) => updateCard(i, 'icon', e.target.value)} placeholder="ShieldCheck" />
+                  <Label className="text-xs">Ícone</Label>
+                  <IconPicker value={card.icon} onChange={(v) => updateCard(i, 'icon', v)} />
                 </div>
                 <div className="space-y-1">
                   <Label className="text-xs">Título</Label>

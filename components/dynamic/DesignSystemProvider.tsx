@@ -1,5 +1,3 @@
-'use client';
-
 import type { DesignSystem } from '@/types/design-system';
 import { generateCSSVars, generateFontFaces } from '@/lib/design-system';
 
@@ -11,7 +9,8 @@ interface DesignSystemProviderProps {
 /**
  * Injects CSS custom properties and @font-face declarations
  * from the DesignSystem into the page via a <style> tag.
- * Wrap the entire course page with this provider.
+ * Server component — renders inline styles in the initial HTML
+ * to prevent FOUC (flash of unstyled content).
  */
 export default function DesignSystemProvider({
   designSystem,

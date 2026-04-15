@@ -52,6 +52,11 @@ export interface DesignSystem {
   // Colors: Program Card
   color_program_card: ProgramCardColors;
 
+  // Hero Frames (animation)
+  hero_frames_path: string | null;
+  hero_frame_ext: string | null;
+  hero_frame_count: number | null;
+
   // Fonts
   font_heading: string;
   font_body: string;

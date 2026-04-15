@@ -9,6 +9,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="pt-BR" className="scroll-smooth">
+      <head>
+        <link rel="preload" href="/fonts/pp-radio-grotesk-regular.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+      </head>
       <body className="bg-[#030d1f] text-[#f5f5f5] antialiased" suppressHydrationWarning>
         {children}
       </body>

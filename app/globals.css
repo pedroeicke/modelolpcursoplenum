@@ -42,7 +42,7 @@
     url('/fonts/pp-radio-grotesk-regular.eot') format('embedded-opentype');
   font-weight: 400;
   font-style: normal;
-  font-display: swap;
+  font-display: block;
 }
 
 @font-face {
@@ -53,7 +53,7 @@
   font-weight: 700;
   /* Fallback to Regular for bold since we only have Regular */
   font-style: normal;
-  font-display: swap;
+  font-display: block;
 }
 
 /* ── Design System Tokens ── */

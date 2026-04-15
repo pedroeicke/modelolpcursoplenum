@@ -100,10 +100,7 @@ export default function Hero({
     if (!sectionRef.current || !loaded) return;
     drawFrame(0);
     const ctx = gsap.context(() => {
-      const els = sectionRef.current?.querySelectorAll('.hero-anim');
-      if (els) {
-        gsap.fromTo(els, { y: 30, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.7, stagger: 0.12, ease: 'power3.out', delay: 0.3 });
-      }
+      // Content is visible from server render — no fade-in animation to avoid FOUC on reload
       ScrollTrigger.create({
         trigger: sectionRef.current,
         start: 'top top',
@@ -143,12 +140,19 @@ export default function Hero({
       {/* ── BG: gradient ── */}
       <div className="absolute inset-0 z-0" style={{ background: `radial-gradient(ellipse 90% 60% at 50% 85%, var(--ds-hero-gradient-mid) 0%, var(--ds-background-deep) 60%)` }} />
 
-      {/* ── Canvas — wave animation ── */}
-      <canvas
-        ref={canvasRef}
-        className="absolute inset-0 z-[1] w-full h-full mix-blend-screen"
-        style={{ opacity: 0.55 }}
-      />
+      {/* ── Canvas — wave animation (first frame as static bg fallback) ── */}
+      <div
+        className="absolute inset-0 z-[1]"
+        style={{
+          opacity: 0.55,
+          ...(!loaded ? { backgroundImage: `url(${frameSrc(0)})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}),
+        }}
+      >
+        <canvas
+          ref={canvasRef}
+          className="w-full h-full mix-blend-screen"
+        />
+      </div>
 
       {/* ── Ultra-subtle glass ── */}
       <div className="absolute inset-0 z-[2] bg-white/[0.01] backdrop-blur-[2px]" />

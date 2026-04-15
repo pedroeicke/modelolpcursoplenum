@@ -37,6 +37,12 @@ export interface AudienceImage {
   alt: string;
 }
 
+// --- General Info Item (Informações Gerais accordion) ---
+export interface GeneralInfoItem {
+  title: string;
+  content: string;
+}
+
 // --- Included Item (Investment) ---
 export interface IncludedItem {
   icon: string;
@@ -92,6 +98,12 @@ export interface Course {
   audience_heading: string | null;
   audience_cards: AudienceCard[];
   audience_images: AudienceImage[];
+
+  // Relevance ("Por que esta capacitação é relevante?")
+  relevance_paragraphs: string[];
+
+  // General Info (Informações Gerais accordion)
+  general_info_items: GeneralInfoItem[];
 
   // Program (labels only; actual program_days are in course_dates)
   program_heading: string | null;

@@ -53,7 +53,7 @@ export default function Program({
       <div className="max-w-[1100px] mx-auto relative z-10">
         {/* ── Header ── */}
         <div className="mb-12">
-          <h2 className="font-[var(--font-bricolage)] text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight leading-none mb-3 bg-gradient-to-b from-white via-white/90 to-white/55 bg-clip-text text-transparent">
+          <h2 className="font-[var(--font-bricolage)] text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight leading-[1.1] mb-3 pb-1 bg-gradient-to-b from-white via-white/90 to-white/55 bg-clip-text text-transparent">
             {heading}
           </h2>
           <p className="text-white/40 text-base md:text-lg">
@@ -85,27 +85,44 @@ export default function Program({
                       return next;
                     });
                   }}
-                  className="w-full text-left flex items-center gap-4 px-6 py-5 cursor-pointer"
+                  className="w-full text-left flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 px-4 py-4 sm:px-6 sm:py-5 cursor-pointer"
                 >
-                  {/* Day pill */}
-                  <span className="shrink-0 text-[11px] font-semibold border border-white/[0.15] rounded-full px-3 py-1 text-white/55 tracking-wide">
-                    {day.tag}
-                  </span>
+                  <div className="flex items-center justify-between sm:contents">
+                    {/* Day pill */}
+                    <span className="shrink-0 text-[10px] sm:text-[11px] font-semibold border border-white/[0.15] rounded-full px-2.5 py-1 sm:px-3 text-white/55 tracking-wide">
+                      {day.tag}
+                    </span>
+
+                    {/* Time — visible on mobile next to pill, hidden on sm+ */}
+                    {day.time && (
+                      <span className="flex sm:hidden items-center gap-1 text-white/35 text-[11px] shrink-0">
+                        <Clock className="w-3 h-3" />
+                        {day.time}
+                      </span>
+                    )}
+
+                    {/* Chevron — visible on mobile next to pill */}
+                    <ChevronUp
+                      className={`w-4 h-4 sm:hidden text-white/35 shrink-0 transition-transform duration-300 ${
+                        isOpen ? '' : 'rotate-180'
+                      }`}
+                    />
+                  </div>
 
                   {/* Title */}
-                  <span className="flex-1 text-white/90 text-base md:text-lg font-semibold leading-snug">
+                  <span className="flex-1 text-white/90 text-sm sm:text-base md:text-lg font-semibold leading-snug">
                     {day.title}
                   </span>
 
-                  {/* Time */}
+                  {/* Time — desktop only */}
                   <span className="hidden sm:flex items-center gap-1.5 text-white/35 text-[12px] shrink-0">
                     <Clock className="w-3.5 h-3.5" />
                     {day.time}
                   </span>
 
-                  {/* Chevron */}
+                  {/* Chevron — desktop only */}
                   <ChevronUp
-                    className={`w-5 h-5 text-white/35 shrink-0 transition-transform duration-300 ${
+                    className={`w-5 h-5 text-white/35 shrink-0 transition-transform duration-300 hidden sm:block ${
                       isOpen ? '' : 'rotate-180'
                     }`}
                   />
@@ -113,13 +130,13 @@ export default function Program({
 
                 {/* ── Expanded content ── */}
                 {isOpen && (
-                  <div className="px-6 pb-6 border-t border-white/[0.07] pt-5">
-                    <div className="flex flex-col gap-3">
+                  <div className="px-4 pb-4 sm:px-6 sm:pb-6 border-t border-white/[0.07] pt-4 sm:pt-5">
+                    <div className="flex flex-col gap-2.5 sm:gap-3">
                       {day.topics.map((topic, j) => (
                         <div key={j}>
-                          <div className="flex items-start gap-3">
-                            <CheckCircle2 className="w-4 h-4 text-[var(--ds-primary-light)] shrink-0 mt-0.5" />
-                            <span className="text-white/70 text-base leading-relaxed">{topic.text}</span>
+                          <div className="flex items-start gap-2.5 sm:gap-3">
+                            <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[var(--ds-primary-light)] shrink-0 mt-0.5" />
+                            <span className="text-white/70 text-sm sm:text-base leading-relaxed">{topic.text}</span>
                           </div>
                           {topic.children && topic.children.length > 0 && (
                             <div className="ml-7 mt-2 flex flex-col gap-1.5 pl-3 border-l border-white/[0.07]">

@@ -65,7 +65,7 @@ export function generateCSSVars(ds: DesignSystem): string {
 export function generateFontFaces(ds: DesignSystem): string {
   const faces: string[] = [];
 
-  // Heading font faces
+  // Heading font faces — use 'block' to prevent FOUC on titles
   if (ds.font_heading_urls && ds.font_heading_urls.length > 0) {
     ds.font_heading_urls.forEach((font: FontUrl) => {
       faces.push(`
@@ -74,7 +74,7 @@ export function generateFontFaces(ds: DesignSystem): string {
           src: url('${font.url}') format('${font.format}');
           font-weight: ${font.weight};
           font-style: normal;
-          font-display: swap;
+          font-display: block;
         }
       `);
     });
