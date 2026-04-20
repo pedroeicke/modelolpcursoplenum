@@ -14,13 +14,6 @@ import {
 } from '@/components/ui/select';
 import { FileText, Loader2, ExternalLink, CheckCircle, ChevronDown, Eye } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
 
 interface TurmaOption {
   id: string;
@@ -218,44 +211,21 @@ export default function GeneratePdfButton({
     }
   };
 
-  // ─── Compact variant (opens dialog with full UI) ──────
+  // ─── Compact variant: link to dedicated PDF page ──────
   if (variant === 'compact') {
     return (
-      <Dialog open={showSelector} onOpenChange={(open) => { setShowSelector(open); if (open) fetchTurmas(); }}>
-        <DialogTrigger asChild>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={(e) => e.stopPropagation()}
-            className="text-gray-800 border-gray-300"
-          >
-            <FileText className="w-3.5 h-3.5 mr-1.5" />
-            PDF
-          </Button>
-        </DialogTrigger>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-          <DialogHeader>
-            <DialogTitle>Gerar Folder PDF</DialogTitle>
-          </DialogHeader>
-          <PdfPanel
-            turmas={turmas}
-            loadingTurmas={loadingTurmas}
-            selectedTurma={selectedTurma}
-            setSelectedTurma={setSelectedTurma}
-            loading={loading}
-            progress={progress}
-            result={result}
-            existingPdfUrl={existingPdfUrl}
-            showOverrides={showOverrides}
-            setShowOverrides={setShowOverrides}
-            overrides={overrides}
-            updateOverride={updateOverride}
-            openSections={openSections}
-            toggleSection={toggleSection}
-            onGenerate={handleGenerate}
-          />
-        </DialogContent>
-      </Dialog>
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={(e) => e.stopPropagation()}
+        className="text-gray-800 border-gray-300"
+        asChild
+      >
+        <a href={`/admin/cursos/${courseId}/pdf`} target="_blank" rel="noopener noreferrer">
+          <FileText className="w-3.5 h-3.5 mr-1.5" />
+          Ajustar PDF
+        </a>
+      </Button>
     );
   }
 

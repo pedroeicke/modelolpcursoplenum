@@ -18,10 +18,10 @@ import {
   Users,
   Calendar,
   Eye,
+  Sliders,
 } from 'lucide-react';
 import type { CourseWithDatesPreview, CourseDatePreview } from '@/lib/queries/courses';
 import { cloneCourseDate, toggleCourseDateStatus } from '@/lib/actions/courses';
-import GeneratePdfButton from './GeneratePdfButton';
 
 // ─── Status Maps ────────────────────────────────────────
 const courseStatusMap: Record<string, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' }> = {
@@ -138,7 +138,12 @@ export default function CourseDashboardTable({ courses }: Props) {
 
               {/* Actions */}
               <div className="shrink-0 flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
-                <GeneratePdfButton courseId={course.id} variant="compact" />
+                <Button variant="outline" size="sm" className="text-gray-800 border-gray-300" asChild>
+                  <a href={`/admin/cursos/${course.id}/pdf`} target="_blank" rel="noopener noreferrer">
+                    <Sliders className="w-3.5 h-3.5 mr-1.5" />
+                    Ajustar PDF
+                  </a>
+                </Button>
                 <Button variant="outline" size="sm" className="text-gray-800 border-gray-300" asChild>
                   <Link href={`/admin/cursos/${course.id}`}>
                     <Pencil className="w-3.5 h-3.5 mr-1.5" />
