@@ -14,6 +14,13 @@ import {
 } from '@/components/ui/select';
 import { FileText, Loader2, ExternalLink, CheckCircle, ChevronDown, Eye } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 
 interface TurmaOption {
   id: string;
@@ -211,66 +218,107 @@ export default function GeneratePdfButton({
     }
   };
 
-  // ─── Compact variant ──────────────────────────────────
+  // ─── Compact variant (opens dialog with full UI) ──────
   if (variant === 'compact') {
-    if (!showSelector) {
-      return (
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={(e) => { e.stopPropagation(); setShowSelector(true); fetchTurmas(); }}
-          className="text-gray-800 border-gray-300"
-        >
-          <FileText className="w-3.5 h-3.5 mr-1.5" />
-          PDF
-        </Button>
-      );
-    }
-
     return (
-      <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
-        {loadingTurmas ? (
-          <Loader2 className="w-4 h-4 animate-spin text-gray-400" />
-        ) : (
-          <Select value={selectedTurma} onValueChange={setSelectedTurma}>
-            <SelectTrigger className="w-48 h-8 text-xs">
-              <SelectValue placeholder="Turma..." />
-            </SelectTrigger>
-            <SelectContent>
-              {turmas.map((t) => (
-                <SelectItem key={t.id} value={t.id}>
-                  {t.label || formatDate(t.start_date)} {t.status !== 'open' ? `(${t.status})` : ''} {t.folder_pdf_url ? '📄' : ''}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        )}
-
-        <Button size="sm" onClick={() => handleGenerate()} disabled={loading || !selectedTurma}>
-          {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <FileText className="w-3.5 h-3.5" />}
-          <span className="ml-1">{loading ? 'Gerando...' : existingPdfUrl ? 'Regerar' : 'Gerar'}</span>
-        </Button>
-
-        {loading && progress && <span className="text-xs text-blue-500 max-w-48 truncate">{progress}</span>}
-
-        {!loading && ((result?.success && result.url) || existingPdfUrl) && (
-          <a href={result?.url || existingPdfUrl || '#'} target="_blank" rel="noopener noreferrer">
-            <CheckCircle className="w-4 h-4 text-green-500" />
-          </a>
-        )}
-
-        {result?.error && <span className="text-xs text-red-500 max-w-32 truncate">{result.error}</span>}
-
-        <button className="text-xs text-gray-400 hover:text-gray-600" onClick={() => { setShowSelector(false); setResult(null); }}>
-          ✕
-        </button>
-      </div>
+      <Dialog open={showSelector} onOpenChange={(open) => { setShowSelector(open); if (open) fetchTurmas(); }}>
+        <DialogTrigger asChild>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={(e) => e.stopPropagation()}
+            className="text-gray-800 border-gray-300"
+          >
+            <FileText className="w-3.5 h-3.5 mr-1.5" />
+            PDF
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+          <DialogHeader>
+            <DialogTitle>Gerar Folder PDF</DialogTitle>
+          </DialogHeader>
+          <PdfPanel
+            turmas={turmas}
+            loadingTurmas={loadingTurmas}
+            selectedTurma={selectedTurma}
+            setSelectedTurma={setSelectedTurma}
+            loading={loading}
+            progress={progress}
+            result={result}
+            existingPdfUrl={existingPdfUrl}
+            showOverrides={showOverrides}
+            setShowOverrides={setShowOverrides}
+            overrides={overrides}
+            updateOverride={updateOverride}
+            openSections={openSections}
+            toggleSection={toggleSection}
+            onGenerate={handleGenerate}
+          />
+        </DialogContent>
+      </Dialog>
     );
   }
 
   // ─── Full variant ─────────────────────────────────────
   useEffect(() => { fetchTurmas(); }, [courseId]);
 
+  return (
+    <PdfPanel
+      turmas={turmas}
+      loadingTurmas={loadingTurmas}
+      selectedTurma={selectedTurma}
+      setSelectedTurma={setSelectedTurma}
+      loading={loading}
+      progress={progress}
+      result={result}
+      existingPdfUrl={existingPdfUrl}
+      showOverrides={showOverrides}
+      setShowOverrides={setShowOverrides}
+      overrides={overrides}
+      updateOverride={updateOverride}
+      openSections={openSections}
+      toggleSection={toggleSection}
+      onGenerate={handleGenerate}
+    />
+  );
+}
+
+// ─── Reusable PDF Panel ────────────────────────────────
+interface PdfPanelProps {
+  turmas: TurmaOption[];
+  loadingTurmas: boolean;
+  selectedTurma: string;
+  setSelectedTurma: (v: string) => void;
+  loading: boolean;
+  progress: string;
+  result: { success: boolean; url?: string; error?: string } | null;
+  existingPdfUrl: string | null;
+  showOverrides: boolean;
+  setShowOverrides: (v: boolean) => void;
+  overrides: Record<string, Record<string, string>>;
+  updateOverride: (section: string, field: string, value: string) => void;
+  openSections: Set<string>;
+  toggleSection: (key: string) => void;
+  onGenerate: (debug?: boolean) => void;
+}
+
+function PdfPanel({
+  turmas,
+  loadingTurmas,
+  selectedTurma,
+  setSelectedTurma,
+  loading,
+  progress,
+  result,
+  existingPdfUrl,
+  showOverrides,
+  setShowOverrides,
+  overrides,
+  updateOverride,
+  openSections,
+  toggleSection,
+  onGenerate,
+}: PdfPanelProps) {
   return (
     <div className="space-y-4">
       {/* Turma selector + buttons */}
@@ -290,12 +338,12 @@ export default function GeneratePdfButton({
           </Select>
         </div>
 
-        <Button onClick={() => handleGenerate()} disabled={loading || !selectedTurma}>
+        <Button onClick={() => onGenerate()} disabled={loading || !selectedTurma}>
           {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <FileText className="w-4 h-4 mr-2" />}
           {loading ? 'Gerando...' : existingPdfUrl ? 'Regerar PDF' : 'Gerar PDF'}
         </Button>
 
-        <Button variant="outline" onClick={() => handleGenerate(true)} disabled={loading || !selectedTurma}>
+        <Button variant="outline" onClick={() => onGenerate(true)} disabled={loading || !selectedTurma}>
           <Eye className="w-4 h-4 mr-2" />
           Preview
         </Button>
