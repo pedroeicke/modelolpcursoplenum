@@ -230,36 +230,41 @@ function MultipleInstructors({ instructors }: { instructors: Instructor[] }) {
         ))}
       </div>
 
-      {/* ── Desktop: side-by-side grid ── */}
-      <div className="hidden md:grid md:grid-cols-2 gap-6">
+      {/* ── Desktop: same layout as single, stacked vertically ── */}
+      <div className="hidden md:flex flex-col gap-8">
         {instructors.map((instructor) => (
           <div key={instructor.id} className="speaker-anim relative">
-            <div className="relative rounded-3xl border border-white/[0.1] bg-white/[0.04] backdrop-blur-md overflow-hidden h-full flex flex-col">
+            <div className="relative rounded-3xl border border-white/[0.1] bg-white/[0.04] backdrop-blur-md overflow-visible">
               <div className="absolute -inset-2 rounded-3xl blur-2xl -z-10" style={{ backgroundColor: 'var(--ds-primary-4)' }} />
 
-              {instructor.photo_url && (
-                <div className="w-full aspect-[16/10] overflow-hidden relative flex-shrink-0">
-                  <img
-                    src={instructor.photo_url}
-                    alt={instructor.name}
-                    className="w-full h-full object-cover object-top"
-                  />
-                  <div className="absolute inset-x-0 bottom-0 h-[40%] pointer-events-none" style={{ background: 'linear-gradient(to bottom, transparent, rgba(0,0,0,0.6))' }} />
-                </div>
-              )}
-
-              <div className="p-8 text-left flex-1 flex flex-col">
-                <h3 className="font-[var(--font-bricolage)] text-2xl font-bold text-white mb-2">
+              <div className="p-12 pr-[300px] text-left">
+                <h3 className="font-[var(--font-bricolage)] text-3xl font-bold text-white mb-2">
                   {instructor.name}
                 </h3>
-                <p className="text-[var(--ds-primary)] text-xs font-semibold uppercase tracking-widest mb-4">
+                <p className="text-[var(--ds-primary)] text-xs font-semibold uppercase tracking-widest mb-5">
                   {instructor.role || 'Instrutor'}
                 </p>
-                <p className="text-white/45 text-sm leading-relaxed mb-6 flex-1">
+                <p className="text-white/45 text-sm leading-relaxed mb-8 max-w-[480px]">
                   {instructor.bio || ''}
                 </p>
                 <SocialLinks links={instructor.social_links} size="md" />
               </div>
+
+              {instructor.photo_url && (
+                <div className="absolute bottom-0 right-0 z-10">
+                  <div
+                    className="w-[280px] h-[430px] overflow-hidden"
+                    style={{ borderRadius: '140px 140px 0 0' }}
+                  >
+                    <img
+                      src={instructor.photo_url}
+                      alt={instructor.name}
+                      className="w-full h-full object-cover object-top"
+                    />
+                  </div>
+                  <div className="absolute inset-0 -z-10 blur-3xl scale-75" style={{ backgroundColor: 'var(--ds-primary-10)' }} />
+                </div>
+              )}
             </div>
           </div>
         ))}

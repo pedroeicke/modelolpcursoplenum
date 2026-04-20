@@ -1,6 +1,5 @@
 {
   "permissions": {
-    "defaultMode": "bypassPermissions",
     "allow": [
       "Bash(npm install)",
       "mcp__Claude_Preview__preview_start",
@@ -40,7 +39,15 @@
       "Bash(npx tsc --noEmit)",
       "Bash(taskkill //F //IM node.exe)",
       "mcp__supabase__list_tables",
-      "mcp__supabase__execute_sql"
-    ]
+      "mcp__supabase__execute_sql",
+      "Bash(rm -rf lib/pdf-generator/)",
+      "Bash(rm -f app/api/pdf-proxy/route.ts)",
+      "Bash(rm -f components/admin/GeneratePdfButton.satori-backup.tsx)",
+      "Bash(rm -rf supabase/functions/generate-folder-pdf/)",
+      "Bash(npm uninstall:*)",
+      "Bash(curl -s -X POST \"http://77.237.247.129:59542/api/v1/generate-pdf\" -H \"Authorization: Bearer plnm-621e4b511104b6c63ccd6b3f5d2d178e\" -H \"Content-Type: application/json\" -d '{\"edition_id\":\"test\"}')",
+      "mcp__Claude_in_Chrome__tabs_context_mcp"
+    ],
+    "defaultMode": "bypassPermissions"
   }
 }

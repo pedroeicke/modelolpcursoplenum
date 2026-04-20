@@ -1,62 +1,64 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
-import { generateFolderPdf } from '@/lib/pdf-generator';
+
+const PDF_URL = process.env.PDF_GENERATOR_URL || 'http://77.237.247.129:59542';
+const PDF_TOKEN = process.env.PDF_GENERATOR_API_TOKEN || 'plnm-621e4b511104b6c63ccd6b3f5d2d178e';
 
 export async function POST(request: NextRequest) {
   try {
-    const { course_id, course_date_id } = await request.json();
+    const body = await request.json();
+    const { edition_id, section_overrides, debug } = body;
 
-    if (!course_id || !course_date_id) {
+    if (!edition_id) {
       return NextResponse.json(
-        { error: 'Missing course_id or course_date_id' },
+        { error: 'edition_id é obrigatório' },
         { status: 400 },
       );
     }
 
-    const supabase = await createClient();
-
-    const pdfBytes = await generateFolderPdf({
-      courseId: course_id,
-      courseDateId: course_date_id,
-      supabase,
-      siteBaseUrl: process.env.NEXT_PUBLIC_SITE_URL || 'https://plenumbrasil.com.br',
-      onProgress: (msg) => console.log(`[API PDF] ${msg}`),
-    });
-
-    // Upload to Supabase Storage
-    const { data: courseData } = await supabase
-      .from('courses')
-      .select('slug')
-      .eq('id', course_id)
-      .single();
-
-    const slug = courseData?.slug || 'curso';
-    const fileName = `${slug}-${course_date_id.slice(0, 8)}-${Date.now()}.pdf`;
-    const filePath = `generated/${fileName}`;
-
-    const { error: uploadError } = await supabase.storage
-      .from('pdfs')
-      .upload(filePath, pdfBytes, { contentType: 'application/pdf', upsert: true });
-
-    if (uploadError) {
-      return NextResponse.json({ error: `Upload failed: ${uploadError.message}` }, { status: 500 });
+    // Build request to external PDF generator
+    const apiUrl = `${PDF_URL}/api/v1/generate-pdf${debug ? '?debug=true' : ''}`;
+    const apiBody: Record<string, unknown> = { edition_id };
+    if (section_overrides && Object.keys(section_overrides).length > 0) {
+      apiBody.section_overrides = section_overrides;
     }
 
-    const { data: { publicUrl } } = supabase.storage
-      .from('pdfs')
-      .getPublicUrl(filePath);
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${PDF_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(apiBody),
+    });
 
-    // Update course_dates with PDF URL
-    await supabase
-      .from('course_dates')
-      .update({ folder_pdf_url: publicUrl })
-      .eq('id', course_date_id);
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ message: 'Erro desconhecido' }));
+      return NextResponse.json(
+        { error: errorData.message || `Erro ${response.status}`, details: errorData },
+        { status: response.status },
+      );
+    }
 
-    return NextResponse.json({ success: true, url: publicUrl });
+    // Debug mode returns HTML
+    if (debug) {
+      const html = await response.text();
+      return new NextResponse(html, {
+        headers: { 'Content-Type': 'text/html; charset=utf-8' },
+      });
+    }
+
+    // Normal mode returns JSON with pdf_url
+    const data = await response.json();
+    return NextResponse.json({
+      success: true,
+      url: data.pdf_url,
+      generated_at: data.generated_at,
+      edition_id: data.edition_id,
+    });
   } catch (error) {
-    console.error('[API PDF] Error:', error);
+    console.error('[API generate-pdf] Error:', error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Unknown error' },
+      { error: error instanceof Error ? error.message : 'Erro interno' },
       { status: 500 },
     );
   }

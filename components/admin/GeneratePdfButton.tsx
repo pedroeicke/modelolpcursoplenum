@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
@@ -10,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { FileText, Loader2, ExternalLink, CheckCircle } from 'lucide-react';
+import { FileText, Loader2, ExternalLink, CheckCircle, ChevronDown, Eye } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 
 interface TurmaOption {
@@ -21,13 +23,59 @@ interface TurmaOption {
   folder_pdf_url: string | null;
 }
 
+interface SectionOverrides {
+  about?: Record<string, string>;
+  audience?: Record<string, string>;
+  program?: Record<string, string>;
+  speakers?: Record<string, string>;
+}
+
 interface Props {
   courseId: string;
-  /** Compact mode for dashboard row (inline) vs full mode for TabMidias */
   variant?: 'compact' | 'full';
-  /** Callback when PDF is generated */
   onGenerated?: (url: string) => void;
 }
+
+// ─── Override field definitions ──────────────────────────
+const OVERRIDE_SECTIONS = [
+  {
+    key: 'about',
+    label: 'Sobre o Curso',
+    fields: [
+      { key: 'margin_top', label: 'Margem superior', hint: 'Base: 10mm. Ex: "5" → 15mm' },
+      { key: 'margin_bottom', label: 'Espaço entre cards', hint: 'Base: 3mm. Ex: "-1" → 2mm' },
+      { key: 'margin_lateral', label: 'Margens laterais', hint: 'Base: 18mm. Ex: "2" → 20mm' },
+      { key: 'icon_size', label: 'Tamanho dos ícones', hint: 'Base: 18px. Ex: "4" → 22px' },
+      { key: 'scale', label: 'Escala geral de fontes', hint: 'Base título: 13pt. Ex: "2" → 15pt' },
+    ],
+  },
+  {
+    key: 'audience',
+    label: 'Público-Alvo',
+    fields: [
+      { key: 'margin_top', label: 'Margem superior', hint: 'Base: 10mm. Ex: "5" → 15mm' },
+      { key: 'card_margin_bottom', label: 'Espaço entre cards', hint: 'Base: 2mm. Ex: "1" → 3mm' },
+      { key: 'card_padding_vertical', label: 'Padding interno dos cards', hint: 'Base: 2.5mm' },
+      { key: 'card_font_size', label: 'Tamanho da fonte', hint: 'Base: 13pt. Ex: "1" → 14pt' },
+      { key: 'icon_size', label: 'Tamanho dos ícones', hint: 'Base: 16px. Ex: "2" → 18px' },
+    ],
+  },
+  {
+    key: 'program',
+    label: 'Programação',
+    fields: [
+      { key: 'day_margin_top', label: 'Margem superior das datas', hint: 'Base: 10mm. Ex: "3" → 13mm' },
+    ],
+  },
+  {
+    key: 'speakers',
+    label: 'Palestrantes',
+    fields: [
+      { key: 'margin_top', label: 'Margem superior', hint: 'Ajusta posição vertical dos cards' },
+      { key: 'scale', label: 'Escala geral', hint: 'Base nome: 20pt, foto: 55mm. Ex: "3" → 23pt/58mm' },
+    ],
+  },
+];
 
 export default function GeneratePdfButton({
   courseId,
@@ -42,14 +90,15 @@ export default function GeneratePdfButton({
   const [progress, setProgress] = useState<string>('');
   const [result, setResult] = useState<{ success: boolean; url?: string; error?: string } | null>(null);
   const [showSelector, setShowSelector] = useState(false);
+  const [showOverrides, setShowOverrides] = useState(false);
+  const [overrides, setOverrides] = useState<Record<string, Record<string, string>>>({});
+  const [openSections, setOpenSections] = useState<Set<string>>(new Set());
 
-  // Get existing PDF URL for selected turma
   const selectedTurmaData = turmas.find((t) => t.id === selectedTurma);
   const existingPdfUrl = selectedTurmaData?.folder_pdf_url || null;
 
-  // Fetch turmas when selector is opened
   const fetchTurmas = async () => {
-    if (turmas.length > 0) return; // Already loaded
+    if (turmas.length > 0) return;
     setLoadingTurmas(true);
     try {
       const supabase = createClient();
@@ -70,67 +119,88 @@ export default function GeneratePdfButton({
     }
   };
 
-  const handleGenerate = async () => {
+  // Build section_overrides from form state
+  const buildOverrides = (): SectionOverrides | undefined => {
+    const result: SectionOverrides = {};
+    let hasAny = false;
+    for (const section of OVERRIDE_SECTIONS) {
+      const sectionData = overrides[section.key];
+      if (sectionData) {
+        const filtered: Record<string, string> = {};
+        for (const [k, v] of Object.entries(sectionData)) {
+          if (v && v.trim() !== '') {
+            filtered[k] = v.trim();
+            hasAny = true;
+          }
+        }
+        if (Object.keys(filtered).length > 0) {
+          (result as Record<string, Record<string, string>>)[section.key] = filtered;
+        }
+      }
+    }
+    return hasAny ? result : undefined;
+  };
+
+  const updateOverride = (section: string, field: string, value: string) => {
+    setOverrides((prev) => ({
+      ...prev,
+      [section]: { ...(prev[section] || {}), [field]: value },
+    }));
+  };
+
+  const toggleSection = (key: string) => {
+    setOpenSections((prev) => {
+      const next = new Set(prev);
+      next.has(key) ? next.delete(key) : next.add(key);
+      return next;
+    });
+  };
+
+  const handleGenerate = async (debug = false) => {
     if (!selectedTurma) return;
     setLoading(true);
     setResult(null);
-    setProgress('Iniciando...');
+    setProgress('Gerando PDF...');
 
     try {
-      const supabase = createClient();
-
-      // ─── Generate PDF in the browser via Satori ───
-      const { generateFolderPdf } = await import('@/lib/pdf-generator');
-
-      const pdfBytes = await generateFolderPdf({
-        courseId,
-        courseDateId: selectedTurma,
-        supabase,
-        siteBaseUrl: window.location.origin,
-        onProgress: (msg) => setProgress(msg),
+      const response = await fetch('/api/generate-pdf', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          edition_id: selectedTurma,
+          section_overrides: buildOverrides(),
+          debug,
+        }),
       });
 
-      // ─── Upload to Supabase Storage ───
-      setProgress('Enviando PDF para o servidor...');
+      if (debug) {
+        const html = await response.text();
+        const win = window.open('', '_blank');
+        if (win) {
+          win.document.write(html);
+          win.document.close();
+        }
+        setProgress('');
+        setLoading(false);
+        return;
+      }
 
-      const { data: courseData } = await supabase
-        .from('courses')
-        .select('slug')
-        .eq('id', courseId)
-        .single();
+      const data = await response.json();
 
-      const slug = courseData?.slug || 'curso';
-      const fileName = `${slug}-${selectedTurma.slice(0, 8)}-${Date.now()}.pdf`;
-      const filePath = `generated/${fileName}`;
+      if (!response.ok || !data.success) {
+        throw new Error(data.error || 'Erro ao gerar PDF');
+      }
 
-      const { error: uploadError } = await supabase.storage
-        .from('pdfs')
-        .upload(filePath, pdfBytes, {
-          contentType: 'application/pdf',
-          upsert: true,
-        });
-
-      if (uploadError) throw new Error(`Upload falhou: ${uploadError.message}`);
-
-      const { data: { publicUrl } } = supabase.storage
-        .from('pdfs')
-        .getPublicUrl(filePath);
-
-      await supabase
-        .from('course_dates')
-        .update({ folder_pdf_url: publicUrl })
-        .eq('id', selectedTurma);
-
-      setResult({ success: true, url: publicUrl });
+      setResult({ success: true, url: data.url });
       setProgress('');
 
       setTurmas((prev) =>
         prev.map((t) =>
-          t.id === selectedTurma ? { ...t, folder_pdf_url: publicUrl } : t,
+          t.id === selectedTurma ? { ...t, folder_pdf_url: data.url } : t,
         ),
       );
 
-      onGenerated?.(publicUrl);
+      onGenerated?.(data.url);
       router.refresh();
     } catch (err) {
       console.error('PDF generation error:', err);
@@ -141,18 +211,14 @@ export default function GeneratePdfButton({
     }
   };
 
-  // Compact variant: button that opens selector inline
+  // ─── Compact variant ──────────────────────────────────
   if (variant === 'compact') {
     if (!showSelector) {
       return (
         <Button
           variant="outline"
           size="sm"
-          onClick={(e) => {
-            e.stopPropagation();
-            setShowSelector(true);
-            fetchTurmas();
-          }}
+          onClick={(e) => { e.stopPropagation(); setShowSelector(true); fetchTurmas(); }}
           className="text-gray-800 border-gray-300"
         >
           <FileText className="w-3.5 h-3.5 mr-1.5" />
@@ -180,63 +246,34 @@ export default function GeneratePdfButton({
           </Select>
         )}
 
-        <Button
-          size="sm"
-          onClick={handleGenerate}
-          disabled={loading || !selectedTurma || loadingTurmas}
-        >
-          {loading ? (
-            <Loader2 className="w-3.5 h-3.5 animate-spin" />
-          ) : (
-            <FileText className="w-3.5 h-3.5" />
-          )}
+        <Button size="sm" onClick={() => handleGenerate()} disabled={loading || !selectedTurma}>
+          {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <FileText className="w-3.5 h-3.5" />}
           <span className="ml-1">{loading ? 'Gerando...' : existingPdfUrl ? 'Regerar' : 'Gerar'}</span>
         </Button>
 
-        {/* Progress indicator */}
-        {loading && progress && (
-          <span className="text-xs text-blue-500 max-w-48 truncate" title={progress}>
-            {progress}
-          </span>
-        )}
+        {loading && progress && <span className="text-xs text-blue-500 max-w-48 truncate">{progress}</span>}
 
-        {/* Show existing or just-generated PDF link */}
-        {!loading && ((result?.success && result.url) || existingPdfUrl) ? (
-          <a
-            href={result?.url || existingPdfUrl || '#'}
-            target="_blank"
-            rel="noopener noreferrer"
-            title="Abrir PDF"
-          >
+        {!loading && ((result?.success && result.url) || existingPdfUrl) && (
+          <a href={result?.url || existingPdfUrl || '#'} target="_blank" rel="noopener noreferrer">
             <CheckCircle className="w-4 h-4 text-green-500" />
           </a>
-        ) : null}
-
-        {result?.error && (
-          <span className="text-xs text-red-500 max-w-32 truncate" title={result.error}>
-            {result.error}
-          </span>
         )}
 
-        <button
-          className="text-xs text-gray-400 hover:text-gray-600"
-          onClick={() => {
-            setShowSelector(false);
-            setResult(null);
-            setProgress('');
-          }}
-        >
+        {result?.error && <span className="text-xs text-red-500 max-w-32 truncate">{result.error}</span>}
+
+        <button className="text-xs text-gray-400 hover:text-gray-600" onClick={() => { setShowSelector(false); setResult(null); }}>
           ✕
         </button>
       </div>
     );
   }
 
-  // Full variant: for TabMidias
+  // ─── Full variant ─────────────────────────────────────
   useEffect(() => { fetchTurmas(); }, [courseId]);
 
   return (
     <div className="space-y-4">
+      {/* Turma selector + buttons */}
       <div className="flex items-center gap-3">
         <div className="flex-1">
           <Select value={selectedTurma} onValueChange={setSelectedTurma}>
@@ -249,27 +286,68 @@ export default function GeneratePdfButton({
                   {t.label || formatDate(t.start_date)} {t.status !== 'open' ? `(${t.status})` : ''} {t.folder_pdf_url ? '📄' : ''}
                 </SelectItem>
               ))}
-              {turmas.length === 0 && !loadingTurmas && (
-                <div className="px-3 py-2 text-sm text-gray-400">Nenhuma turma encontrada</div>
-              )}
             </SelectContent>
           </Select>
         </div>
 
-        <Button
-          onClick={handleGenerate}
-          disabled={loading || !selectedTurma}
-        >
-          {loading ? (
-            <Loader2 className="w-4 h-4 animate-spin mr-2" />
-          ) : (
-            <FileText className="w-4 h-4 mr-2" />
-          )}
-          {loading ? 'Gerando PDF...' : existingPdfUrl ? 'Regerar Folder PDF' : 'Gerar Folder PDF'}
+        <Button onClick={() => handleGenerate()} disabled={loading || !selectedTurma}>
+          {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <FileText className="w-4 h-4 mr-2" />}
+          {loading ? 'Gerando...' : existingPdfUrl ? 'Regerar PDF' : 'Gerar PDF'}
+        </Button>
+
+        <Button variant="outline" onClick={() => handleGenerate(true)} disabled={loading || !selectedTurma}>
+          <Eye className="w-4 h-4 mr-2" />
+          Preview
         </Button>
       </div>
 
-      {/* Progress bar */}
+      {/* Toggle overrides */}
+      <button
+        className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700"
+        onClick={() => setShowOverrides(!showOverrides)}
+      >
+        <ChevronDown className={`w-4 h-4 transition-transform ${showOverrides ? 'rotate-180' : ''}`} />
+        Ajustes visuais do PDF
+      </button>
+
+      {/* Section overrides */}
+      {showOverrides && (
+        <div className="space-y-3 border rounded-lg p-4 bg-gray-50">
+          <p className="text-xs text-gray-500">
+            Valores positivos somam ao base, negativos subtraem. Deixe vazio para usar o padrão.
+          </p>
+          {OVERRIDE_SECTIONS.map((section) => (
+            <div key={section.key} className="border rounded-lg bg-white overflow-hidden">
+              <button
+                className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-gray-50"
+                onClick={() => toggleSection(section.key)}
+              >
+                <span className="text-sm font-medium text-gray-700">{section.label}</span>
+                <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${openSections.has(section.key) ? 'rotate-180' : ''}`} />
+              </button>
+              {openSections.has(section.key) && (
+                <div className="px-4 pb-4 space-y-3 border-t">
+                  {section.fields.map((field) => (
+                    <div key={field.key} className="space-y-1 pt-3">
+                      <Label className="text-xs text-gray-600">{field.label}</Label>
+                      <Input
+                        type="text"
+                        placeholder="0"
+                        value={overrides[section.key]?.[field.key] || ''}
+                        onChange={(e) => updateOverride(section.key, field.key, e.target.value)}
+                        className="h-8 text-sm"
+                      />
+                      <p className="text-[10px] text-gray-400">{field.hint}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Progress */}
       {loading && progress && (
         <div className="text-sm text-blue-600 bg-blue-50 border border-blue-200 rounded-lg p-3 flex items-center gap-2">
           <Loader2 className="w-4 h-4 animate-spin shrink-0" />
@@ -283,32 +361,22 @@ export default function GeneratePdfButton({
         </div>
       )}
 
-      {/* Show existing PDF for selected turma or just-generated */}
-      {!loading && ((result?.success && result.url) || existingPdfUrl) ? (
+      {!loading && ((result?.success && result.url) || existingPdfUrl) && (
         <div className="flex items-center gap-3 p-3 bg-green-50 border border-green-200 rounded-lg">
           <CheckCircle className="w-5 h-5 text-green-500 shrink-0" />
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium text-green-700">
-              {result?.success ? 'PDF gerado com sucesso!' : 'PDF já gerado para esta turma'}
+              {result?.success ? 'PDF gerado com sucesso!' : 'PDF existente'}
             </p>
-            <a
-              href={result?.url || existingPdfUrl || '#'}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-xs text-green-600 hover:underline truncate block"
-            >
+            <a href={result?.url || existingPdfUrl || '#'} target="_blank" rel="noopener noreferrer" className="text-xs text-green-600 hover:underline truncate block">
               {result?.url || existingPdfUrl}
             </a>
           </div>
-          <a
-            href={result?.url || existingPdfUrl || '#'}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          <a href={result?.url || existingPdfUrl || '#'} target="_blank" rel="noopener noreferrer">
             <ExternalLink className="w-4 h-4 text-green-500" />
           </a>
         </div>
-      ) : null}
+      )}
     </div>
   );
 }
