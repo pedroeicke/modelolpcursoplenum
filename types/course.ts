@@ -115,6 +115,7 @@ export interface Course {
   included_items: IncludedItem[];
   background_image_url: string | null;
   product_image_url: string | null;
+  price: number | null;
 
   // Testimonials
   testimonials: Testimonial[];

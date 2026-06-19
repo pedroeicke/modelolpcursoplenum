@@ -163,6 +163,7 @@ export default async function CoursePage({
             whatsappUrl={whatsappUrl}
             backgroundImageUrl={course.background_image_url || undefined}
             productImageUrl={course.product_image_url || undefined}
+            price={course.price}
           />
 
           <FolderForm

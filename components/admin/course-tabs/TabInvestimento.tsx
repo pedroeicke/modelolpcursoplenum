@@ -15,6 +15,7 @@ import IconPicker from '../IconPicker';
 interface Props {
   investmentHeading: string; setInvestmentHeading: (v: string) => void;
   investmentSubtitle: string; setInvestmentSubtitle: (v: string) => void;
+  price: string; setPrice: (v: string) => void;
   includedItems: IncludedItem[]; setIncludedItems: (v: IncludedItem[]) => void;
   backgroundImageUrl: string; setBackgroundImageUrl: (v: string) => void;
   productImageUrl: string; setProductImageUrl: (v: string) => void;
@@ -25,6 +26,7 @@ interface Props {
 export default function TabInvestimento({
   investmentHeading, setInvestmentHeading,
   investmentSubtitle, setInvestmentSubtitle,
+  price, setPrice,
   includedItems, setIncludedItems,
   backgroundImageUrl, setBackgroundImageUrl,
   productImageUrl, setProductImageUrl,
@@ -121,6 +123,19 @@ export default function TabInvestimento({
           <div className="space-y-2">
             <Label>Subtítulo</Label>
             <Textarea value={investmentSubtitle} onChange={(e) => setInvestmentSubtitle(e.target.value)} rows={2} />
+          </div>
+          <div className="space-y-2">
+            <Label>Valor da inscrição (R$)</Label>
+            <Input
+              type="number"
+              inputMode="decimal"
+              step="0.01"
+              min="0"
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+              placeholder="Ex: 1590"
+            />
+            <p className="text-xs text-gray-500">Exibido na seção de investimento da landing page. Deixe vazio para não mostrar preço.</p>
           </div>
         </CardContent>
       </Card>
