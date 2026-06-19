@@ -214,6 +214,7 @@ export interface Database {
           meta_title: string | null;
           meta_description: string | null;
           og_image_url: string | null;
+          price: number | null;
           created_at: string;
           updated_at: string;
         };
@@ -253,6 +254,7 @@ export interface Database {
           meta_title?: string | null;
           meta_description?: string | null;
           og_image_url?: string | null;
+          price?: number | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -292,6 +294,7 @@ export interface Database {
           meta_title?: string | null;
           meta_description?: string | null;
           og_image_url?: string | null;
+          price?: number | null;
           created_at?: string;
           updated_at?: string;
         };

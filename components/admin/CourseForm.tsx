@@ -70,6 +70,7 @@ export default function CourseForm({ course, designSystems, role = 'dev' }: Prop
   // Investimento
   const [investmentHeading, setInvestmentHeading] = useState(course?.investment_heading || '');
   const [investmentSubtitle, setInvestmentSubtitle] = useState(course?.investment_subtitle || '');
+  const [price, setPrice] = useState(course?.price != null ? String(course.price) : '');
   const [includedItems, setIncludedItems] = useState(course?.included_items || []);
   const [backgroundImageUrl, setBackgroundImageUrl] = useState(course?.background_image_url || '');
   const [productImageUrl, setProductImageUrl] = useState(course?.product_image_url || '');
@@ -123,6 +124,7 @@ export default function CourseForm({ course, designSystems, role = 'dev' }: Prop
       general_info_items: generalInfoItems,
       investment_heading: investmentHeading || null,
       investment_subtitle: investmentSubtitle || null,
+      price: price.trim() === '' ? null : Number(price),
       included_items: includedItems,
       background_image_url: backgroundImageUrl || null,
       product_image_url: productImageUrl || null,
@@ -262,6 +264,7 @@ export default function CourseForm({ course, designSystems, role = 'dev' }: Prop
           <TabInvestimento
             investmentHeading={investmentHeading} setInvestmentHeading={setInvestmentHeading}
             investmentSubtitle={investmentSubtitle} setInvestmentSubtitle={setInvestmentSubtitle}
+            price={price} setPrice={setPrice}
             includedItems={includedItems} setIncludedItems={setIncludedItems}
             backgroundImageUrl={backgroundImageUrl} setBackgroundImageUrl={setBackgroundImageUrl}
             productImageUrl={productImageUrl} setProductImageUrl={setProductImageUrl}

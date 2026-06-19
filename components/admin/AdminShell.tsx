@@ -9,6 +9,7 @@ import {
   Users,
   UserCog,
   Settings,
+  FileText,
   LogOut,
   Menu,
   X,
@@ -25,6 +26,7 @@ import {
 const NAV_ITEMS = [
   { label: 'Dashboard',     href: '/admin',               icon: BarChart2, minRole: 'consultor' as UserRole },
   { label: 'Cursos',        href: '/admin/cursos',         icon: BookOpen,  minRole: 'consultor' as UserRole },
+  { label: 'Gerar PDF',     href: '/admin/gerar-pdf',      icon: FileText,  minRole: 'consultor' as UserRole },
   { label: 'Leads',         href: '/admin/leads',          icon: Users,     minRole: 'gerente'   as UserRole },
   { label: 'Configurações', href: '/admin/configuracoes',  icon: Settings,  minRole: 'admin'     as UserRole },
   { label: 'Usuários',      href: '/admin/usuarios',       icon: UserCog,   minRole: 'dev'       as UserRole },

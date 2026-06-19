@@ -12,6 +12,12 @@ export interface WorkloadPaymentProps {
   backgroundImageUrl?: string;
   productImageUrl?: string;
   ctaText?: string;
+  price?: number | null;
+}
+
+// ─── Helper: format BRL ────────────────────────────────
+function formatBRL(value: number): string {
+  return value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
 // ─── Defaults ──────────────────────────────────────────
@@ -32,6 +38,7 @@ export default function WorkloadPayment({
   backgroundImageUrl = '/bgvg.png',
   productImageUrl,
   ctaText = 'Falar com Consultor',
+  price,
 }: WorkloadPaymentProps) {
   return (
     <section id="investimento" className="relative overflow-hidden">
@@ -92,6 +99,16 @@ export default function WorkloadPayment({
                   </div>
                 ))}
               </div>
+
+              {/* Price */}
+              {price != null && price > 0 && (
+                <div className="mb-8">
+                  <span className="block text-white/50 text-sm mb-1">Investimento</span>
+                  <span className="text-white font-bold tracking-tight text-4xl md:text-5xl">
+                    <span className="text-2xl md:text-3xl align-top mr-1">R$</span>{formatBRL(price)}
+                  </span>
+                </div>
+              )}
 
               {/* CTA Button */}
               <a
