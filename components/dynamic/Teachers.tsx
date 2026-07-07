@@ -230,11 +230,11 @@ function MultipleInstructors({ instructors }: { instructors: Instructor[] }) {
         ))}
       </div>
 
-      {/* ── Desktop: text left, photo contained on the right ── */}
-      <div className="hidden md:flex flex-col gap-8">
+      {/* ── Desktop: head rises above the card (arch), height-controlled ── */}
+      <div className="hidden md:flex flex-col gap-24">
         {instructors.map((instructor) => (
           <div key={instructor.id} className="speaker-anim relative">
-            <div className="relative rounded-3xl border border-white/[0.1] bg-white/[0.04] backdrop-blur-md overflow-hidden min-h-[400px] flex items-center">
+            <div className="relative rounded-3xl border border-white/[0.1] bg-white/[0.04] backdrop-blur-md overflow-visible min-h-[340px] flex items-center">
               <div className="absolute -inset-2 rounded-3xl blur-2xl -z-10" style={{ backgroundColor: 'var(--ds-primary-4)' }} />
 
               <div className={`p-12 ${instructor.photo_url ? 'pr-[300px]' : ''} text-left w-full`}>
@@ -251,12 +251,15 @@ function MultipleInstructors({ instructors }: { instructors: Instructor[] }) {
               </div>
 
               {instructor.photo_url && (
-                <div className="absolute bottom-0 right-10 z-10 h-full w-[260px] flex items-end justify-center">
-                  <img
-                    src={instructor.photo_url}
-                    alt={instructor.name}
-                    className="max-h-[380px] w-auto object-contain object-bottom drop-shadow-2xl"
-                  />
+                <div className="absolute bottom-0 right-8 z-10">
+                  <div className="w-[260px] h-[420px] overflow-hidden" style={{ borderRadius: '130px 130px 0 0' }}>
+                    <img
+                      src={instructor.photo_url}
+                      alt={instructor.name}
+                      className="w-full h-full object-cover object-top"
+                    />
+                  </div>
+                  <div className="absolute inset-0 -z-10 blur-3xl scale-75" style={{ backgroundColor: 'var(--ds-primary-10)' }} />
                 </div>
               )}
             </div>
