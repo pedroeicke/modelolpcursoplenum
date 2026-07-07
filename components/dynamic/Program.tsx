@@ -89,7 +89,7 @@ export default function Program({
                 >
                   <div className="flex items-center justify-between sm:contents">
                     {/* Day pill */}
-                    <span className="shrink-0 text-[10px] sm:text-[11px] font-semibold border border-white/[0.15] rounded-full px-2.5 py-1 sm:px-3 text-white/55 tracking-wide">
+                    <span className="shrink-0 text-[11px] sm:text-[12px] font-semibold border border-white/[0.15] rounded-full px-2.5 py-1 sm:px-3 text-white/60 tracking-wide">
                       {day.tag}
                     </span>
 
@@ -110,7 +110,7 @@ export default function Program({
                   </div>
 
                   {/* Title */}
-                  <span className="flex-1 text-white/90 text-sm sm:text-base md:text-lg font-semibold leading-snug">
+                  <span className="flex-1 text-white/90 text-base sm:text-lg md:text-xl font-semibold leading-snug">
                     {day.title}
                   </span>
 
@@ -136,14 +136,14 @@ export default function Program({
                         <div key={j}>
                           <div className="flex items-start gap-2.5 sm:gap-3">
                             <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[var(--ds-primary-light)] shrink-0 mt-0.5" />
-                            <span className="text-white/70 text-sm sm:text-base leading-relaxed">{topic.text}</span>
+                            <span className="text-white/75 text-base sm:text-lg leading-relaxed">{topic.text}</span>
                           </div>
                           {topic.children && topic.children.length > 0 && (
                             <div className="ml-7 mt-2 flex flex-col gap-1.5 pl-3 border-l border-white/[0.07]">
                               {topic.children.map((child, k) => (
                                 <div key={k} className="flex items-start gap-2">
                                   <span className="text-[var(--ds-primary-light)] text-[10px] mt-1.5">●</span>
-                                  <span className="text-white/45 text-[13px] leading-relaxed">{child}</span>
+                                  <span className="text-white/50 text-[15px] leading-relaxed">{child}</span>
                                 </div>
                               ))}
                             </div>
