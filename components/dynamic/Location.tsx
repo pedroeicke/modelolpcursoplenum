@@ -102,9 +102,9 @@ export default function Location({
                   <div className="w-9 h-9 rounded-full bg-[var(--ds-primary)] text-white flex items-center justify-center shrink-0">
                     <Phone className="w-3.5 h-3.5" />
                   </div>
-                  <div>
-                    <p className="text-[10px] text-white/35 uppercase tracking-wider mb-0.5">{phone.label}</p>
-                    <a href={`tel:${phone.number.replace(/\D/g, '')}`} className="font-bold text-white text-sm hover:text-[var(--ds-primary)] transition-colors">
+                  <div className="min-w-0">
+                    <p className="text-[10px] text-white/35 uppercase tracking-wider mb-0.5 leading-snug">{phone.label}</p>
+                    <a href={`tel:${phone.number.replace(/\D/g, '')}`} className="font-bold text-white text-sm whitespace-nowrap hover:text-[var(--ds-primary)] transition-colors">
                       {phone.number}
                     </a>
                   </div>
@@ -163,17 +163,17 @@ export default function Location({
                 );
               })}
 
-              {/* Phones */}
+              {/* Phones — grid 2 colunas; número nunca quebra */}
               {phones.length > 0 && (
-                <div className="pt-4 flex flex-row gap-6 border-t border-white/[0.06]">
+                <div className="pt-4 grid grid-cols-1 xl:grid-cols-2 gap-x-8 gap-y-5 border-t border-white/[0.06]">
                   {phones.map((phone, i) => (
-                    <div key={i} className="flex items-center gap-4 group/phone">
+                    <div key={i} className="flex items-center gap-4 group/phone min-w-0">
                       <div className="w-10 h-10 rounded-full bg-[var(--ds-primary)] text-white flex items-center justify-center shrink-0">
                         <Phone className="w-4 h-4" />
                       </div>
-                      <div>
-                        <p className="text-[10px] text-white/35 uppercase tracking-wider mb-0.5">{phone.label}</p>
-                        <a href={`tel:${phone.number.replace(/\D/g, '')}`} className="font-bold text-white text-base hover:text-[var(--ds-primary)] transition-colors">
+                      <div className="min-w-0">
+                        <p className="text-[10px] text-white/35 uppercase tracking-wider mb-0.5 leading-snug">{phone.label}</p>
+                        <a href={`tel:${phone.number.replace(/\D/g, '')}`} className="font-bold text-white text-base whitespace-nowrap hover:text-[var(--ds-primary)] transition-colors">
                           {phone.number}
                         </a>
                       </div>

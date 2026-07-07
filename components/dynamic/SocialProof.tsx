@@ -328,9 +328,9 @@ export default function SocialProof({
               <div>
                 <p className="text-white font-bold text-sm uppercase tracking-wider mb-0.5">Formas de Pagamento</p>
                 <p className="text-white/45 text-sm leading-relaxed">
-                  {company.payment_info?.bank_name
-                    ? `${company.payment_info.bank_name} — ${company.payment_info.agency || ''}`
-                    : 'Boleto bancário, transferência, cheque ou dinheiro.'}
+                  {company.payment_info?.methods
+                    || company.payment_info?.bank_name
+                    || 'Boleto bancário, transferência, cheque ou dinheiro.'}
                 </p>
               </div>
             </div>
