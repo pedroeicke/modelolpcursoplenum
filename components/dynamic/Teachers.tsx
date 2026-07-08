@@ -204,12 +204,12 @@ function MultipleInstructors({ instructors }: { instructors: Instructor[] }) {
               <div className="absolute -inset-2 rounded-3xl blur-2xl -z-10" style={{ backgroundColor: 'var(--ds-primary-4)' }} />
 
               {instructor.photo_url && (
-                <div className="w-full aspect-[3/4] overflow-hidden">
+                <div className="w-full aspect-[6/5] overflow-hidden">
                   <img
                     src={instructor.photo_url}
                     alt={instructor.name}
                     className="w-full h-full object-cover object-top"
-                    style={{ maskImage: 'linear-gradient(to bottom, #000 60%, transparent 100%)', WebkitMaskImage: 'linear-gradient(to bottom, #000 60%, transparent 100%)' }}
+                    style={{ maskImage: 'linear-gradient(to bottom, #000 62%, transparent 100%)', WebkitMaskImage: 'linear-gradient(to bottom, #000 62%, transparent 100%)' }}
                   />
                 </div>
               )}
