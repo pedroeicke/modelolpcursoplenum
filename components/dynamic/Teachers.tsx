@@ -127,8 +127,8 @@ function SingleInstructor({ instructor }: { instructor: Instructor }) {
                   src={instructor.photo_url}
                   alt={instructor.name}
                   className="w-full aspect-[3/4] object-cover object-top"
+                  style={{ maskImage: 'linear-gradient(to bottom, #000 50%, transparent 95%)', WebkitMaskImage: 'linear-gradient(to bottom, #000 50%, transparent 95%)' }}
                 />
-                <div className="absolute inset-x-0 bottom-0 h-[40%] pointer-events-none" style={{ background: 'linear-gradient(to bottom, transparent, var(--ds-background))' }} />
               </div>
             </div>
           )}
@@ -209,8 +209,8 @@ function MultipleInstructors({ instructors }: { instructors: Instructor[] }) {
                     src={instructor.photo_url}
                     alt={instructor.name}
                     className="w-full h-full object-cover object-top"
+                    style={{ maskImage: 'linear-gradient(to bottom, #000 55%, transparent 100%)', WebkitMaskImage: 'linear-gradient(to bottom, #000 55%, transparent 100%)' }}
                   />
-                  <div className="absolute inset-x-0 bottom-0 h-[30%] pointer-events-none" style={{ background: 'linear-gradient(to bottom, transparent, var(--ds-background))' }} />
                 </div>
               )}
 
