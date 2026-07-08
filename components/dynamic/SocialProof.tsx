@@ -119,15 +119,17 @@ export default function SocialProof({
       </div>
 
       <div className="max-w-[1200px] mx-auto px-6 md:px-12 relative z-10">
-        {/* Header */}
-        <div className="text-center mb-16">
-          <span className="text-[var(--ds-primary)] text-sm font-bold tracking-[0.2em] uppercase mb-4 inline-block">
-            Depoimentos
-          </span>
-          <h2 className="font-[var(--font-bricolage)] text-3xl sm:text-[42px] md:text-[52px] lg:text-[72px] font-bold tracking-tight leading-[1.05] bg-gradient-to-b from-white via-white/90 to-white/55 bg-clip-text text-transparent">
-            O que estão falando da gente
-          </h2>
-        </div>
+        {/* Header — só quando há depoimentos */}
+        {testimonials.length > 0 && (
+          <div className="text-center mb-16">
+            <span className="text-[var(--ds-primary)] text-sm font-bold tracking-[0.2em] uppercase mb-4 inline-block">
+              Depoimentos
+            </span>
+            <h2 className="font-[var(--font-bricolage)] text-3xl sm:text-[42px] md:text-[52px] lg:text-[72px] font-bold tracking-tight leading-[1.05] bg-gradient-to-b from-white via-white/90 to-white/55 bg-clip-text text-transparent">
+              O que estão falando da gente
+            </h2>
+          </div>
+        )}
 
         {/* Carousel */}
         {testimonials.length > 0 && (
