@@ -173,13 +173,14 @@ function SingleInstructor({ instructor }: { instructor: Instructor }) {
           {instructor.photo_url && (
             <div className="absolute bottom-0 right-8 z-10">
               <div
-                className="w-[260px] h-[420px] overflow-hidden"
+                className="relative w-[260px] h-[420px] overflow-hidden"
                 style={{ borderRadius: '130px 130px 0 0' }}
               >
                 <img
                   src={instructor.photo_url}
                   alt={instructor.name}
                   className="w-full h-full object-cover object-top"
+                  style={{ maskImage: 'linear-gradient(to bottom, #000 50%, transparent 95%)', WebkitMaskImage: 'linear-gradient(to bottom, #000 50%, transparent 95%)' }}
                 />
               </div>
               <div className="absolute inset-0 -z-10 blur-3xl scale-75" style={{ backgroundColor: 'var(--ds-primary-10)' }} />
@@ -252,11 +253,12 @@ function MultipleInstructors({ instructors }: { instructors: Instructor[] }) {
 
               {instructor.photo_url && (
                 <div className="absolute bottom-0 right-8 z-10">
-                  <div className="w-[260px] h-[420px] overflow-hidden" style={{ borderRadius: '130px 130px 0 0' }}>
+                  <div className="relative w-[260px] h-[420px] overflow-hidden" style={{ borderRadius: '130px 130px 0 0' }}>
                     <img
                       src={instructor.photo_url}
                       alt={instructor.name}
                       className="w-full h-full object-cover object-top"
+                      style={{ maskImage: 'linear-gradient(to bottom, #000 50%, transparent 95%)', WebkitMaskImage: 'linear-gradient(to bottom, #000 50%, transparent 95%)' }}
                     />
                   </div>
                   <div className="absolute inset-0 -z-10 blur-3xl scale-75" style={{ backgroundColor: 'var(--ds-primary-10)' }} />

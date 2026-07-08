@@ -336,7 +336,7 @@ export default function SocialProof({
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-4 shrink-0">
+            <div className="flex flex-wrap items-center justify-center gap-4 w-full md:w-auto md:shrink-0">
               <div className="hidden md:block w-px h-10 bg-white/[0.08]" />
               <div className="text-center">
                 <p className="text-white/35 text-[10px] uppercase tracking-widest mb-1">Solicite informações no financeiro:</p>
