@@ -152,12 +152,12 @@ function SingleInstructor({ instructor }: { instructor: Instructor }) {
         </div>
       </div>
 
-      {/* ── Desktop Card -- photo right, text left ── */}
+      {/* ── Desktop Card -- photo right, text left (mesmo padrão do multi) ── */}
       <div className="speaker-anim relative hidden md:block">
-        <div className="relative rounded-3xl border border-white/[0.1] bg-white/[0.04] backdrop-blur-md overflow-visible">
+        <div className="relative rounded-3xl border border-white/[0.1] bg-white/[0.04] backdrop-blur-md overflow-visible min-h-[340px] flex items-center">
           <div className="absolute -inset-2 rounded-3xl blur-2xl -z-10" style={{ backgroundColor: 'var(--ds-primary-4)' }} />
 
-          <div className="p-12 pr-[300px] text-left">
+          <div className={`p-12 ${instructor.photo_url ? 'pr-[300px]' : ''} text-left w-full`}>
             <h3 className="font-[var(--font-bricolage)] text-3xl font-bold text-white mb-2">
               {instructor.name}
             </h3>
@@ -171,10 +171,10 @@ function SingleInstructor({ instructor }: { instructor: Instructor }) {
           </div>
 
           {instructor.photo_url && (
-            <div className="absolute bottom-0 right-0 z-10">
+            <div className="absolute bottom-0 right-8 z-10">
               <div
-                className="w-[280px] h-[430px] overflow-hidden"
-                style={{ borderRadius: '140px 140px 0 0' }}
+                className="w-[260px] h-[420px] overflow-hidden"
+                style={{ borderRadius: '130px 130px 0 0' }}
               >
                 <img
                   src={instructor.photo_url}
