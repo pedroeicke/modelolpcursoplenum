@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
+import { usePathname } from 'next/navigation';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ArrowRight, ChevronDown, Download } from 'lucide-react';
@@ -43,7 +44,14 @@ export default function Hero({
   const [turmaOpen, setTurmaOpen] = useState(false);
 
   // ── Turma context (replaces local state) ──
-  const { turmaLabels, heroBadges, selectedIndex, setSelectedIndex } = useTurma();
+  const { turmaLabels, heroBadges, selectedIndex, setSelectedIndex, courseDateId } = useTurma();
+
+  // ── Link para a página de inscrição com curso/turma atuais ──
+  const pathname = usePathname();
+  const slugMatch = pathname?.match(/^\/cursos\/([^/]+)/);
+  const inscricaoHref = slugMatch
+    ? `/inscricao?curso=${slugMatch[1]}${courseDateId ? `&turma=${courseDateId}` : ''}`
+    : '/inscricao';
 
   const actualFrameCount = frameCount || 192;
   const actualFramesPath = framesPath || '/frames/frame_';
@@ -260,7 +268,7 @@ export default function Hero({
           )}
 
           <a
-            href="#inscricao"
+            href={inscricaoHref}
             className="relative group inline-flex items-center gap-2.5 px-7 py-3.5 rounded-full border text-white text-sm font-semibold transition-all duration-300"
             style={{ borderColor: 'var(--ds-primary-30)', backgroundColor: 'var(--ds-primary-5)' }}
             onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'var(--ds-primary-10)'; }}

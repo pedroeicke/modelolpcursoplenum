@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { usePathname } from 'next/navigation';
 import { Menu, X, ArrowRight } from 'lucide-react';
 import gsap from 'gsap';
 
@@ -40,6 +41,16 @@ export default function Header({
   const [scrolled, setScrolled] = useState(false);
   const [isLightBackground, setIsLightBackground] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
+
+  // "#inscricao" (padrão) vira link para a página de inscrição com o curso atual
+  const pathname = usePathname();
+  const slugMatch = pathname?.match(/^\/cursos\/([^/]+)/);
+  const resolvedCtaHref =
+    ctaHref === '#inscricao'
+      ? slugMatch
+        ? `/inscricao?curso=${slugMatch[1]}`
+        : '/inscricao'
+      : ctaHref;
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -113,7 +124,7 @@ export default function Header({
           </nav>
 
           <a
-            href={ctaHref}
+            href={resolvedCtaHref}
             className="relative group inline-flex items-center justify-center gap-1.5 px-7 py-2 rounded-full text-white text-[13px] font-semibold uppercase transition-all"
             style={{ borderColor: 'var(--ds-primary-20)', backgroundColor: 'var(--ds-primary-5)' }}
           >
@@ -159,7 +170,7 @@ export default function Header({
             </a>
           ))}
           <a
-            href={ctaHref}
+            href={resolvedCtaHref}
             className="relative group mt-4 w-full inline-flex items-center justify-center px-10 py-3 rounded-full border text-white text-sm font-semibold uppercase tracking-wide transition-all"
             style={{ borderColor: 'var(--ds-primary-20)', backgroundColor: 'var(--ds-primary-5)' }}
           >

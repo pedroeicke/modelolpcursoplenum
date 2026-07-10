@@ -1,5 +1,6 @@
 'use client';
 
+import { usePathname } from 'next/navigation';
 import { Link2, Mail, Phone } from 'lucide-react';
 import type { CompanySettings } from '@/types/company';
 
@@ -47,6 +48,12 @@ export default function Footer({
 }: FooterProps) {
   const year = new Date().getFullYear();
 
+  // "#inscricao" vira link para a página de inscrição com o curso atual
+  const pathname = usePathname();
+  const slugMatch = pathname?.match(/^\/cursos\/([^/]+)/);
+  const inscricaoHref = slugMatch ? `/inscricao?curso=${slugMatch[1]}` : '/inscricao';
+  const resolveHref = (href: string) => (href === '#inscricao' ? inscricaoHref : href);
+
   // Derive contact links from company data
   const websiteUrl = company.website || 'https://www.plenumbrasil.com.br';
   const emailHref = company.emails?.[0]?.email
@@ -83,7 +90,7 @@ export default function Footer({
               <ul className="flex flex-col gap-3">
                 {col.links.map((link) => (
                   <li key={link.label}>
-                    <a href={link.href} className="text-white/40 text-sm hover:text-white transition-colors">
+                    <a href={resolveHref(link.href)} className="text-white/40 text-sm hover:text-white transition-colors">
                       {link.label}
                     </a>
                   </li>
