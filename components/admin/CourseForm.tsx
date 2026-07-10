@@ -47,6 +47,10 @@ export default function CourseForm({ course, designSystems, role = 'dev' }: Prop
   const [categoryLabel, setCategoryLabel] = useState(course?.category_label || 'Imersão');
   const [status, setStatus] = useState<string>(course?.status || 'draft');
   const [modality, setModality] = useState<string>(course?.modality || 'presencial');
+  const [nucleo, setNucleo] = useState<string>(course?.nucleo || '');
+  const [workload, setWorkload] = useState<string>(course?.workload || '');
+  const [tipo, setTipo] = useState<string>(course?.tipo || 'curso');
+  const [bannerImageUrl, setBannerImageUrl] = useState<string>(course?.banner_image_url || '');
   const [designSystemId, setDesignSystemId] = useState(course?.design_system_id || '');
   const [whatsappNumber, setWhatsappNumber] = useState(course?.whatsapp_number || '');
   const [whatsappMessage, setWhatsappMessage] = useState(course?.whatsapp_message || '');
@@ -107,6 +111,10 @@ export default function CourseForm({ course, designSystems, role = 'dev' }: Prop
       category_label: categoryLabel || null,
       status,
       modality,
+      nucleo: nucleo || null,
+      workload: workload || null,
+      tipo: tipo || 'curso',
+      banner_image_url: bannerImageUrl || null,
       design_system_id: designSystemId || null,
       whatsapp_number: whatsappNumber || null,
       whatsapp_message: whatsappMessage || null,
@@ -211,6 +219,10 @@ export default function CourseForm({ course, designSystems, role = 'dev' }: Prop
             categoryLabel={categoryLabel} setCategoryLabel={setCategoryLabel}
             status={status} setStatus={setStatus}
             modality={modality} setModality={setModality}
+            nucleo={nucleo} setNucleo={setNucleo}
+            workload={workload} setWorkload={setWorkload}
+            tipo={tipo} setTipo={setTipo}
+            bannerImageUrl={bannerImageUrl} setBannerImageUrl={setBannerImageUrl}
             designSystemId={designSystemId} setDesignSystemId={setDesignSystemId}
             whatsappNumber={whatsappNumber} setWhatsappNumber={setWhatsappNumber}
             whatsappMessage={whatsappMessage} setWhatsappMessage={setWhatsappMessage}

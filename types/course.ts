@@ -79,6 +79,14 @@ export interface Course {
   slug: string;
   status: 'draft' | 'published' | 'archived';
   modality: 'presencial' | 'online' | 'hibrido';
+  /** Núcleo do site principal (filtros de /cursos): Licitações e Contratos, IA e Tecnologia, Liderança, Finanças Públicas, Legislativo */
+  nucleo: string | null;
+  /** Carga horária exibida no card do site principal (ex.: "16h") */
+  workload: string | null;
+  /** Tipo: curso (só cards) | seminario/congresso (cards + banner da home do site principal) */
+  tipo: 'curso' | 'seminario' | 'congresso';
+  /** Imagem larga do banner da home (seminários/congressos); fallback: cover_image_url */
+  banner_image_url: string | null;
   design_system_id: string | null;
 
   // Hero

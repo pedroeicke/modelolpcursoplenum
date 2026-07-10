@@ -183,6 +183,10 @@ export interface Database {
           slug: string;
           status: string;
           modality: string;
+          nucleo: string | null;
+          workload: string | null;
+          tipo: string;
+          banner_image_url: string | null;
           design_system_id: string | null;
           title: string;
           subtitle: string | null;
@@ -223,6 +227,10 @@ export interface Database {
           slug: string;
           status?: string;
           modality?: string;
+          nucleo?: string | null;
+          workload?: string | null;
+          tipo?: string;
+          banner_image_url?: string | null;
           design_system_id?: string | null;
           title: string;
           subtitle?: string | null;
@@ -263,6 +271,10 @@ export interface Database {
           slug?: string;
           status?: string;
           modality?: string;
+          nucleo?: string | null;
+          workload?: string | null;
+          tipo?: string;
+          banner_image_url?: string | null;
           design_system_id?: string | null;
           title?: string;
           subtitle?: string | null;

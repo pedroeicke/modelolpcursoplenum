@@ -14,6 +14,15 @@ import {
 
 import type { UserRole } from '@/types/user-roles';
 
+// Núcleos do site principal da Plenum (filtros da página /cursos)
+const NUCLEOS = [
+  'Licitações e Contratos',
+  'IA e Tecnologia',
+  'Liderança',
+  'Finanças Públicas',
+  'Legislativo',
+];
+
 interface Props {
   slug: string; setSlug: (v: string) => void;
   title: string; setTitle: (v: string) => void;
@@ -21,6 +30,10 @@ interface Props {
   categoryLabel: string; setCategoryLabel: (v: string) => void;
   status: string; setStatus: (v: string) => void;
   modality: string; setModality: (v: string) => void;
+  nucleo: string; setNucleo: (v: string) => void;
+  workload: string; setWorkload: (v: string) => void;
+  tipo: string; setTipo: (v: string) => void;
+  bannerImageUrl: string; setBannerImageUrl: (v: string) => void;
   designSystemId: string; setDesignSystemId: (v: string) => void;
   whatsappNumber: string; setWhatsappNumber: (v: string) => void;
   whatsappMessage: string; setWhatsappMessage: (v: string) => void;
@@ -35,6 +48,10 @@ export default function TabGeral({
   categoryLabel, setCategoryLabel,
   status, setStatus,
   modality, setModality,
+  nucleo, setNucleo,
+  workload, setWorkload,
+  tipo, setTipo,
+  bannerImageUrl, setBannerImageUrl,
   designSystemId, setDesignSystemId,
   whatsappNumber, setWhatsappNumber,
   whatsappMessage, setWhatsappMessage,
@@ -114,6 +131,53 @@ export default function TabGeral({
                   <SelectItem value="hibrido">Híbrido</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label>Tipo</Label>
+            <Select value={tipo} onValueChange={setTipo}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="curso">Curso</SelectItem>
+                <SelectItem value="seminario">Seminário</SelectItem>
+                <SelectItem value="congresso">Congresso</SelectItem>
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-gray-400">
+              Seminários e congressos aparecem também nos banners da home do site principal; cursos só nos cards
+            </p>
+          </div>
+
+          {(tipo === 'seminario' || tipo === 'congresso') && (
+            <div className="space-y-2">
+              <Label>Imagem do banner (home do site principal)</Label>
+              <Input
+                value={bannerImageUrl}
+                onChange={(e) => setBannerImageUrl(e.target.value)}
+                placeholder="https://... (imagem larga, ~1920x800)"
+              />
+              <p className="text-xs text-gray-400">Se vazio, usa a imagem de capa do curso</p>
+            </div>
+          )}
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Núcleo (site principal)</Label>
+              <Select value={nucleo} onValueChange={setNucleo}>
+                <SelectTrigger><SelectValue placeholder="Selecione o núcleo..." /></SelectTrigger>
+                <SelectContent>
+                  {NUCLEOS.map((n) => (
+                    <SelectItem key={n} value={n}>{n}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-gray-400">Define em qual filtro o curso aparece no site da Plenum</p>
+            </div>
+            <div className="space-y-2">
+              <Label>Carga horária</Label>
+              <Input value={workload} onChange={(e) => setWorkload(e.target.value)} placeholder="16h" />
+              <p className="text-xs text-gray-400">Exibida no card do curso no site principal</p>
             </div>
           </div>
 
