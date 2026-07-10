@@ -55,7 +55,7 @@ export default async function InscricaoPage({
   }));
 
   return (
-    <main className="min-h-screen bg-[#010814] text-white">
+    <main className="min-h-screen bg-[#F4F5F7] text-[#030D1F]">
       <InscricaoForm
         cursos={cursos}
         cursoSlugInicial={cursoSlug || null}

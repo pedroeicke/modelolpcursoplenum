@@ -17,12 +17,15 @@ const UFS = [
 const TIPOS_INSTITUICAO = ['Órgão Público', 'Particular', 'Empresa'];
 const FORMAS_PAGAMENTO = ['Boleto', 'Cartão de Crédito', 'Cheque', 'Dinheiro', 'Depósito Identificado'];
 
+const NAVY = '#030D1F';
+const GOLD = '#C9A227';
+
 const inputCls =
-  'w-full px-4 py-3 rounded-xl bg-white/[0.06] border border-white/[0.1] text-white text-sm placeholder:text-white/25 focus:outline-none focus:border-emerald-400/50 focus:shadow-[0_0_20px_rgba(16,185,129,0.15)] transition-all';
-const labelCls = 'text-white/60 text-[11px] uppercase font-bold tracking-widest block mb-2';
-const sectionTitleCls = 'text-emerald-400 text-xs font-bold uppercase tracking-[0.2em] mb-1';
-const sectionCls =
-  'rounded-2xl border border-white/[0.08] bg-white/[0.03] backdrop-blur-xl p-6 md:p-8 space-y-5';
+  'w-full px-4 py-3 rounded-xl bg-white border border-[#030D1F]/15 text-[#030D1F] text-sm placeholder:text-[#030D1F]/30 focus:outline-none focus:border-[#C9A227] focus:ring-2 focus:ring-[#C9A227]/25 transition-all';
+const labelCls = 'text-[#030D1F]/60 text-[11px] uppercase font-bold tracking-widest block mb-2';
+const sectionCls = 'rounded-2xl border border-[#030D1F]/8 bg-white shadow-[0_2px_16px_rgba(3,13,31,0.05)] p-6 md:p-8 space-y-5';
+const sectionH2Cls = 'text-[#030D1F] font-bold text-lg flex items-center gap-2.5';
+const goldDot = <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: GOLD }} />;
 
 export default function InscricaoForm({
   cursos,
@@ -121,19 +124,22 @@ export default function InscricaoForm({
   if (enviado) {
     return (
       <div className="max-w-[640px] mx-auto px-6 py-24 text-center">
-        <CheckCircle2 className="w-16 h-16 text-emerald-400 mx-auto mb-6" />
-        <h1 className="text-3xl md:text-4xl font-bold mb-4">Inscrição enviada! 🎉</h1>
-        <p className="text-white/60 leading-relaxed mb-3">
+        <CheckCircle2 className="w-16 h-16 mx-auto mb-6" style={{ color: GOLD }} />
+        <h1 className="text-3xl md:text-4xl font-bold mb-4" style={{ color: NAVY }}>
+          Inscrição enviada!
+        </h1>
+        <p className="text-[#030D1F]/60 leading-relaxed mb-3">
           Recebemos a sua inscrição no curso{' '}
-          <strong className="text-white">{cursoSelecionado?.title}</strong>.
+          <strong style={{ color: NAVY }}>{cursoSelecionado?.title}</strong>.
         </p>
-        <p className="text-white/60 leading-relaxed mb-10">
+        <p className="text-[#030D1F]/60 leading-relaxed mb-10">
           Você receberá um e-mail de confirmação e nossa equipe entrará em contato em breve para
           finalizar os detalhes.
         </p>
         <a
           href={cursoSelecionado ? `/cursos/${cursoSelecionado.slug}` : '/'}
-          className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-semibold transition-colors"
+          className="inline-flex items-center gap-2 px-7 py-3 rounded-full text-sm font-semibold uppercase tracking-wide transition-colors hover:bg-[#e4bc44]"
+          style={{ backgroundColor: GOLD, color: NAVY }}
         >
           <ArrowLeft className="w-4 h-4" />
           Voltar para o curso
@@ -149,21 +155,26 @@ export default function InscricaoForm({
         {cursoSelecionado && (
           <a
             href={`/cursos/${cursoSelecionado.slug}`}
-            className="inline-flex items-center gap-2 text-white/40 hover:text-white/70 text-sm mb-6 transition-colors"
+            className="inline-flex items-center gap-2 text-[#030D1F]/40 hover:text-[#030D1F]/70 text-sm mb-6 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             Voltar para o curso
           </a>
         )}
-        <p className={sectionTitleCls}>Inscrição</p>
-        <h1 className="text-3xl md:text-5xl font-bold leading-tight mb-3">Garanta sua vaga</h1>
-        <p className="text-white/50 text-sm md:text-base leading-relaxed max-w-[560px]">
+        <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] mb-3" style={{ color: GOLD }}>
+          {goldDot}
+          Inscrição
+        </p>
+        <h1 className="text-3xl md:text-5xl font-semibold leading-[1.1] tracking-[-0.02em] mb-3" style={{ color: NAVY }}>
+          Garanta sua vaga
+        </h1>
+        <p className="text-[#030D1F]/55 text-sm md:text-base leading-relaxed max-w-[560px]">
           Preencha os dados abaixo e nossa equipe entrará em contato para confirmar sua inscrição.
         </p>
       </div>
 
       {erro && (
-        <div className="mb-6 px-5 py-4 rounded-xl border border-red-500/30 bg-red-500/10 text-red-300 text-sm">
+        <div className="mb-6 px-5 py-4 rounded-xl border border-red-300 bg-red-50 text-red-700 text-sm">
           {erro}
         </div>
       )}
@@ -171,14 +182,14 @@ export default function InscricaoForm({
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* ── Seção 1: Curso ── */}
         <div className={sectionCls}>
-          <h2 className="text-white font-bold text-lg">1. Curso</h2>
+          <h2 className={sectionH2Cls}>{goldDot}Curso</h2>
 
           <div>
             <label className={labelCls}>Curso *</label>
             <select name="curso" required value={courseId} onChange={handleCursoChange} className={inputCls}>
-              <option value="" className="bg-[#0b1a30]">Selecione o curso...</option>
+              <option value="">Selecione o curso...</option>
               {cursos.map((c) => (
-                <option key={c.id} value={c.id} className="bg-[#0b1a30]">{c.title}</option>
+                <option key={c.id} value={c.id}>{c.title}</option>
               ))}
             </select>
           </div>
@@ -188,7 +199,7 @@ export default function InscricaoForm({
               <label className={labelCls}>Turma *</label>
               <select name="turma" required value={turmaId} onChange={(e) => setTurmaId(e.target.value)} className={inputCls}>
                 {cursoSelecionado.turmas.map((t) => (
-                  <option key={t.id} value={t.id} className="bg-[#0b1a30]">{t.label}</option>
+                  <option key={t.id} value={t.id}>{t.label}</option>
                 ))}
               </select>
             </div>
@@ -198,9 +209,9 @@ export default function InscricaoForm({
             <div>
               <label className={labelCls}>Tipo de Instituição *</label>
               <select name="tipo_instituicao" required value={form.tipo_instituicao} onChange={handleChange} className={inputCls}>
-                <option value="" className="bg-[#0b1a30]">Selecione...</option>
+                <option value="">Selecione...</option>
                 {TIPOS_INSTITUICAO.map((t) => (
-                  <option key={t} value={t} className="bg-[#0b1a30]">{t}</option>
+                  <option key={t} value={t}>{t}</option>
                 ))}
               </select>
             </div>
@@ -208,7 +219,7 @@ export default function InscricaoForm({
               <label className={labelCls}>Número de Inscritos *</label>
               <select name="num_inscritos" required value={form.num_inscritos} onChange={handleChange} className={inputCls}>
                 {Array.from({ length: 20 }, (_, i) => String(i + 1)).map((n) => (
-                  <option key={n} value={n} className="bg-[#0b1a30]">{n}</option>
+                  <option key={n} value={n}>{n}</option>
                 ))}
               </select>
             </div>
@@ -235,9 +246,9 @@ export default function InscricaoForm({
             <div>
               <label className={labelCls}>Estado *</label>
               <select name="estado" required value={form.estado} onChange={handleChange} className={inputCls}>
-                <option value="" className="bg-[#0b1a30]">UF...</option>
+                <option value="">UF...</option>
                 {UFS.map((uf) => (
-                  <option key={uf} value={uf} className="bg-[#0b1a30]">{uf}</option>
+                  <option key={uf} value={uf}>{uf}</option>
                 ))}
               </select>
             </div>
@@ -246,7 +257,7 @@ export default function InscricaoForm({
 
         {/* ── Seção 2: Nota Fiscal ── */}
         <div className={sectionCls}>
-          <h2 className="text-white font-bold text-lg">2. Dados para a Nota Fiscal</h2>
+          <h2 className={sectionH2Cls}>{goldDot}Dados para a Nota Fiscal</h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
@@ -293,9 +304,9 @@ export default function InscricaoForm({
             <div>
               <label className={labelCls}>UF *</label>
               <select name="uf" required value={form.uf} onChange={handleChange} className={inputCls}>
-                <option value="" className="bg-[#0b1a30]">UF...</option>
+                <option value="">UF...</option>
                 {UFS.map((uf) => (
-                  <option key={uf} value={uf} className="bg-[#0b1a30]">{uf}</option>
+                  <option key={uf} value={uf}>{uf}</option>
                 ))}
               </select>
             </div>
@@ -304,7 +315,7 @@ export default function InscricaoForm({
 
         {/* ── Seção 3: Responsável ── */}
         <div className={sectionCls}>
-          <h2 className="text-white font-bold text-lg">3. Responsável pela Inscrição</h2>
+          <h2 className={sectionH2Cls}>{goldDot}Responsável pela Inscrição</h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
@@ -336,15 +347,15 @@ export default function InscricaoForm({
 
         {/* ── Seção 4: Pagamento ── */}
         <div className={sectionCls}>
-          <h2 className="text-white font-bold text-lg">4. Pagamento</h2>
+          <h2 className={sectionH2Cls}>{goldDot}Pagamento</h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
               <label className={labelCls}>Forma de Pagamento *</label>
               <select name="forma_pagamento" required value={form.forma_pagamento} onChange={handleChange} className={inputCls}>
-                <option value="" className="bg-[#0b1a30]">Selecione...</option>
+                <option value="">Selecione...</option>
                 {FORMAS_PAGAMENTO.map((f) => (
-                  <option key={f} value={f} className="bg-[#0b1a30]">{f}</option>
+                  <option key={f} value={f}>{f}</option>
                 ))}
               </select>
             </div>
@@ -354,13 +365,13 @@ export default function InscricaoForm({
             </div>
           </div>
 
-          <label className="flex items-start gap-3 cursor-pointer text-sm text-white/60">
+          <label className="flex items-start gap-3 cursor-pointer text-sm text-[#030D1F]/60">
             <input
               type="checkbox"
               name="vencimento_igual_inicio"
               checked={form.vencimento_igual_inicio}
               onChange={handleChange}
-              className="mt-0.5 w-4 h-4 rounded accent-emerald-500"
+              className="mt-0.5 w-4 h-4 rounded accent-[#C9A227]"
             />
             Vencimento do boleto igual à data de início do curso
           </label>
@@ -369,7 +380,8 @@ export default function InscricaoForm({
         <button
           type="submit"
           disabled={enviando}
-          className="w-full inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-emerald-500 hover:bg-emerald-600 disabled:opacity-60 text-white text-base font-semibold transition-colors"
+          className="w-full inline-flex items-center justify-center gap-2 px-7 py-4 rounded-full text-sm font-semibold uppercase tracking-wide transition-colors hover:bg-[#e4bc44] disabled:opacity-60"
+          style={{ backgroundColor: GOLD, color: NAVY }}
         >
           {enviando ? (
             <>
@@ -379,12 +391,12 @@ export default function InscricaoForm({
           ) : (
             <>
               Enviar inscrição
-              <ArrowRight className="w-5 h-5" />
+              <ArrowRight className="w-4 h-4" />
             </>
           )}
         </button>
 
-        <p className="text-white/30 text-xs text-center leading-relaxed">
+        <p className="text-[#030D1F]/35 text-xs text-center leading-relaxed">
           Ao enviar, você receberá um e-mail de confirmação e nossa equipe entrará em contato.
         </p>
       </form>
