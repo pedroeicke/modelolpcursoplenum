@@ -32,6 +32,8 @@ export interface SiteCourse {
   tipo: string;
   /** Imagem larga para o banner da home (seminários/congressos) */
   bannerImage: string;
+  /** true quando o curso tem capa própria (a arte já contém título/data — o card não sobrepõe texto) */
+  hasCover: boolean;
 }
 
 const FALLBACK_IMAGE =
@@ -139,6 +141,7 @@ export async function fetchSiteCourses(): Promise<SiteCourse[]> {
       url: `${LP_BASE}/cursos/${c.slug}`,
       startDate: turma ? turma.start_date : null,
       tipo: c.tipo || "curso",
+      hasCover: !!c.cover_image_url,
       bannerImage:
         c.banner_image_url || c.cover_image_url || c.background_image_url || c.og_image_url || FALLBACK_IMAGE,
     };

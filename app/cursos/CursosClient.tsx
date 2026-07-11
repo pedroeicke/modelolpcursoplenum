@@ -153,11 +153,13 @@ function CursosContent({ courses }: { courses: SiteCourse[] }) {
                             {filtered.map((course) => (
                                 <a key={course.id} href={course.url} className="group relative block h-[450px] sm:h-[490px] lg:h-[520px] rounded-[20px] sm:rounded-[24px] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.25)] hover:shadow-[0_24px_60px_rgba(0,0,0,0.35)] hover:-translate-y-1 transition-all duration-300 cursor-pointer">
                                     <img src={course.image} alt={course.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" draggable={false} />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-[#030D1F]/92 via-[#030D1F]/35 to-[#030D1F]/5" />
+                                    {/* capa própria: a arte já traz título/data — só as pills por cima */}
+                                    {!course.hasCover && <div className="absolute inset-0 bg-gradient-to-t from-[#030D1F]/92 via-[#030D1F]/35 to-[#030D1F]/5" />}
                                     <div className="absolute top-5 left-5 right-5 z-10 flex items-start justify-between gap-3">
                                         <span className="inline-flex items-center gap-2 px-3 py-1.5 bg-white/15 backdrop-blur-md border border-white/20 rounded-full text-[10px] font-semibold tracking-widest text-white uppercase"><span className="w-1.5 h-1.5 rounded-full bg-[#C9A227]" />{course.area}</span>
                                         <span className="inline-flex px-3 py-1.5 bg-[#030D1F]/45 border border-white/15 rounded-full text-[10px] font-semibold tracking-wider uppercase text-white/80">{course.modality}</span>
                                     </div>
+                                    {!course.hasCover && (
                                     <div className="absolute bottom-0 left-0 right-0 p-6 z-10">
                                         <p className="text-[12px] text-white/50 mb-2">{course.professor}</p>
                                         <h4 className="text-[20px] lg:text-[23px] font-display font-semibold text-white leading-tight mb-3">{course.title}</h4>
@@ -169,6 +171,7 @@ function CursosContent({ courses }: { courses: SiteCourse[] }) {
                                         </div>
                                         <div className="flex justify-end"><span className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/10 border border-white/25 rounded-full text-[12px] font-semibold text-white tracking-wider uppercase group-hover:bg-white/20 transition-all">Ver Curso <ArrowRight className="w-3.5 h-3.5" /></span></div>
                                     </div>
+                                    )}
                                 </a>
                             ))}
                 </div>
