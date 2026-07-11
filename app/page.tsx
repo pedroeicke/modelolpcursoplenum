@@ -1,13 +1,60 @@
-import { redirect } from 'next/navigation';
+import Header from "@/components/sections/Header";
+import Hero from "@/components/sections/Hero";
+import Events from "@/components/sections/Events";
+import Academy from "@/components/sections/Academy";
+import SocialProof from "@/components/sections/SocialProof";
+import GovTechHome from "@/components/sections/GovTechHome";
+import EducaPublicaHome from "@/components/sections/EducaPublicaHome";
+import Consultoria from "@/components/sections/Consultoria";
+import AlumniHome from "@/components/sections/AlumniHome";
+import Blog from "@/components/sections/Blog";
+import Instagram from "@/components/sections/Instagram";
+import Enderecos from "@/components/sections/Enderecos";
+import WhatsappFinal from "@/components/sections/WhatsappFinal";
+import Footer from "@/components/sections/Footer";
+import WhatsAppFloat from "@/components/sections/WhatsAppFloat";
+import { getInstagramPosts } from "@/lib/instagram";
+import { fetchUpcomingSeminars } from "@/lib/courses-db";
 
-/**
- * Homepage — o site "começa" na página institucional da Plenum.
- * As landing pages dos cursos vivem em /cursos/[slug]; quem chega na raiz
- * é enviado para o site principal.
- */
-const MAIN_SITE_URL =
-  process.env.NEXT_PUBLIC_MAIN_SITE_URL || 'https://plenum-flax.vercel.app';
+export const revalidate = 300;
 
-export default function Home() {
-  redirect(MAIN_SITE_URL);
+export default async function Home() {
+  const instagramPosts = await getInstagramPosts();
+
+  // Seminários e congressos com turma aberta (cadastrados no admin) → banner
+  const seminars = await fetchUpcomingSeminars(5);
+  const homeEvents = seminars.map((c) => ({
+    id: c.id,
+    title: c.title,
+    badge: [c.tipo === "congresso" ? "Congresso" : "Seminário", c.month]
+      .filter(Boolean)
+      .join(" · ")
+      .toUpperCase(),
+    description: c.description || `${c.date} · ${c.location}`,
+    image: c.bannerImage,
+    url: c.url,
+  }));
+
+  return (
+    <main className="plenum-site text-[#030D1F] overflow-x-hidden">
+      <Header />
+      <Hero />
+
+      <div className="relative z-[5] bg-[#F1F1F1]">
+        <Events events={homeEvents} />
+        <Academy />
+        <SocialProof />
+        <GovTechHome />
+        <EducaPublicaHome />
+        <Consultoria />
+        <AlumniHome />
+        <Blog />
+        <Instagram posts={instagramPosts} />
+        <Enderecos />
+        <WhatsappFinal />
+        <Footer />
+      </div>
+      <WhatsAppFloat />
+    </main>
+  );
 }

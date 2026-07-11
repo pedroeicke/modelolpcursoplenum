@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Emendas Parlamentares 2026 na Prática | Plenum Brasil',
-  description: 'Execução, Transparência e Prestação de Contas (pós-mudanças do STF). Imersão presencial em Brasília/DF. 09 a 13 de Março de 2026.',
+  title: 'Instituto Plenum Brasil — Capacitação para o Setor Público',
+  description: 'Formações executivas, seminários e congressos para gestores e servidores públicos. Cursos presenciais e híbridos em todo o Brasil.',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
