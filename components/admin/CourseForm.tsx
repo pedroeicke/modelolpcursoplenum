@@ -223,6 +223,7 @@ export default function CourseForm({ course, designSystems, role = 'dev' }: Prop
             workload={workload} setWorkload={setWorkload}
             tipo={tipo} setTipo={setTipo}
             bannerImageUrl={bannerImageUrl} setBannerImageUrl={setBannerImageUrl}
+            coverImageUrl={coverImageUrl} setCoverImageUrl={setCoverImageUrl}
             designSystemId={designSystemId} setDesignSystemId={setDesignSystemId}
             whatsappNumber={whatsappNumber} setWhatsappNumber={setWhatsappNumber}
             whatsappMessage={whatsappMessage} setWhatsappMessage={setWhatsappMessage}

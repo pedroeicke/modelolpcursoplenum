@@ -12,6 +12,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
+import ImageUploadField from '@/components/admin/ImageUploadField';
 import type { UserRole } from '@/types/user-roles';
 
 // Núcleos do site principal da Plenum (filtros da página /cursos)
@@ -34,6 +35,7 @@ interface Props {
   workload: string; setWorkload: (v: string) => void;
   tipo: string; setTipo: (v: string) => void;
   bannerImageUrl: string; setBannerImageUrl: (v: string) => void;
+  coverImageUrl: string; setCoverImageUrl: (v: string) => void;
   designSystemId: string; setDesignSystemId: (v: string) => void;
   whatsappNumber: string; setWhatsappNumber: (v: string) => void;
   whatsappMessage: string; setWhatsappMessage: (v: string) => void;
@@ -52,6 +54,7 @@ export default function TabGeral({
   workload, setWorkload,
   tipo, setTipo,
   bannerImageUrl, setBannerImageUrl,
+  coverImageUrl, setCoverImageUrl,
   designSystemId, setDesignSystemId,
   whatsappNumber, setWhatsappNumber,
   whatsappMessage, setWhatsappMessage,
@@ -132,6 +135,21 @@ export default function TabGeral({
                 </SelectContent>
               </Select>
             </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label>Capa do curso (site principal)</Label>
+            <ImageUploadField
+              value={coverImageUrl}
+              onChange={setCoverImageUrl}
+              bucket="course-covers"
+              pathPrefix="covers/"
+              shape="wide"
+              placeholder="URL da capa ou clique para fazer upload"
+            />
+            <p className="text-xs text-gray-400">
+              Imagem do card na página de todos os cursos (formato vertical, ex.: 1080×1350)
+            </p>
           </div>
 
           <div className="space-y-2">
