@@ -63,12 +63,12 @@ export default function Academy({ courses = [] }: { courses?: SiteCourse[] }) {
                         <a
                             key={course.id}
                             href={course.url}
-                            className="group relative block h-[450px] sm:h-[490px] lg:h-[520px] rounded-[20px] sm:rounded-[24px] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.25)] hover:shadow-[0_24px_60px_rgba(0,0,0,0.35)] hover:-translate-y-1 transition-all duration-300 cursor-pointer"
+                            className="group relative block h-[450px] sm:h-[490px] lg:h-[520px] rounded-[20px] sm:rounded-[24px] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.25)] hover:shadow-[0_24px_60px_rgba(0,0,0,0.3),0_0_0_2px_rgba(201,162,39,0.55),0_0_32px_rgba(201,162,39,0.35)] hover:-translate-y-1 transition-all duration-300 cursor-pointer"
                         >
                             <img
                                 src={course.image}
                                 alt={course.title}
-                                className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                className="absolute inset-0 w-full h-full object-cover group-hover:brightness-[1.12] transition-[filter] duration-300"
                                 draggable={false}
                             />
                             {/* capa própria: a arte já traz título/data — só as pills por cima */}
