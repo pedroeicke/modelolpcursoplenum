@@ -14,12 +14,15 @@ import WhatsappFinal from "@/components/sections/WhatsappFinal";
 import Footer from "@/components/sections/Footer";
 import WhatsAppFloat from "@/components/sections/WhatsAppFloat";
 import { getInstagramPosts } from "@/lib/instagram";
-import { fetchUpcomingSeminars } from "@/lib/courses-db";
+import { fetchSiteCourses, fetchUpcomingSeminars } from "@/lib/courses-db";
 
 export const revalidate = 300;
 
 export default async function Home() {
   const instagramPosts = await getInstagramPosts();
+
+  // Cursos reais (ordenados pela turma mais próxima) → vitrine da Academy
+  const courses = await fetchSiteCourses();
 
   // Seminários e congressos com turma aberta (cadastrados no admin) → banner
   const seminars = await fetchUpcomingSeminars(5);
@@ -42,7 +45,7 @@ export default async function Home() {
 
       <div className="relative z-[5] bg-[#F1F1F1]">
         <Events events={homeEvents} />
-        <Academy />
+        <Academy courses={courses} />
         <SocialProof />
         <GovTechHome />
         <EducaPublicaHome />
