@@ -1,4 +1,4 @@
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import type { Metadata } from 'next';
 import { getCourseBySlug, getPublishedCourses } from '@/lib/queries/courses';
 import { getCompanySettings } from '@/lib/queries/company';
@@ -65,6 +65,12 @@ export default async function CoursePage({
 
   if (!course || course.status !== 'published') {
     notFound();
+  }
+
+  // Evento com site próprio (ex.: seminário): a página interna não existe — vai direto pro site
+  const externalSite = (course.section_backgrounds as Record<string, string> | null)?.banner_link;
+  if (externalSite) {
+    redirect(externalSite);
   }
 
   const designSystem = course.design_system;

@@ -142,7 +142,9 @@ export async function fetchSiteCourses(): Promise<SiteCourse[]> {
       description: c.subtitle || "",
       audiences: [],
       image: c.cover_image_url || c.og_image_url || c.background_image_url || FALLBACK_IMAGE,
-      url: `${LP_BASE}/cursos/${c.slug}`,
+      url:
+        (c.section_backgrounds && c.section_backgrounds.banner_link) ||
+        `${LP_BASE}/cursos/${c.slug}`,
       startDate: turma ? turma.start_date : null,
       tipo: c.tipo || "curso",
       hasCover: !!c.cover_image_url,
