@@ -100,7 +100,7 @@ export default function Header({
             : 'bg-white/10 border-white/20 backdrop-blur-xl shadow-[0_8px_40px_rgba(0,0,0,0.3)]'
           : 'bg-white/5 border-white/10 backdrop-blur-lg'
           }`}>
-          <a href="#" className="flex items-center shrink-0">
+          <a href="/" aria-label="Ir para a página inicial" className="flex items-center shrink-0">
             <img
               src={isLightBackground && scrolled ? logoDarkUrl : logoUrl}
               alt="Logo"
@@ -140,7 +140,7 @@ export default function Header({
           ? 'bg-white/90 border-black/10 shadow-sm'
           : 'bg-white/10 border-white/10'
           }`}>
-          <a href="#" className="flex items-center shrink-0">
+          <a href="/" aria-label="Ir para a página inicial" className="flex items-center shrink-0">
             <img
               src={isLightBackground && scrolled ? logoDarkUrl : logoUrl}
               alt="Logo"
