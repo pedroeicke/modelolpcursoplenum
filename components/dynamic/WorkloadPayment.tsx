@@ -35,7 +35,7 @@ export default function WorkloadPayment({
   subtitle = 'Invista na sua capacitação com acesso completo aos dias\nde imersão e material de apoio exclusivo.',
   items = defaultItems,
   whatsappUrl = 'https://wa.me/553125311776?text=Olá!%20Gostaria%20de%20informações%20sobre%20o%20curso%20de%20Emendas%20Parlamentares.',
-  backgroundImageUrl = '/bgvg.png',
+  backgroundImageUrl,
   productImageUrl,
   ctaText = 'Falar com Consultor',
   price,
@@ -47,10 +47,20 @@ export default function WorkloadPayment({
 
       <div className={`relative ${productImageUrl ? 'min-h-[500px] md:min-h-[850px]' : 'min-h-[500px] md:min-h-[600px]'}`}>
         {/* Background image */}
-        <div
-          className="absolute inset-0 bg-right bg-no-repeat"
-          style={{ backgroundImage: `url('${backgroundImageUrl}')`, backgroundSize: 'cover', backgroundPosition: 'center' }}
-        />
+        {backgroundImageUrl ? (
+          <div
+            className="absolute inset-0 bg-right bg-no-repeat"
+            style={{ backgroundImage: `url('${backgroundImageUrl}')`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+          />
+        ) : (
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                'radial-gradient(ellipse at 75% 35%, var(--ds-primary-10), transparent 55%), linear-gradient(180deg, var(--ds-background-alt), var(--ds-background))',
+            }}
+          />
+        )}
 
         {/* ── Desktop: Product image — absolutely positioned, right side, full height ── */}
         {productImageUrl && (
