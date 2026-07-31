@@ -35,7 +35,8 @@ export default async function Home() {
       .toUpperCase(),
     description: c.description || `${c.date} · ${c.location}`,
     image: c.bannerImage,
-    url: c.url,
+    url: c.bannerLink || c.url,
+    clean: c.hasBannerArt,
   }));
 
   return (

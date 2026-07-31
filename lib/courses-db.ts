@@ -34,6 +34,10 @@ export interface SiteCourse {
   bannerImage: string;
   /** true quando o curso tem capa própria (a arte já contém título/data — o card não sobrepõe texto) */
   hasCover: boolean;
+  /** true quando o banner é arte pronta (home mostra só a imagem clicável, sem textos) */
+  hasBannerArt: boolean;
+  /** link externo do banner (ex.: site próprio do seminário); vazio = página interna */
+  bannerLink: string;
 }
 
 const FALLBACK_IMAGE =
@@ -90,7 +94,7 @@ function dateLabel(turma: any): string {
 export async function fetchSiteCourses(): Promise<SiteCourse[]> {
   const [courses, dates, instructors] = await Promise.all([
     rest(
-      "courses?status=eq.published&select=id,slug,title,subtitle,modality,nucleo,workload,tipo,banner_image_url,cover_image_url,og_image_url,background_image_url"
+      "courses?status=eq.published&select=id,slug,title,subtitle,modality,nucleo,workload,tipo,banner_image_url,cover_image_url,og_image_url,background_image_url,section_backgrounds"
     ),
     rest(
       "course_dates?status=eq.open&select=course_id,label,start_date,end_date,location_venue,instructor_ids&order=start_date.asc"
@@ -142,6 +146,8 @@ export async function fetchSiteCourses(): Promise<SiteCourse[]> {
       startDate: turma ? turma.start_date : null,
       tipo: c.tipo || "curso",
       hasCover: !!c.cover_image_url,
+      hasBannerArt: !!c.banner_image_url,
+      bannerLink: (c.section_backgrounds && c.section_backgrounds.banner_link) || "",
       bannerImage:
         c.banner_image_url || c.cover_image_url || c.background_image_url || c.og_image_url || FALLBACK_IMAGE,
     };

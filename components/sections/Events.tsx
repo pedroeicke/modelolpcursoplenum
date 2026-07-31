@@ -29,10 +29,10 @@ const EVENTS = [
     },
 ];
 
-type EventItem = { id: string | number; title: string; badge: string; description: string; image: string; url: string };
+type EventItem = { id: string | number; title: string; badge: string; description: string; image: string; url: string; clean?: boolean };
 
 export default function Events({ events }: { events?: EventItem[] }) {
-    const slides = events && events.length > 0 ? events : EVENTS;
+    const slides: EventItem[] = events && events.length > 0 ? events : EVENTS;
     const [current, setCurrent] = useState(0);
     const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
     const touchStartX = useRef(0);
@@ -72,6 +72,17 @@ export default function Events({ events }: { events?: EventItem[] }) {
                 >
                     {slides.map((event, i) => (
                         <div key={event.id} className={`absolute inset-0 transition-all duration-700 ease-in-out ${i === current ? "opacity-100 scale-100" : "opacity-0 scale-105"}`} style={{ backgroundImage: `url(${event.image})`, backgroundSize: "cover", backgroundPosition: "center" }}>
+                            {event.clean ? (
+                                /* arte pronta: só a imagem, inteira clicável, sem textos por cima */
+                                <a
+                                    href={event.url}
+                                    target={event.url.startsWith("http") ? "_blank" : undefined}
+                                    rel={event.url.startsWith("http") ? "noopener noreferrer" : undefined}
+                                    aria-label={event.title}
+                                    className="absolute inset-0 z-10 cursor-pointer"
+                                />
+                            ) : (
+                            <>
                             <div className="absolute inset-0 bg-gradient-to-r from-[#030D1F]/88 via-[#030D1F]/52 to-[#030D1F]/18" />
                             <div className={`absolute inset-0 flex flex-col justify-center px-6 md:px-14 lg:px-20 transition-all duration-500 delay-200 ${i === current ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}>
                                 <div className="max-w-[620px]">
@@ -90,6 +101,8 @@ export default function Events({ events }: { events?: EventItem[] }) {
                                     </a>
                                 </div>
                             </div>
+                            </>
+                            )}
                         </div>
                     ))}
 
