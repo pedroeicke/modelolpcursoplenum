@@ -75,7 +75,7 @@ export default function SocialProof() {
                                     src={logo.url}
                                     alt={logo.name}
                                     title={logo.name}
-                                    className="h-10 lg:h-12 w-auto object-contain opacity-40 hover:opacity-80 transition-opacity duration-300"
+                                    className="h-10 lg:h-12 w-auto object-contain opacity-90 hover:opacity-100 transition-opacity duration-300"
                                     draggable={false}
                                 />
                             </div>

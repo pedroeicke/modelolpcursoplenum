@@ -80,7 +80,7 @@ export default function Stats({
             {[...logos, ...logos].map((logo, i) => (
               <div
                 key={i}
-                className="flex-shrink-0 h-10 w-28 flex items-center justify-center opacity-40 grayscale"
+                className="flex-shrink-0 h-10 w-32 flex items-center justify-center opacity-90"
               >
                 <img src={logo.url} alt={logo.name} className="max-h-full max-w-full object-contain" />
               </div>
