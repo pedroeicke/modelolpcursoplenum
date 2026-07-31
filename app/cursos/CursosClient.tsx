@@ -8,7 +8,7 @@ import WhatsAppFloat from "@/components/sections/WhatsAppFloat";
 import { AUDIENCES, COURSE_AREAS } from "@/lib/plenum-content";
 import type { SiteCourse } from "@/lib/courses-db";
 
-const MODALITIES = ["Todos", "Presencial", "Híbrido"];
+const MODALITIES = ["Todos", "Presencial", "Presencial e Online"];
 const LOCATIONS = ["Todas", "Brasília", "Belo Horizonte"];
 const AUDIENCE_FILTERS = ["Todos", ...AUDIENCES];
 const AREA_FILTERS = ["Todas", ...COURSE_AREAS];

@@ -46,7 +46,7 @@ const FALLBACK_IMAGE =
 const MODALITY_LABEL: Record<string, string> = {
   presencial: "Presencial",
   online: "Online",
-  hibrido: "Híbrido",
+  hibrido: "Presencial e Online",
 };
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
