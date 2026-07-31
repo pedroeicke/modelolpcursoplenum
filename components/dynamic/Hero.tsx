@@ -125,6 +125,18 @@ export default function Hero({
     return () => { ctx.revert(); window.removeEventListener('resize', onResize); };
   }, [loaded]);
 
+  // Tamanho do título adaptado ao comprimento (títulos longos não ficam gigantes)
+  const titleLength = (titleParts && titleParts.length > 0
+    ? titleParts.map((p) => p.text).join(' ')
+    : title
+  ).trim().length;
+  const titleSizeClass =
+    titleLength > 70
+      ? 'text-[1.5rem] sm:text-3xl md:text-4xl lg:text-[3.25rem] xl:text-[3.75rem] leading-[1.05]'
+      : titleLength > 40
+        ? 'text-[1.75rem] sm:text-4xl md:text-5xl lg:text-[4.25rem] xl:text-[5rem] leading-[1]'
+        : 'text-[2rem] sm:text-5xl md:text-6xl lg:text-[5.5rem] xl:text-[6.5rem] leading-[0.95]';
+
   // Render title: use titleParts if available, else fallback to plain title
   const renderTitle = () => {
     if (titleParts && titleParts.length > 0) {
@@ -185,7 +197,7 @@ export default function Hero({
         )}
 
         {/* ── Heading ── */}
-        <h1 className="hero-anim text-center font-[var(--font-bricolage)] text-[2rem] sm:text-5xl md:text-6xl lg:text-[5.5rem] xl:text-[6.5rem] font-extrabold leading-[0.95] tracking-tight mb-6 sm:mb-10 px-2">
+        <h1 className={`hero-anim text-center font-[var(--font-bricolage)] ${titleSizeClass} font-extrabold tracking-tight mb-6 sm:mb-10 px-2`}>
           {renderTitle()}
         </h1>
 
