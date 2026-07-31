@@ -62,7 +62,8 @@ export default function Footer({
   const whatsappNumber = company.phones?.find(p => p.label?.toLowerCase().includes('whatsapp'))?.number
     || company.phones?.[0]?.number
     || '553125311776';
-  const whatsappHref = `https://wa.me/${whatsappNumber.replace(/\D/g, '')}`;
+  const whatsappDigits = whatsappNumber.replace(/\D/g, '');
+  const whatsappHref = `https://wa.me/${whatsappDigits.startsWith('55') ? whatsappDigits : `55${whatsappDigits}`}`;
 
   return (
     <footer className="relative bg-[var(--ds-background-alt)] border-t border-white/[0.06] pt-16 pb-8 px-6 md:px-12">

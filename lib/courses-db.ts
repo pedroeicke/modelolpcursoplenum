@@ -71,6 +71,9 @@ async function rest(path: string): Promise<any[]> {
 
 function cityFromVenue(venue: string | null): string {
   if (!venue) return "";
+  // nomes de sede tipo "Sede Plenum Brasília" não têm separador — detecta a cidade direto
+  if (/bras[ií]lia/i.test(venue)) return "Brasília";
+  if (/belo horizonte/i.test(venue)) return "Belo Horizonte";
   if (venue.includes(" - ")) return venue.split(" - ").pop()!.trim();
   return venue.split(",")[0].trim();
 }

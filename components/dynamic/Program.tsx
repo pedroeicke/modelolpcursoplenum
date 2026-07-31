@@ -16,7 +16,7 @@ export interface ProgramProps {
 // ─── Component ────────────────────────────────────────
 export default function Program({
   heading = 'Programação',
-  description = '4 dias de imersão presencial em Brasília/DF. Carga horária total de 12 horas-aula.',
+  description = '',
   shaderColors = ['#007bff', '#4097bf'] as [string, string],
 }: ProgramProps) {
   const { programDays, courseDateId } = useTurma();
@@ -56,9 +56,11 @@ export default function Program({
           <h2 className="font-[var(--font-bricolage)] text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight leading-[1.1] mb-3 pb-1 bg-gradient-to-b from-white via-white/90 to-white/55 bg-clip-text text-transparent">
             {heading}
           </h2>
-          <p className="text-white/40 text-base md:text-lg">
-            {description}
-          </p>
+          {description && (
+            <p className="text-white/40 text-base md:text-lg">
+              {description}
+            </p>
+          )}
         </div>
 
         {/* ── List ── */}

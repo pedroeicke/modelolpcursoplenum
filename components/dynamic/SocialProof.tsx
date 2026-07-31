@@ -341,7 +341,7 @@ export default function SocialProof({
               <div className="text-center">
                 <p className="text-white/35 text-[10px] uppercase tracking-widest mb-1">Solicite informações no financeiro:</p>
                 <a
-                  href={whatsappUrl}
+                  href="https://wa.me/553125311750?text=Quero%20informa%C3%A7%C3%B5es%20sobre%20pagamento."
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-block px-6 py-2.5 rounded-full bg-[var(--ds-primary)] text-white text-xs font-bold uppercase tracking-widest hover:bg-[var(--ds-primary-hover)] transition-colors"

@@ -166,7 +166,8 @@ export default async function CoursePage({
             heading={course.investment_heading || undefined}
             subtitle={course.investment_subtitle || undefined}
             items={course.included_items}
-            whatsappUrl={whatsappUrl}
+            whatsappUrl="https://wa.me/553125311750?text=Quero%20informa%C3%A7%C3%B5es%20sobre%20pagamento."
+            ctaText="Informações sobre pagamento"
             backgroundImageUrl={course.background_image_url || undefined}
             productImageUrl={course.product_image_url || undefined}
             price={course.price}
