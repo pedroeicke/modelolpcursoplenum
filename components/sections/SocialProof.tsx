@@ -8,7 +8,20 @@ const STATS = [
     { value: "26 estados + DF", label: "órgãos públicos de todo o país já passaram pela Plenum" },
 ];
 
-const LOGOS = ["TCU", "CGU", "ENAP", "STF", "SENADO", "BNDES"];
+const LOGOS = [
+    { name: "SERPRO", url: "https://jyackmnjhsdllfqqxund.supabase.co/storage/v1/object/public/course-covers/logos-instituicoes/serpro-branco.png" },
+    { name: "MPU", url: "https://jyackmnjhsdllfqqxund.supabase.co/storage/v1/object/public/course-covers/logos-instituicoes/mpu-branco.png" },
+    { name: "Ministério da Gestão", url: "https://jyackmnjhsdllfqqxund.supabase.co/storage/v1/object/public/course-covers/logos-instituicoes/mgi-branco.png" },
+    { name: "Senado Federal", url: "https://jyackmnjhsdllfqqxund.supabase.co/storage/v1/object/public/course-covers/logos-instituicoes/senado-branco.png" },
+    { name: "UFMG", url: "https://jyackmnjhsdllfqqxund.supabase.co/storage/v1/object/public/course-covers/logos-instituicoes/ufmg-branco.png" },
+    { name: "TCE-MG", url: "https://jyackmnjhsdllfqqxund.supabase.co/storage/v1/object/public/course-covers/logos-instituicoes/tce-mg-branco.png" },
+    { name: "MPMG", url: "https://jyackmnjhsdllfqqxund.supabase.co/storage/v1/object/public/course-covers/logos-instituicoes/mpmg-branco.png" },
+    { name: "ALMG", url: "https://jyackmnjhsdllfqqxund.supabase.co/storage/v1/object/public/course-covers/logos-instituicoes/almg-branco.png" },
+    { name: "CEMIG", url: "https://jyackmnjhsdllfqqxund.supabase.co/storage/v1/object/public/course-covers/logos-instituicoes/cemig-branco.png" },
+    { name: "CEB", url: "https://jyackmnjhsdllfqqxund.supabase.co/storage/v1/object/public/course-covers/logos-instituicoes/ceb-branco.png" },
+    { name: "TCE-AM", url: "https://jyackmnjhsdllfqqxund.supabase.co/storage/v1/object/public/course-covers/logos-instituicoes/tce-am-branco.png" },
+    { name: "TCE-AP", url: "https://jyackmnjhsdllfqqxund.supabase.co/storage/v1/object/public/course-covers/logos-instituicoes/tce-ap-branco.png" }
+];
 
 export default function SocialProof() {
     const sectionRef = useRef<HTMLElement>(null);
@@ -57,10 +70,14 @@ export default function SocialProof() {
                 <div className="border-t border-b border-white/[0.06] py-10 overflow-hidden">
                     <div className="flex animate-scroll-left whitespace-nowrap">
                         {[...LOGOS, ...LOGOS].map((logo, i) => (
-                            <div key={`${logo}-${i}`} className="flex-shrink-0 mx-10 lg:mx-16 flex items-center justify-center">
-                                <span className="text-lg lg:text-xl font-display font-light text-white/20 tracking-widest uppercase hover:text-white/50 transition-colors duration-300 cursor-default">
-                                    {logo}
-                                </span>
+                            <div key={`${logo.name}-${i}`} className="flex-shrink-0 mx-10 lg:mx-14 flex items-center justify-center">
+                                <img
+                                    src={logo.url}
+                                    alt={logo.name}
+                                    title={logo.name}
+                                    className="h-10 lg:h-12 w-auto object-contain opacity-40 hover:opacity-80 transition-opacity duration-300"
+                                    draggable={false}
+                                />
                             </div>
                         ))}
                     </div>
