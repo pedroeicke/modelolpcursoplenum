@@ -22,7 +22,7 @@ export interface FolderFormProps {
 export default function FolderForm({
   courseId,
   pdfUrl,
-  backgroundImageUrl = '/fundodepo.png',
+  backgroundImageUrl = '',
   heading = 'Baixe o Folder',
   headingSecondary = 'Completo do Evento',
   subtitle = 'Tenha acesso a programação detalhada, currículo completo dos palestrantes e informações sobre o investimento.',
@@ -108,10 +108,17 @@ export default function FolderForm({
 
   return (
     <section ref={sectionRef} id="folder" className="pt-24 md:pt-32 px-6 md:px-12 relative overflow-hidden">
-      {/* ── Background image ── */}
+      {/* ── Background: imagem própria ou gradiente no tom do design system ── */}
       <div
         className="absolute inset-0 bg-cover bg-no-repeat pointer-events-none"
-        style={{ backgroundImage: `url('${backgroundImageUrl}')`, backgroundPosition: 'center top' }}
+        style={
+          backgroundImageUrl
+            ? { backgroundImage: `url('${backgroundImageUrl}')`, backgroundPosition: 'center top' }
+            : {
+                background:
+                  'radial-gradient(ellipse at 70% 30%, var(--ds-primary-10), transparent 55%), linear-gradient(180deg, var(--ds-background-alt), var(--ds-background))',
+              }
+        }
       />
 
       <div className="max-w-[1200px] mx-auto relative z-10">
