@@ -8,7 +8,7 @@ import WhatsAppFloat from "@/components/sections/WhatsAppFloat";
 import { AUDIENCES, COURSE_AREAS } from "@/lib/plenum-content";
 import type { SiteCourse } from "@/lib/courses-db";
 
-const MODALITIES = ["Todos", "Presencial", "Presencial e Online"];
+const MODALITIES = ["Todos", "Presencial", "Online"];
 const LOCATIONS = ["Todas", "Brasília", "Belo Horizonte"];
 const AUDIENCE_FILTERS = ["Todos", ...AUDIENCES];
 const AREA_FILTERS = ["Todas", ...COURSE_AREAS];
@@ -32,7 +32,12 @@ function CursosContent({ courses }: { courses: SiteCourse[] }) {
         if (tipo === "seminario" && course.tipo !== "seminario" && course.tipo !== "congresso") return false;
         const audienceMatch = activeAudience === "Todos" || course.audiences.includes(activeAudience);
         const areaMatch = activeArea === "Todas" || course.area === activeArea;
-        const modMatch = activeModality === "Todos" || course.modality === activeModality;
+        // curso "Presencial e Online" atende quem busca presencial E quem busca online
+        const modMatch =
+            activeModality === "Todos" ||
+            course.modality === activeModality ||
+            (course.modality === "Presencial e Online" &&
+                (activeModality === "Presencial" || activeModality === "Online"));
         const locMatch = activeLocation === "Todas" || course.city === activeLocation;
         const monthMatch = !activeMonth || course.month === activeMonth;
         const text = `${course.title} ${course.area} ${course.professor} ${course.description} ${course.audiences.join(" ")}`.toLowerCase();
@@ -56,7 +61,17 @@ function CursosContent({ courses }: { courses: SiteCourse[] }) {
             <Header />
 
             <section className="relative overflow-hidden pt-32 lg:pt-40 pb-16 lg:pb-20 bg-[#030D1F]">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(201,162,39,0.16),transparent_28%),linear-gradient(135deg,#030D1F,#08182d)]" />
+                {/* foto de evento da Plenum ao fundo */}
+                <div
+                    className="absolute inset-0 bg-cover bg-center"
+                    style={{ backgroundImage: "url('https://jyackmnjhsdllfqqxund.supabase.co/storage/v1/object/public/course-covers/eventos/evento-scroll-1.jpg')" }}
+                />
+                {/* véu escuro — mobile: vertical (texto ocupa a largura toda); desktop: lateral */}
+                <div className="absolute inset-0 lg:hidden bg-[linear-gradient(180deg,rgba(3,13,31,0.92)_0%,rgba(3,13,31,0.86)_55%,rgba(3,13,31,0.95)_100%)]" />
+                <div className="absolute inset-0 hidden lg:block bg-[linear-gradient(100deg,#030D1F_0%,rgba(3,13,31,0.95)_38%,rgba(3,13,31,0.72)_62%,rgba(3,13,31,0.88)_100%)]" />
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(201,162,39,0.16),transparent_28%)]" />
+                {/* emenda suave com a faixa clara de baixo */}
+                <div className="absolute inset-x-0 bottom-0 h-24 bg-[linear-gradient(to_bottom,transparent,#030D1F)]" />
                 <div className="relative z-10 max-w-[1280px] mx-auto px-4">
                     <span className="inline-flex items-center gap-2 px-4 py-2 bg-white/8 backdrop-blur-sm border border-white/12 rounded-full text-[10px] font-semibold tracking-[0.2em] text-white/70 uppercase mb-6 w-fit">
                         <span className="w-2 h-2 rounded-full bg-[#C9A227]" />
