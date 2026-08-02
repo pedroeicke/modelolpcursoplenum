@@ -2,10 +2,11 @@
 import { useEffect, useRef, useState } from "react";
 import { ArrowRight, Calendar, MapPin } from "lucide-react";
 import { gsap } from "@/lib/gsap";
-import { COURSE_AREAS } from "@/lib/plenum-content";
+import { AUDIENCES } from "@/lib/plenum-content";
 import type { SiteCourse } from "@/lib/courses-db";
 
-const FILTERS = ["Todos", ...COURSE_AREAS];
+// filtro por esfera/órgão (versão aprovada) — não por categoria
+const FILTERS = ["Todos", ...AUDIENCES];
 
 export default function Academy({ courses = [] }: { courses?: SiteCourse[] }) {
     const sectionRef = useRef<HTMLElement>(null);
@@ -17,7 +18,7 @@ export default function Academy({ courses = [] }: { courses?: SiteCourse[] }) {
     );
     const filteredCourses = (activeNucleo === "Todos"
         ? upcoming
-        : upcoming.filter((c) => c.area === activeNucleo)
+        : upcoming.filter((c) => c.audiences.includes(activeNucleo))
     ).slice(0, 3);
 
     useEffect(() => {
@@ -107,8 +108,11 @@ export default function Academy({ courses = [] }: { courses?: SiteCourse[] }) {
                                     </span>
                                 </div>
 
-                                <div className="flex justify-end">
-                                    <span className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/10 border border-white/25 rounded-full text-[12px] font-semibold text-white tracking-wider uppercase group-hover:bg-white/20 transition-all">
+                                <div className="flex items-center justify-between gap-3">
+                                    <span className="text-[12px] text-white/45 truncate">
+                                        {course.audiences[0]}
+                                    </span>
+                                    <span className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/10 border border-white/25 rounded-full text-[12px] font-semibold text-white tracking-wider uppercase group-hover:bg-white/20 transition-all shrink-0">
                                         Ver Curso <ArrowRight className="w-3.5 h-3.5" />
                                     </span>
                                 </div>
@@ -119,7 +123,7 @@ export default function Academy({ courses = [] }: { courses?: SiteCourse[] }) {
                 </div>
                 {filteredCourses.length === 0 && (
                     <div className="text-center text-sm text-[#555]">
-                        Nenhum curso com turma aberta neste núcleo no momento.
+                        Nenhum curso com turma aberta para esta esfera no momento.
                     </div>
                 )}
 

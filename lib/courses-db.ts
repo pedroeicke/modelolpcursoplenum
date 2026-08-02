@@ -69,6 +69,63 @@ async function rest(path: string): Promise<any[]> {
   }
 }
 
+/**
+ * Esferas de atuação (AUDIENCES) que o curso atende, derivadas do público-alvo
+ * cadastrado no admin. Alimenta o filtro por órgão da vitrine da home.
+ */
+function audiencesFromCards(cards: any[], nucleo: string): string[] {
+  const texto = [
+    ...(cards || []).map((c) => `${c?.title || ""} ${c?.description || ""}`),
+    nucleo,
+  ]
+    .join(" ")
+    .toLowerCase();
+
+  const set = new Set<string>();
+  const marca = (cond: boolean, esfera: string) => cond && set.add(esfera);
+
+  marca(/vereador|c[âa]mara|parlamentar|legislativ|assessor/.test(texto), "Legislativo");
+  marca(/prefeit|munic[íi]p|c[âa]mara|vereador|secretaria municipal/.test(texto), "Municípios");
+  marca(/controle interno|auditor|tribunal de contas|tce|tcu|controladoria|fiscaliza/.test(texto), "Órgãos de Controle");
+  marca(/estatal|empresa p[úu]blica|sociedade de economia mista/.test(texto), "Estatais");
+  marca(/judici[áa]ri|tribunal de justi[çc]a|f[óo]rum/.test(texto), "Judiciário");
+  marca(/conselho/.test(texto), "Conselhos");
+  marca(
+    /[óo]rg[ãa]o|servidor|gestor|administra[çc][ãa]o p[úu]blica|agente de contrata|pregoeir|setor p[úu]blico|federal|estadual/.test(
+      texto
+    ),
+    "Administração Pública"
+  );
+
+  // temas transversais (licitação, finanças, gestão de pessoas, tecnologia)
+  // valem para qualquer órgão — não só para quem está citado no público-alvo
+  const transversal = /licita|contrat|finan|tribut|or[çc]ament|lideran|gest[ãa]o de pessoas|tecnologia|intelig[êe]ncia artificial/.test(
+    `${nucleo} ${texto}`.toLowerCase()
+  );
+  if (transversal) {
+    ["Administração Pública", "Órgãos de Controle", "Estatais", "Municípios"].forEach((e) =>
+      set.add(e)
+    );
+  }
+
+  // curso amplo (atende quase todo mundo) entra também como "Todas as esferas"
+  if (set.size >= 4) set.add("Todas as esferas");
+  if (set.size === 0) set.add("Administração Pública");
+
+  // mantém a ordem oficial das esferas
+  const ordem = [
+    "Administração Pública",
+    "Órgãos de Controle",
+    "Municípios",
+    "Estatais",
+    "Legislativo",
+    "Judiciário",
+    "Conselhos",
+    "Todas as esferas",
+  ];
+  return ordem.filter((e) => set.has(e));
+}
+
 function cityFromVenue(venue: string | null): string {
   if (!venue) return "";
   // nomes de sede tipo "Sede Plenum Brasília" não têm separador — detecta a cidade direto
@@ -97,7 +154,7 @@ function dateLabel(turma: any): string {
 export async function fetchSiteCourses(): Promise<SiteCourse[]> {
   const [courses, dates, instructors] = await Promise.all([
     rest(
-      "courses?status=eq.published&select=id,slug,title,subtitle,modality,nucleo,workload,tipo,banner_image_url,cover_image_url,og_image_url,background_image_url,section_backgrounds"
+      "courses?status=eq.published&select=id,slug,title,subtitle,modality,nucleo,workload,tipo,banner_image_url,cover_image_url,og_image_url,background_image_url,section_backgrounds,audience_cards"
     ),
     rest(
       "course_dates?status=eq.open&select=course_id,label,start_date,end_date,location_venue,instructor_ids&order=start_date.asc"
@@ -143,7 +200,7 @@ export async function fetchSiteCourses(): Promise<SiteCourse[]> {
       workload: c.workload || "",
       professor: professores || "Equipe Plenum",
       description: c.subtitle || "",
-      audiences: [],
+      audiences: audiencesFromCards(c.audience_cards, c.nucleo || ""),
       image: c.cover_image_url || c.og_image_url || c.background_image_url || FALLBACK_IMAGE,
       url:
         (c.section_backgrounds && c.section_backgrounds.banner_link) ||
