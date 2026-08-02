@@ -32,8 +32,9 @@ export async function POST(request: NextRequest) {
     // Revalidate the specific course page
     revalidatePath(`/cursos/${slug}`);
 
-    // Also revalidate homepage (if it lists courses)
+    // Also revalidate homepage and the course listing (both show course cards)
     revalidatePath('/');
+    revalidatePath('/cursos');
 
     return NextResponse.json({
       revalidated: true,
