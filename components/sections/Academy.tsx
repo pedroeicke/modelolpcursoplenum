@@ -12,14 +12,14 @@ export default function Academy({ courses = [] }: { courses?: SiteCourse[] }) {
     const sectionRef = useRef<HTMLElement>(null);
     const [activeNucleo, setActiveNucleo] = useState("Todos");
 
-    // cursos com turma futura, já ordenados por data (courses-db) → 3 mais próximos do núcleo
+    // cursos com turma futura, já ordenados por data (courses-db) → 12 mais próximos
     const upcoming = courses.filter(
         (c) => c.startDate && new Date(c.startDate).getTime() >= Date.now() - 24 * 60 * 60 * 1000
     );
     const filteredCourses = (activeNucleo === "Todos"
         ? upcoming
         : upcoming.filter((c) => c.audiences.includes(activeNucleo))
-    ).slice(0, 3);
+    ).slice(0, 12); // 4 fileiras de 3 no desktop
 
     useEffect(() => {
         const ctx = gsap.context(() => {
