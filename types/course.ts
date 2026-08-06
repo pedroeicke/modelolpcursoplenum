@@ -66,11 +66,20 @@ export interface PartnerLogo {
 }
 
 // --- Section Backgrounds ---
+/** Valores por modalidade (sem coluna nova: fica em section_backgrounds.precos) */
+export interface CoursePrices {
+  presencial?: number;
+  online?: number;
+  grupos?: number;
+}
+
 export interface SectionBackgrounds {
   investment?: string;
   testimonials?: string;
   folder?: string;
-  [key: string]: string | undefined;
+  banner_link?: string;
+  precos?: CoursePrices;
+  [key: string]: string | CoursePrices | undefined;
 }
 
 // --- Main Course Type ---

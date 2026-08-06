@@ -171,6 +171,8 @@ export default async function CoursePage({
             backgroundImageUrl={course.background_image_url || undefined}
             productImageUrl={course.product_image_url || undefined}
             price={course.price}
+            modality={course.modality}
+            prices={course.section_backgrounds?.precos}
           />
 
           <FolderForm

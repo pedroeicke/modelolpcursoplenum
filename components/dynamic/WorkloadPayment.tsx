@@ -1,7 +1,7 @@
 'use client';
 
-import { CheckCircle2 } from 'lucide-react';
-import type { IncludedItem } from '@/types/course';
+import { CheckCircle2, MapPin, Monitor, Users } from 'lucide-react';
+import type { IncludedItem, CoursePrices } from '@/types/course';
 
 // ─── Props ─────────────────────────────────────────────
 export interface WorkloadPaymentProps {
@@ -13,6 +13,9 @@ export interface WorkloadPaymentProps {
   productImageUrl?: string;
   ctaText?: string;
   price?: number | null;
+  /** presencial | online | hibrido — define quais linhas de valor aparecem */
+  modality?: string;
+  prices?: CoursePrices;
 }
 
 // ─── Helper: format BRL ────────────────────────────────
@@ -39,7 +42,23 @@ export default function WorkloadPayment({
   productImageUrl,
   ctaText = 'Falar com Consultor',
   price,
+  modality = 'presencial',
+  prices,
 }: WorkloadPaymentProps) {
+  // valor do presencial: campo próprio ou o preço geral do curso
+  const vPresencial = prices?.presencial ?? price ?? null;
+  const vOnline = prices?.online ?? null;
+  const vGrupos = prices?.grupos ?? null;
+
+  const mostraPresencial = modality !== 'online' && vPresencial != null && vPresencial > 0;
+  const mostraOnline = modality !== 'presencial' && vOnline != null && vOnline > 0;
+  const temLinhas = mostraPresencial || mostraOnline;
+
+  const linhas = [
+    mostraPresencial && { Icone: MapPin, rotulo: 'Presencial', valor: vPresencial! },
+    mostraOnline && { Icone: Monitor, rotulo: 'Online ao vivo', valor: vOnline! },
+  ].filter(Boolean) as { Icone: typeof MapPin; rotulo: string; valor: number }[];
+
   return (
     <section id="investimento" className="relative overflow-hidden">
       {/* Gradient transition from previous section */}
@@ -83,15 +102,17 @@ export default function WorkloadPayment({
                 {heading}
               </h2>
 
-              {/* Subtitle */}
-              <p className="text-white/60 text-base md:text-lg leading-relaxed mb-10">
-                {subtitle.split('\n').map((line, i, arr) => (
-                  <span key={i}>
-                    {line}
-                    {i < arr.length - 1 && <br />}
-                  </span>
-                ))}
-              </p>
+              {/* Subtitle — some quando os valores por modalidade assumem o lugar */}
+              {!temLinhas && (
+                <p className="text-white/60 text-base md:text-lg leading-relaxed mb-10">
+                  {subtitle.split('\n').map((line, i, arr) => (
+                    <span key={i}>
+                      {line}
+                      {i < arr.length - 1 && <br />}
+                    </span>
+                  ))}
+                </p>
+              )}
 
               {/* Label */}
               <span className="inline-block px-4 py-1.5 rounded-full text-[var(--ds-primary)] text-[11px] uppercase font-bold tracking-widest mb-5" style={{ backgroundColor: 'var(--ds-primary-10)', borderWidth: '1px', borderColor: 'var(--ds-primary-20)' }}>
@@ -110,13 +131,39 @@ export default function WorkloadPayment({
                 ))}
               </div>
 
-              {/* Price */}
-              {price != null && price > 0 && (
+              {/* Investimento: um valor por modalidade (ícone + rótulo), desconto de grupos abaixo */}
+              {temLinhas && (
                 <div className="mb-8">
-                  <span className="block text-white/50 text-sm mb-1">Investimento</span>
-                  <span className="text-white font-bold tracking-tight text-4xl md:text-5xl">
-                    <span className="text-2xl md:text-3xl align-top mr-1">R$</span>{formatBRL(price)}
-                  </span>
+                  <span className="block text-white/50 text-sm mb-3">Investimento</span>
+
+                  <div className="flex flex-col gap-3">
+                    {linhas.map(({ Icone, rotulo, valor }) => (
+                      <div key={rotulo} className="flex items-center gap-3">
+                        <span
+                          className="w-10 h-10 rounded-full flex items-center justify-center shrink-0"
+                          style={{ backgroundColor: 'var(--ds-primary-10)', border: '1px solid var(--ds-primary-20)' }}
+                        >
+                          <Icone className="w-5 h-5 text-[var(--ds-primary)]" />
+                        </span>
+                        <div className="flex flex-col leading-tight">
+                          <span className="text-white/55 text-[13px] uppercase tracking-wider font-semibold">{rotulo}</span>
+                          <span className="text-white font-bold tracking-tight text-3xl md:text-4xl">
+                            <span className="text-xl md:text-2xl align-top mr-1">R$</span>{formatBRL(valor)}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {vGrupos != null && vGrupos > 0 && (
+                    <div className="flex items-center gap-2 mt-4">
+                      <Users className="w-4 h-4 text-[var(--ds-primary)] shrink-0" />
+                      <span className="text-white/70 text-sm md:text-base">
+                        Desconto para grupos:{' '}
+                        <strong className="text-white font-semibold">R$ {formatBRL(vGrupos)}</strong>
+                      </span>
+                    </div>
+                  )}
                 </div>
               )}
 
