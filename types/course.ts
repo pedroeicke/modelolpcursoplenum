@@ -68,7 +68,12 @@ export interface PartnerLogo {
 // --- Section Backgrounds ---
 /** Valores por modalidade (sem coluna nova: fica em section_backgrounds.precos) */
 export interface CoursePrices {
+  /** valor presencial em destaque (o promocional, quando houver lote) */
   presencial?: number;
+  /** valor cheio do presencial, exibido como referência quando há lote promocional */
+  presencial_normal?: number;
+  /** data limite do lote promocional, ex.: "18/08" */
+  promo_ate?: string;
   online?: number;
   grupos?: number;
 }

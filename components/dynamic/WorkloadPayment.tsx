@@ -54,10 +54,18 @@ export default function WorkloadPayment({
   const mostraOnline = modality !== 'presencial' && vOnline != null && vOnline > 0;
   const temLinhas = mostraPresencial || mostraOnline;
 
+  // nota do lote promocional: "Lote promocional até 18/08 · valor normal R$ 4.490,00"
+  const notaPresencial = prices?.presencial_normal
+    ? [
+        prices.promo_ate ? `Lote promocional até ${prices.promo_ate}` : 'Valor promocional',
+        `valor normal R$ ${formatBRL(prices.presencial_normal)}`,
+      ].join(' · ')
+    : null;
+
   const linhas = [
-    mostraPresencial && { Icone: MapPin, rotulo: 'Presencial', valor: vPresencial! },
-    mostraOnline && { Icone: Monitor, rotulo: 'Online ao vivo', valor: vOnline! },
-  ].filter(Boolean) as { Icone: typeof MapPin; rotulo: string; valor: number }[];
+    mostraPresencial && { Icone: MapPin, rotulo: 'Presencial', valor: vPresencial!, nota: notaPresencial },
+    mostraOnline && { Icone: Monitor, rotulo: 'Online ao vivo', valor: vOnline!, nota: null },
+  ].filter(Boolean) as { Icone: typeof MapPin; rotulo: string; valor: number; nota: string | null }[];
 
   return (
     <section id="investimento" className="relative overflow-hidden">
@@ -137,7 +145,7 @@ export default function WorkloadPayment({
                   <span className="block text-white/50 text-sm mb-3">Investimento</span>
 
                   <div className="flex flex-col gap-3">
-                    {linhas.map(({ Icone, rotulo, valor }) => (
+                    {linhas.map(({ Icone, rotulo, valor, nota }) => (
                       <div key={rotulo} className="flex items-center gap-3">
                         <span
                           className="w-10 h-10 rounded-full flex items-center justify-center shrink-0"
@@ -150,6 +158,9 @@ export default function WorkloadPayment({
                           <span className="text-white font-bold tracking-tight text-3xl md:text-4xl">
                             <span className="text-xl md:text-2xl align-top mr-1">R$</span>{formatBRL(valor)}
                           </span>
+                          {nota && (
+                            <span className="text-white/55 text-[13px] mt-0.5">{nota}</span>
+                          )}
                         </div>
                       </div>
                     ))}
