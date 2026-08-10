@@ -76,6 +76,8 @@ export interface CoursePrices {
   promo_ate?: string;
   online?: number;
   grupos?: number;
+  /** ex.: 'a partir de 3 participantes' */
+  grupos_obs?: string;
 }
 
 export interface SectionBackgrounds {

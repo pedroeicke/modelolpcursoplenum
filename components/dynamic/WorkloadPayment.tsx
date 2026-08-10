@@ -54,13 +54,12 @@ export default function WorkloadPayment({
   const mostraOnline = modality !== 'presencial' && vOnline != null && vOnline > 0;
   const temLinhas = mostraPresencial || mostraOnline;
 
-  // nota do lote promocional: "Lote promocional até 18/08 · valor normal R$ 4.490,00"
-  const notaPresencial = prices?.presencial_normal
-    ? [
-        prices.promo_ate ? `Lote promocional até ${prices.promo_ate}` : 'Valor promocional',
-        `valor normal R$ ${formatBRL(prices.presencial_normal)}`,
-      ].join(' · ')
-    : null;
+  // nota do presencial: lote promocional e/ou valor cheio de referência
+  const partesNota = [
+    prices?.promo_ate ? `Valor promocional até ${prices.promo_ate}` : null,
+    prices?.presencial_normal ? `valor normal R$ ${formatBRL(prices.presencial_normal)}` : null,
+  ].filter(Boolean) as string[];
+  const notaPresencial = partesNota.length ? partesNota.join(' · ') : null;
 
   const linhas = [
     mostraPresencial && { Icone: MapPin, rotulo: 'Presencial', valor: vPresencial!, nota: notaPresencial },
@@ -170,8 +169,9 @@ export default function WorkloadPayment({
                     <div className="flex items-center gap-2 mt-4">
                       <Users className="w-4 h-4 text-[var(--ds-primary)] shrink-0" />
                       <span className="text-white/70 text-sm md:text-base">
-                        Desconto para grupos:{' '}
+                        Grupos:{' '}
                         <strong className="text-white font-semibold">R$ {formatBRL(vGrupos)}</strong>
+                        {prices?.grupos_obs ? ` ${prices.grupos_obs}` : ''}
                       </span>
                     </div>
                   )}
