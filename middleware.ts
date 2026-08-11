@@ -7,11 +7,20 @@ import { type UserRole, hasMinRole } from '@/types/user-roles';
  * Hierarchy: consultor < gerente < admin < dev
  */
 const ROUTE_ACCESS: Array<{ prefix: string; minRole: UserRole }> = [
-  { prefix: '/admin/configuracoes',  minRole: 'admin'   },
-  { prefix: '/admin/leads',          minRole: 'gerente' },
-  { prefix: '/admin/cursos/novo',    minRole: 'gerente' },
-  { prefix: '/admin/cursos/',        minRole: 'gerente' }, // edit/turmas sub-routes
+  { prefix: '/admin/configuracoes',  minRole: 'admin'     },
+  { prefix: '/admin/usuarios',       minRole: 'admin'     },
+  // Área do vendedor: leads/inscrições e a própria conta (trocar senha)
+  { prefix: '/admin/leads',          minRole: 'consultor' },
+  { prefix: '/admin/conta',          minRole: 'consultor' },
+  // Gestão do site fica restrita à gerência
+  { prefix: '/admin/cursos',         minRole: 'gerente'   },
+  { prefix: '/admin/gerar-pdf',      minRole: 'gerente'   },
 ];
+
+/** Vendedor (consultor) não tem dashboard: cai direto na lista de leads */
+function rotaInicial(role: UserRole): string {
+  return role === 'consultor' ? '/admin/leads' : '/admin';
+}
 
 function requiredRole(pathname: string): UserRole {
   for (const rule of ROUTE_ACCESS) {
@@ -62,9 +71,11 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(url);
     }
 
-    // ── Role guard (only for restricted routes) ────────────────────────
+    // ── Role guard ─────────────────────────────────────────────────────
     const minRole = requiredRole(pathname);
-    if (minRole !== 'consultor') {
+    const precisaSaberPapel = minRole !== 'consultor' || pathname === '/admin';
+
+    if (precisaSaberPapel) {
       const { data: profile } = await supabase
         .from('profiles')
         .select('role')
@@ -74,9 +85,16 @@ export async function middleware(request: NextRequest) {
       // Users without a profile are treated as 'dev' (pre-existing admins)
       const userRole: UserRole = (profile?.role as UserRole) ?? 'dev';
 
+      // Dashboard é da gerência: vendedor entra direto na lista de leads
+      if (pathname === '/admin' && !hasMinRole(userRole, 'gerente')) {
+        const url = request.nextUrl.clone();
+        url.pathname = '/admin/leads';
+        return NextResponse.redirect(url);
+      }
+
       if (!hasMinRole(userRole, minRole)) {
         const url = request.nextUrl.clone();
-        url.pathname = '/admin';
+        url.pathname = rotaInicial(userRole);
         url.searchParams.set('error', 'unauthorized');
         return NextResponse.redirect(url);
       }

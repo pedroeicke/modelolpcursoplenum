@@ -8,6 +8,7 @@ import {
   BookOpen,
   Users,
   UserCog,
+  KeyRound,
   Settings,
   FileText,
   LogOut,
@@ -24,12 +25,13 @@ import {
 } from '@/types/user-roles';
 
 const NAV_ITEMS = [
-  { label: 'Dashboard',     href: '/admin',               icon: BarChart2, minRole: 'consultor' as UserRole },
-  { label: 'Cursos',        href: '/admin/cursos',         icon: BookOpen,  minRole: 'consultor' as UserRole },
-  { label: 'Gerar PDF',     href: '/admin/gerar-pdf',      icon: FileText,  minRole: 'consultor' as UserRole },
-  { label: 'Leads',         href: '/admin/leads',          icon: Users,     minRole: 'gerente'   as UserRole },
+  { label: 'Dashboard',     href: '/admin',               icon: BarChart2, minRole: 'gerente'   as UserRole },
+  { label: 'Cursos',        href: '/admin/cursos',         icon: BookOpen,  minRole: 'gerente'   as UserRole },
+  { label: 'Gerar PDF',     href: '/admin/gerar-pdf',      icon: FileText,  minRole: 'gerente'   as UserRole },
+  { label: 'Leads',         href: '/admin/leads',          icon: Users,     minRole: 'consultor' as UserRole },
+  { label: 'Minha conta',   href: '/admin/conta',          icon: KeyRound,  minRole: 'consultor' as UserRole },
   { label: 'Configurações', href: '/admin/configuracoes',  icon: Settings,  minRole: 'admin'     as UserRole },
-  { label: 'Usuários',      href: '/admin/usuarios',       icon: UserCog,   minRole: 'dev'       as UserRole },
+  { label: 'Usuários',      href: '/admin/usuarios',       icon: UserCog,   minRole: 'admin'     as UserRole },
 ];
 
 interface AdminShellProps {

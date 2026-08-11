@@ -10,7 +10,7 @@ import nodemailer from 'nodemailer';
  *   SMTP_USER=contato@plenumbrasil.com.br
  *   SMTP_PASS=senha
  *   SMTP_FROM="Instituto Plenum Brasil <contato@plenumbrasil.com.br>"  (opcional; padrão = SMTP_USER)
- *   PLENUM_NOTIFY_EMAIL=email@que-recebe-avisos.com  (pode ser e-mail de teste; troca depois)
+ *   PLENUM_NOTIFY_EMAIL=um@email.com,outro@email.com  (aceita vários, separados por vírgula)
  */
 
 export function isEmailConfigured(): boolean {
@@ -98,7 +98,12 @@ export async function sendClienteConfirmacao(d: InscricaoEmailData): Promise<boo
 
 /** Aviso para a Plenum de nova inscrição */
 export async function sendPlenumAviso(d: InscricaoEmailData): Promise<boolean> {
-  const to = process.env.PLENUM_NOTIFY_EMAIL;
+  // aceita vários destinatários separados por vírgula (equipe comercial inteira)
+  const to = (process.env.PLENUM_NOTIFY_EMAIL || '')
+    .split(',')
+    .map((e) => e.trim())
+    .filter(Boolean)
+    .join(', ');
   if (!to) {
     console.log('[email] PLENUM_NOTIFY_EMAIL não configurado — pulando aviso interno');
     return false;
