@@ -164,18 +164,20 @@ export async function fetchSiteCourses(): Promise<SiteCourse[]> {
 
   const nameById = new Map<string, string>(instructors.map((i: any) => [i.id, i.name]));
 
-  // primeira turma aberta futura de cada curso (fallback: primeira aberta)
-  const now = Date.now();
+  // Turma encerrada sai do ar sozinha: no dia seguinte ao último dia do curso.
+  // (usa fim do dia do end_date, então durante o evento o curso continua visível)
+  const agora = Date.now();
+  const aindaVale = (d: any) => {
+    const fim = new Date(d.end_date || d.start_date);
+    fim.setHours(23, 59, 59, 999);
+    return fim.getTime() >= agora;
+  };
+  const vigentes = dates.filter(aindaVale);
+
+  // próxima turma vigente de cada curso (as já realizadas foram descartadas acima)
   const turmaByCourse = new Map<string, any>();
-  for (const d of dates) {
-    const isFuture = new Date(d.start_date).getTime() >= now;
-    const current = turmaByCourse.get(d.course_id);
-    if (!current) {
-      turmaByCourse.set(d.course_id, d);
-    } else {
-      const currentFuture = new Date(current.start_date).getTime() >= now;
-      if (isFuture && !currentFuture) turmaByCourse.set(d.course_id, d);
-    }
+  for (const d of vigentes) {
+    if (!turmaByCourse.has(d.course_id)) turmaByCourse.set(d.course_id, d);
   }
 
   const mapped: SiteCourse[] = courses.map((c: any) => {
@@ -215,14 +217,17 @@ export async function fetchSiteCourses(): Promise<SiteCourse[]> {
     };
   });
 
+  // curso sem nenhuma turma vigente não aparece no site
+  const comTurma = mapped.filter((c) => c.startDate);
+
   // próximos primeiro; sem turma no fim
-  mapped.sort((a, b) => {
+  comTurma.sort((a, b) => {
     if (!a.startDate) return 1;
     if (!b.startDate) return -1;
     return new Date(a.startDate).getTime() - new Date(b.startDate).getTime();
   });
 
-  return mapped;
+  return comTurma;
 }
 
 /** Seminários e congressos com turma aberta (banner/carrossel da home) */
