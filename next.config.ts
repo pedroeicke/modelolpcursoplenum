@@ -31,6 +31,32 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  // Links do site antigo (.aspx) continuam funcionando após a troca de domínio.
+  // Os dois ids abaixo são os do 2º Seminário de Obras, usados no site do evento.
+  async redirects() {
+    return [
+      {
+        source: '/inscricao.aspx',
+        has: [{ type: 'query', key: 'id', value: 'NjhsaFhDTzBrRU00UStsbGY2UUljUT09' }],
+        destination: '/inscricao?curso=2-seminario-de-obras-e-servicos-de-engenharia',
+        permanent: true,
+      },
+      {
+        source: '/inscricao.aspx',
+        has: [{ type: 'query', key: 'id', value: 'NjhsaFhDTzBrRVBqVkl2L2hrQlQ0dz09' }],
+        destination: '/inscricao?curso=2-seminario-de-obras-e-servicos-de-engenharia',
+        permanent: true,
+      },
+      { source: '/inscricao.aspx', destination: '/inscricao', permanent: true },
+      { source: '/cursospresenciais.aspx', destination: '/cursos', permanent: true },
+      { source: '/cursos.aspx', destination: '/cursos', permanent: true },
+      { source: '/curso.aspx', destination: '/cursos', permanent: true },
+      { source: '/default.aspx', destination: '/', permanent: true },
+      { source: '/index.aspx', destination: '/', permanent: true },
+      { source: '/contato.aspx', destination: '/#contato', permanent: true },
+    ];
+  },
+
   output: 'standalone',
   transpilePackages: ['motion'],
   webpack: (config, {dev}) => {
