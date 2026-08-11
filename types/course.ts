@@ -78,6 +78,8 @@ export interface CoursePrices {
   grupos?: number;
   /** ex.: 'a partir de 3 participantes' */
   grupos_obs?: string;
+  /** true = valores aparecem só no folder, não na landing page */
+  ocultar_no_site?: boolean;
 }
 
 export interface SectionBackgrounds {

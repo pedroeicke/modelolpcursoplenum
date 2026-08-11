@@ -45,10 +45,11 @@ export default function WorkloadPayment({
   modality = 'presencial',
   prices,
 }: WorkloadPaymentProps) {
-  // valor do presencial: campo próprio ou o preço geral do curso
-  const vPresencial = prices?.presencial ?? price ?? null;
-  const vOnline = prices?.online ?? null;
-  const vGrupos = prices?.grupos ?? null;
+  // curso pode ter valor só no folder — nesse caso a página não exibe nada
+  const ocultar = prices?.ocultar_no_site === true;
+  const vPresencial = ocultar ? null : (prices?.presencial ?? price ?? null);
+  const vOnline = ocultar ? null : (prices?.online ?? null);
+  const vGrupos = ocultar ? null : (prices?.grupos ?? null);
 
   const mostraPresencial = modality !== 'online' && vPresencial != null && vPresencial > 0;
   const mostraOnline = modality !== 'presencial' && vOnline != null && vOnline > 0;
