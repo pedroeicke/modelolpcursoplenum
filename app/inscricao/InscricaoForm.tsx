@@ -100,25 +100,47 @@ export default function InscricaoForm({
       return;
     }
     setEnviando(true);
-    try {
-      const res = await fetch('/api/inscricoes', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          course_id: courseId,
-          course_date_id: turmaId || null,
-          ...form,
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Erro ao enviar. Tente novamente.');
-      setEnviado(true);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    } catch (err) {
-      setErro(err instanceof Error ? err.message : 'Erro ao enviar. Tente novamente.');
-    } finally {
-      setEnviando(false);
+    const corpo = JSON.stringify({
+      course_id: courseId,
+      course_date_id: turmaId || null,
+      ...form,
+    });
+
+    // falha de rede é comum em rede de órgão público: tenta 3x antes de desistir
+    let ultimoErro: unknown = null;
+    for (let tentativa = 1; tentativa <= 3; tentativa++) {
+      try {
+        const res = await fetch('/api/inscricoes', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: corpo,
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          // erro de validação/servidor: repetir não resolve
+          setErro(data.error || 'Não foi possível concluir a inscrição. Tente novamente.');
+          setEnviando(false);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          return;
+        }
+        setEnviado(true);
+        setEnviando(false);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+      } catch (err) {
+        ultimoErro = err;
+        if (tentativa < 3) await new Promise((r) => setTimeout(r, tentativa * 1500));
+      }
     }
+
+    console.error('Falha ao enviar inscrição:', ultimoErro);
+    setErro(
+      'Não conseguimos enviar sua inscrição — parece instabilidade na conexão. ' +
+        'Seus dados continuam preenchidos: aguarde alguns segundos e clique novamente. ' +
+        'Se persistir, fale com a gente pelo WhatsApp (31) 2531-1776.'
+    );
+    setEnviando(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   if (enviado) {
