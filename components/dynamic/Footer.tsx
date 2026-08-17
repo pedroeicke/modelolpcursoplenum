@@ -43,7 +43,9 @@ const defaultColumns: FooterColumn[] = [
 export default function Footer({
   company,
   logoUrl = '/logo-plenum-aberta2.png',
-  description = 'Capacitação em gestão pública com foco em emendas parlamentares, compliance e prestação de contas.',
+  // genérico de propósito: o rodapé é o mesmo em toda LP, não pode citar o tema
+  // de um curso específico como se fosse o daquela página
+  description = 'Capacitação e consultoria para gestores públicos em todo o Brasil.',
   columns = defaultColumns,
 }: FooterProps) {
   const year = new Date().getFullYear();

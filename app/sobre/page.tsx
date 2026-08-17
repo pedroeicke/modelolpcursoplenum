@@ -21,20 +21,8 @@ const aboutStats = [
   { value: "+1.000", label: "instituições" },
 ];
 
-const testimonials = [
-  {
-    quote: "Apliquei no primeiro edital sob a nova lei. Passou sem ressalvas.",
-    person: "Nome · Pregoeira, Prefeitura/MG",
-  },
-  {
-    quote: "O professor vai exatamente na realidade do servidor. Voltei aplicando.",
-    person: "Nome · Controlador, Câmara/GO",
-  },
-  {
-    quote: "Direcionado para aplicabilidade real. Superou minhas expectativas.",
-    person: "Nome · Procuradora, TC ___",
-  },
-];
+// Depoimento só entra com nome e órgão reais, autorizados pelo aluno.
+const testimonials: Array<{ quote: string; person: string }> = [];
 
 const culture = [
   ["1", "Integridade inegociável", "Fazemos o que ensinamos."],
@@ -71,6 +59,7 @@ export default function SobrePage() {
 
       <EcosystemRadial />
 
+      {testimonials.length > 0 && (
       <section className="py-16 lg:py-24">
         <div className="max-w-[1280px] mx-auto px-4">
           <SectionIntro
@@ -95,6 +84,7 @@ export default function SobrePage() {
           </div>
         </div>
       </section>
+      )}
 
       <section className="relative overflow-hidden bg-[#030D1F] py-16 lg:py-24 text-white grain-overlay">
         <div className="glow-spot glow-spot--gold" style={{ width: 480, height: 320, top: -60, left: "40%" }} />

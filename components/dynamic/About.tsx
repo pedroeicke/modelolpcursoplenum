@@ -17,20 +17,15 @@ export interface AboutProps {
 }
 
 // ─── Defaults ──────────────────────────────────────────
-const defaultCards: AboutCard[] = [
-  { icon: 'ShieldCheck', title: 'Segurança Jurídica', description: 'Entenda detalhadamente os novos entendimentos do STF e garanta que cada etapa do processo cumpra integralmente as diretrizes do Tribunal de Contas da União.' },
-  { icon: 'Eye', title: 'Transparência Total', description: 'Aprenda a estruturar fluxos de informação, portais e relatórios que blindam a gestão pública contra acusações de opacidade e irregularidades.' },
-  { icon: 'FileCheck', title: 'Prestação de Contas', description: 'Técnicas práticas para organização documental e aprovação célere de contas, garantindo a viabilidade de repasses futuros para o seu município.' },
-  { icon: 'Scale', title: 'Conformidade Legal', description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ut enim ad minim.' },
-  { icon: 'BookOpen', title: 'Capacitação Prática', description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo.' },
-  { icon: 'Users', title: 'Gestão Colaborativa', description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.' },
-];
+// Sem texto próprio cadastrado a seção não aparece. Default com conteúdo de
+// outro curso (ou lorem ipsum) vazaria para landing pages que não são dele.
+const defaultCards: AboutCard[] = [];
 
 // ─── Component ────────────────────────────────────────
 export default function About({
   cards = defaultCards,
-  heading = 'Domine as Novas Regras de\nExecução Orçamentária',
-  subheading = 'Compreenda as recentes decisões do STF e as normativas do TCU sobre emendas parlamentares.',
+  heading = '',
+  subheading = '',
   iconUrl = '/icon.svg',
 }: AboutProps) {
   const sectionRef = useRef<HTMLElement>(null);
@@ -49,6 +44,8 @@ export default function About({
   }, []);
 
   const headingLines = heading.split('\n');
+
+  if (!heading && cards.length === 0) return null;
 
   return (
     <section ref={sectionRef} id="diferenciais" className="py-24 md:py-32 px-6 md:px-12 bg-[var(--ds-background)] relative overflow-hidden">

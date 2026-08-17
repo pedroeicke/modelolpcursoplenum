@@ -38,6 +38,8 @@ export interface SiteCourse {
   hasBannerArt: boolean;
   /** link externo do banner (ex.: site próprio do seminário); vazio = página interna */
   bannerLink: string;
+  /** marcado no admin para subir ao banner da home mesmo sendo curso comum */
+  destaqueHome: boolean;
 }
 
 const FALLBACK_IMAGE =
@@ -212,6 +214,7 @@ export async function fetchSiteCourses(): Promise<SiteCourse[]> {
       hasCover: !!c.cover_image_url,
       hasBannerArt: !!c.banner_image_url,
       bannerLink: (c.section_backgrounds && c.section_backgrounds.banner_link) || "",
+      destaqueHome: !!(c.section_backgrounds && c.section_backgrounds.destaque_home),
       bannerImage:
         c.banner_image_url || c.cover_image_url || c.background_image_url || c.og_image_url || FALLBACK_IMAGE,
     };
@@ -230,10 +233,18 @@ export async function fetchSiteCourses(): Promise<SiteCourse[]> {
   return comTurma;
 }
 
-/** Seminários e congressos com turma aberta (banner/carrossel da home) */
-export async function fetchUpcomingSeminars(limit = 5): Promise<SiteCourse[]> {
+/**
+ * Banner/carrossel da home: seminários e congressos com turma aberta, mais os
+ * cursos marcados como destaque no admin (section_backgrounds.destaque_home).
+ * Os destaques vêm primeiro. Sem nada aqui, a home não mostra a seção — o
+ * banner nunca exibe evento que a Plenum não tem.
+ */
+export async function fetchHomeBanner(limit = 5): Promise<SiteCourse[]> {
   const all = await fetchSiteCourses();
-  return all
-    .filter((c) => c.startDate && (c.tipo === "seminario" || c.tipo === "congresso"))
-    .slice(0, limit);
+  const naVitrine = all.filter(
+    (c) => c.destaqueHome || c.tipo === "seminario" || c.tipo === "congresso"
+  );
+  // destaque manda no topo; o resto segue a ordem cronológica que já vinha
+  naVitrine.sort((a, b) => Number(b.destaqueHome) - Number(a.destaqueHome));
+  return naVitrine.slice(0, limit);
 }

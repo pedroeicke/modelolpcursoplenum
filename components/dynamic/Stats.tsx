@@ -11,16 +11,9 @@ export interface StatsProps {
 }
 
 // ─── Defaults (mirror original hardcoded data) ────────
-const defaultLogos: PartnerLogo[] = [
-  { name: 'Órgão 1', url: '/logos/logo1.png' },
-  { name: 'Órgão 2', url: '/logos/logo2.png' },
-  { name: 'Órgão 3', url: '/logos/logo3.png' },
-  { name: 'Órgão 4', url: '/logos/logo4.png' },
-  { name: 'Órgão 5', url: '/logos/logo5.png' },
-  { name: 'Órgão 6', url: '/logos/logo6.png' },
-  { name: 'Órgão 7', url: '/logos/logo7.png' },
-  { name: 'Órgão 8', url: '/logos/logo8.png' },
-];
+// "Órgão 1..8" apontavam para arquivos que não existem — 8 imagens quebradas
+// embaixo de "Instituições que já se capacitaram conosco".
+const defaultLogos: PartnerLogo[] = [];
 
 // ─── Component ────────────────────────────────────────
 export default function Stats({
@@ -47,6 +40,8 @@ export default function Stats({
 
   // Split heading on newlines for <br />
   const headingLines = heading.split('\n');
+
+  if (logos.length === 0) return null;
 
   return (
     <section className="py-12 px-6 md:px-12 relative overflow-hidden bg-[var(--ds-background)]">

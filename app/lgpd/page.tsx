@@ -118,13 +118,13 @@ export default function LgpdPage() {
         <div className="max-w-[1280px] mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-8 border-t border-[#030D1F]/[0.06] pt-10">
           <div className="reveal">
             <p className="text-label text-[#8a6e1a] mb-3">Encarregado (DPO)</p>
-            <h2 className="font-display text-[26px] leading-tight mb-2">Nome Sobrenome</h2>
-            <p className="text-sm text-[#555]">dpo@plenumbrasil.com.br · conheça o DPO na página de Liderança</p>
+            <h2 className="font-display text-[26px] leading-tight mb-2">Instituto Plenum Brasil</h2>
+            <p className="text-sm text-[#555]">dpo@plenumbrasil.com.br</p>
           </div>
           <div className="reveal" data-reveal-delay="80">
             <p className="text-label text-[#8a6e1a] mb-3">Controlador</p>
             <h2 className="font-display text-[26px] leading-tight mb-2">Instituto Plenum Brasil</h2>
-            <p className="text-sm text-[#555]">CNPJ XX.XXX.XXX/0001-XX · Rua Espírito Santo, 1204 · Centro · Belo Horizonte/MG</p>
+            <p className="text-sm text-[#555]">Rua Espírito Santo, 1204 · 2º andar · Lourdes · Belo Horizonte/MG · CEP 30.160-033</p>
           </div>
         </div>
       </section>

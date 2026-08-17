@@ -70,7 +70,7 @@ export default function AlumniPage() {
               Qual o limite de dispensa por valor em 2026?
             </div>
             <div className="w-fit max-w-[90%] rounded-[16px] rounded-tl-sm border border-[#C9A227]/20 bg-[#C9A227]/10 p-4 text-sm text-white/85">
-              Para obras e serviços de engenharia, R$ ___; para outros, R$ ___. Quer o fundamento legal?
+              Depende do objeto: obras e serviços de engenharia têm limite próprio, distinto do de compras e serviços em geral. Quer o valor vigente e o fundamento legal?
             </div>
             <p className="mt-4 text-xs text-white/35">Exclusivo para membros da rede</p>
           </div>

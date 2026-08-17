@@ -14,7 +14,7 @@ import WhatsappFinal from "@/components/sections/WhatsappFinal";
 import Footer from "@/components/sections/Footer";
 import WhatsAppFloat from "@/components/sections/WhatsAppFloat";
 import { getInstagramPosts } from "@/lib/instagram";
-import { fetchSiteCourses, fetchUpcomingSeminars } from "@/lib/courses-db";
+import { fetchSiteCourses, fetchHomeBanner } from "@/lib/courses-db";
 
 export const revalidate = 300;
 
@@ -24,12 +24,16 @@ export default async function Home() {
   // Cursos reais (ordenados pela turma mais próxima) → vitrine da Academy
   const courses = await fetchSiteCourses();
 
-  // Seminários e congressos com turma aberta (cadastrados no admin) → banner
-  const seminars = await fetchUpcomingSeminars(5);
-  const homeEvents = seminars.map((c) => ({
+  // Banner: seminários/congressos + cursos marcados como destaque no admin.
+  // Vazio = a seção some da home (nada fictício no lugar).
+  const destaques = await fetchHomeBanner(5);
+  const homeEvents = destaques.map((c) => ({
     id: c.id,
     title: c.title,
-    badge: [c.tipo === "congresso" ? "Congresso" : "Seminário", c.month]
+    badge: [
+      c.tipo === "congresso" ? "Congresso" : c.tipo === "seminario" ? "Seminário" : "Curso",
+      c.month,
+    ]
       .filter(Boolean)
       .join(" · ")
       .toUpperCase(),

@@ -5,17 +5,6 @@ import Image from "next/image";
 import { gsap } from "@/lib/gsap";
 import type { InstagramPost } from "@/types/instagram";
 
-const FALLBACK_IMAGES = [
-    "https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=600&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?q=80&w=600&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=600&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1577985043696-8bd54d9f093f?q=80&w=600&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=600&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=600&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1552581234-26160f608093?q=80&w=600&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=600&auto=format&fit=crop",
-];
-
 interface InstagramProps {
     posts?: InstagramPost[];
 }
@@ -38,22 +27,17 @@ export default function Instagram({ posts }: InstagramProps) {
         return () => ctx.revert();
     }, []);
 
-    // Build items: use API posts if available, otherwise fallback images
-    const items = hasPosts
-        ? posts.slice(0, 8).map((post) => ({
-            id: post.id,
-            src: post.media_type === "VIDEO" ? post.thumbnail_url! : post.media_url,
-            href: post.permalink,
-            alt: post.caption || "Instagram post",
-            caption: post.caption,
-        }))
-        : FALLBACK_IMAGES.map((img, i) => ({
-            id: String(i),
-            src: img,
-            href: "https://instagram.com/plenumbrasil",
-            alt: "",
-            caption: undefined as string | undefined,
-        }));
+    // Só post real do @plenumbrasil. Sem retorno da API, a seção inteira some —
+    // foto de banco de imagens sob o nome do perfil passaria por post da Plenum.
+    if (!hasPosts) return null;
+
+    const items = posts.slice(0, 8).map((post) => ({
+        id: post.id,
+        src: post.media_type === "VIDEO" ? post.thumbnail_url! : post.media_url,
+        href: post.permalink,
+        alt: post.caption || "Instagram post",
+        caption: post.caption,
+    }));
 
     return (
         <section ref={sectionRef} className="bg-[#F1F1F1] py-12 lg:py-24">

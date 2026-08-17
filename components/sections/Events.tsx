@@ -2,37 +2,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 
-const EVENTS = [
-    {
-        id: 1,
-        title: "Congresso Nacional de Gestão Pública",
-        badge: "CONGRESSO · MAIO 2026",
-        description: "Inovação, liderança e IA em debate.",
-        image: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=2070&auto=format&fit=crop",
-        url: "/cursos?tipo=seminario",
-    },
-    {
-        id: 2,
-        title: "Nova Lei de Licitações na prática",
-        badge: "LICITAÇÕES",
-        description: "Formações presenciais para equipes que precisam dominar planejamento, julgamento e execução.",
-        image: "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?q=80&w=2070&auto=format&fit=crop",
-        url: "/cursos",
-    },
-    {
-        id: 3,
-        title: "IA aplicada ao setor público",
-        badge: "GOVTECH",
-        description: "Uma nova frente para gestores que querem usar agentes, dados e tecnologia com responsabilidade.",
-        image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=2070&auto=format&fit=crop",
-        url: "/govtech",
-    },
-];
-
 type EventItem = { id: string | number; title: string; badge: string; description: string; image: string; url: string; clean?: boolean };
 
 export default function Events({ events }: { events?: EventItem[] }) {
-    const slides: EventItem[] = events && events.length > 0 ? events : EVENTS;
+    // Só evento real, cadastrado no admin. Sem nenhum, a seção inteira não é
+    // renderizada — nunca inventar curso/congresso que a Plenum não tem.
+    const slides: EventItem[] = events || [];
     const [current, setCurrent] = useState(0);
     const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
     const touchStartX = useRef(0);
@@ -49,6 +24,8 @@ export default function Events({ events }: { events?: EventItem[] }) {
         resetTimer();
         return () => { if (timerRef.current) clearInterval(timerRef.current); };
     }, [resetTimer]);
+
+    if (slides.length === 0) return null;
 
     return (
         <section id="eventos" className="events-section overflow-hidden relative bg-[#F1F1F1] py-10 lg:py-16">
@@ -83,7 +60,10 @@ export default function Events({ events }: { events?: EventItem[] }) {
                                 />
                             ) : (
                             <>
-                            <div className="absolute inset-0 bg-gradient-to-r from-[#030D1F]/88 via-[#030D1F]/52 to-[#030D1F]/18" />
+                            {/* véu forte: a capa do curso é vertical e traz o próprio
+                                título — sem isso o texto do banner duplica em cima da arte */}
+                            <div className="absolute inset-0 bg-[#030D1F]/55" />
+                            <div className="absolute inset-0 bg-gradient-to-r from-[#030D1F]/92 via-[#030D1F]/72 to-[#030D1F]/45" />
                             <div className={`absolute inset-0 flex flex-col justify-center px-6 md:px-14 lg:px-20 transition-all duration-500 delay-200 ${i === current ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}>
                                 <div className="max-w-[620px]">
                                     <span className="inline-flex items-center gap-2 px-4 py-2 bg-white/12 backdrop-blur-md border border-white/25 rounded-full text-[11px] font-semibold tracking-[0.2em] text-white uppercase mb-5">

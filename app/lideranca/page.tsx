@@ -7,7 +7,14 @@ export const metadata = {
   description: "Quem conduz a escola que forma líderes públicos.",
 };
 
-const leaders = [
+const leaders: Array<{
+  initials: string;
+  name: string;
+  role: string;
+  bio: string;
+  tags: string[];
+  highlight?: boolean;
+}> = [
   {
     initials: "AA",
     name: "André Azevedo",
@@ -15,35 +22,8 @@ const leaders = [
     bio: "Conduz a transformação da escola em plataforma de educação, inovação e IA.",
     tags: ["14 anos de setor público"],
   },
-  {
-    initials: "NS",
-    name: "Nome Sobrenome",
-    role: "Diretor Jurídico",
-    bio: "Responde pela segurança jurídica das formações e consultorias.",
-    tags: ["OAB/MG", "Mestre"],
-  },
-  {
-    initials: "NS",
-    name: "Nome Sobrenome",
-    role: "Coord. Acadêmico",
-    bio: "Curadoria do corpo docente e do método de aplicação prática.",
-    tags: ["Doutor"],
-  },
-  {
-    initials: "NS",
-    name: "Nome Sobrenome",
-    role: "Diretora Administrativa",
-    bio: "Comanda a operação, da recepção ao pós-curso.",
-    tags: ["Gente que cuida de gente"],
-  },
-  {
-    initials: "NS",
-    name: "Nome Sobrenome",
-    role: "Encarregado (DPO)",
-    bio: "Zela pelos dados, nos termos da LGPD. dpo@plenumbrasil.com.br",
-    tags: ["LGPD · Art. 41"],
-    highlight: true,
-  },
+  // Demais nomes entram quando a Plenum informar. Nunca deixar card genérico
+  // ("Nome Sobrenome") no ar — passa por pessoa real que não existe.
 ];
 
 const seats = [

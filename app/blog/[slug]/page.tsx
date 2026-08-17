@@ -63,7 +63,11 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                 <h1 className="text-[32px] md:text-[46px] font-display font-semibold leading-[1.08] tracking-[-0.02em] text-[#111] mb-4">{post.title}</h1>
                 <p className="text-[19px] md:text-[21px] leading-[1.45] text-[#555] mb-8">{post.subtitle}</p>
                 <div className="flex items-center gap-4 mb-8 pb-8 border-b border-[#eee]">
-                    <div className="relative w-11 h-11 rounded-full overflow-hidden"><Image src={post.author.avatar} alt={post.author.name} fill className="object-cover" /></div>
+                    {/* sem foto: o avatar vinha de banco de imagens e mostrava o
+                        rosto de um desconhecido como se fosse da Equipe Plenum */}
+                    <div className="flex w-11 h-11 shrink-0 items-center justify-center rounded-full bg-[#030D1F] text-[13px] font-semibold text-[#C9A227]">
+                        {post.author.name.split(" ").slice(0, 2).map((p) => p[0]).join("")}
+                    </div>
                     <div>
                         <p className="text-[14px] font-semibold text-[#111]">{post.author.name}</p>
                         <p className="text-[13px] text-[#888]">{post.author.role} · {post.date} · {post.readTime} de leitura</p>
