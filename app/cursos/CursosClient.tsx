@@ -46,6 +46,16 @@ function CursosContent({ courses }: { courses: SiteCourse[] }) {
     });
 
     const months = useMemo(() => [...new Set(courses.map((course) => course.month))], [courses]);
+
+    // agenda separada por mês ("Agosto 2026", "Setembro 2026"...) — os cursos já vêm
+    // ordenados por data, então a ordem dos grupos sai cronológica sozinha
+    const gruposPorMes: Array<[string, SiteCourse[]]> = [];
+    for (const course of filtered) {
+        const ultimo = gruposPorMes[gruposPorMes.length - 1];
+        if (ultimo && ultimo[0] === course.month) ultimo[1].push(course);
+        else gruposPorMes.push([course.month, [course]]);
+    }
+
     const hasActiveFilters = activeAudience !== "Todos" || activeArea !== "Todas" || activeModality !== "Todos" || activeLocation !== "Todas" || activeMonth !== null || searchQuery !== "";
     const clearAll = () => {
         setActiveAudience("Todos");
@@ -164,8 +174,23 @@ function CursosContent({ courses }: { courses: SiteCourse[] }) {
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6 mb-14">
-                            {filtered.map((course) => (
+                {gruposPorMes.map(([mes, cursosDoMes]) => {
+                    const [nomeMes, ano] = mes.split(" ");
+                    return (
+                    <section key={mes} className="mb-12 lg:mb-14">
+                        <div className="flex items-baseline gap-3 sm:gap-4 mb-5">
+                            <h2 className="text-[26px] lg:text-[34px] font-display font-semibold text-[#030D1F] uppercase tracking-tight leading-none">
+                                {nomeMes}
+                                {ano && <span className="ml-2 text-[#030D1F]/30 font-normal">{ano}</span>}
+                            </h2>
+                            <span className="shrink-0 text-[11px] font-semibold uppercase tracking-wider text-[#888]">
+                                {cursosDoMes.length} {cursosDoMes.length === 1 ? "curso" : "cursos"}
+                            </span>
+                            <span className="flex-1 h-px bg-[#030D1F]/10" />
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
+                            {cursosDoMes.map((course) => (
                                 <a key={course.id} href={course.url} className="group relative block h-[450px] sm:h-[490px] lg:h-[520px] rounded-[20px] sm:rounded-[24px] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.25)] hover:shadow-[0_24px_60px_rgba(0,0,0,0.35),0_0_0_3px_rgba(255,255,255,0.9),0_0_40px_rgba(201,162,39,0.5)] hover:-translate-y-1 transition-all duration-300 cursor-pointer">
                                     <img src={course.image} alt={course.title} className="absolute inset-0 w-full h-full object-cover group-hover:brightness-[1.08] transition-[filter] duration-300" draggable={false} />
                                     <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-[0.18] transition-opacity duration-300 pointer-events-none z-[5]" />
@@ -190,7 +215,10 @@ function CursosContent({ courses }: { courses: SiteCourse[] }) {
                                     )}
                                 </a>
                             ))}
-                </div>
+                        </div>
+                    </section>
+                    );
+                })}
 
                 {filtered.length === 0 && (
                     <div className="text-center py-20">
