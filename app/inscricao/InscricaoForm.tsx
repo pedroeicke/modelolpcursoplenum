@@ -75,6 +75,8 @@ export default function InscricaoForm({
     vencimento_igual_inicio: false,
   });
 
+  const [buscandoCep, setBuscandoCep] = useState(false);
+  const [erroCep, setErroCep] = useState<string | null>(null);
   const [enviando, setEnviando] = useState(false);
   const [enviado, setEnviado] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
@@ -97,6 +99,41 @@ export default function InscricaoForm({
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) {
     const t = e.target;
     set(t.name, t.type === 'checkbox' ? (t as HTMLInputElement).checked : t.value);
+  }
+
+  /** Digitou o CEP: formata 00000-000 e completa endereço, bairro, cidade e UF. */
+  function handleCepChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const so_numeros = e.target.value.replace(/\D/g, '').slice(0, 8);
+    const formatado = so_numeros.length > 5 ? `${so_numeros.slice(0, 5)}-${so_numeros.slice(5)}` : so_numeros;
+    set('cep', formatado);
+    setErroCep(null);
+    if (so_numeros.length === 8) buscaCep(so_numeros);
+  }
+
+  async function buscaCep(cep: string) {
+    setBuscandoCep(true);
+    try {
+      const res = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+      const d = await res.json();
+      if (d.erro) {
+        setErroCep('CEP não encontrado. Preencha o endereço manualmente.');
+        return;
+      }
+      setForm((f) => ({
+        ...f,
+        endereco: d.logradouro || f.endereco,
+        bairro: d.bairro || f.bairro,
+        cidade: d.localidade || f.cidade,
+        uf: d.uf || f.uf,
+        // município/estado da instituição costumam ser os mesmos; só preenche se vazios
+        municipio: f.municipio || d.localidade || '',
+        estado: f.estado || d.uf || '',
+      }));
+    } catch {
+      setErroCep('Não deu para consultar o CEP agora. Preencha o endereço manualmente.');
+    } finally {
+      setBuscandoCep(false);
+    }
   }
 
   function handleCursoChange(e: React.ChangeEvent<HTMLSelectElement>) {
@@ -339,7 +376,11 @@ export default function InscricaoForm({
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             <div>
               <label className={labelCls}>CEP *</label>
-              <input type="text" name="cep" required value={form.cep} onChange={handleChange} placeholder="00000-000" className={inputCls} />
+              <div className="relative">
+                <input type="text" name="cep" required value={form.cep} onChange={handleCepChange} inputMode="numeric" maxLength={9} placeholder="00000-000" className={inputCls} />
+                {buscandoCep && <Loader2 className="w-4 h-4 animate-spin absolute right-3 top-1/2 -translate-y-1/2" style={{ color: GOLD }} />}
+              </div>
+              {erroCep && <p className="mt-1 text-xs text-amber-700">{erroCep}</p>}
             </div>
             <div className="md:col-span-2">
               <label className={labelCls}>Endereço *</label>

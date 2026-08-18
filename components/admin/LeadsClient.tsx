@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Search, X } from 'lucide-react';
 import { leModalidade } from '@/lib/inscricao-modalidade';
 import {
   Table,
@@ -97,6 +97,7 @@ export default function LeadsClient({
   cursos: CursoOpcao[];
 }) {
   const [cursoId, setCursoId] = useState('todos');
+  const [busca, setBusca] = useState('');
 
   const courseMap = useMemo(
     () => new Map(cursos.map((c) => [c.id, c.title])),
@@ -113,18 +114,30 @@ export default function LeadsClient({
       .sort((a, b) => a.title.localeCompare(b.title, 'pt-BR'));
   }, [cursos, inscricoes, leads]);
 
-  const inscricoesFiltradas = useMemo(
-    () =>
-      cursoId === 'todos'
-        ? inscricoes
-        : inscricoes.filter((i) => i.course_id === cursoId),
-    [inscricoes, cursoId]
-  );
+  const termo = busca.trim().toLowerCase();
 
-  const leadsFiltrados = useMemo(
-    () => (cursoId === 'todos' ? leads : leads.filter((l) => l.course_id === cursoId)),
-    [leads, cursoId]
-  );
+  const inscricoesFiltradas = useMemo(() => {
+    let lista = cursoId === 'todos' ? inscricoes : inscricoes.filter((i) => i.course_id === cursoId);
+    if (termo) {
+      lista = lista.filter((i) =>
+        [i.resp_email, i.resp_nome, i.razao_social, i.cnpj, i.resp_telefone, i.municipio]
+          .join(' ')
+          .toLowerCase()
+          .includes(termo)
+      );
+    }
+    return lista;
+  }, [inscricoes, cursoId, termo]);
+
+  const leadsFiltrados = useMemo(() => {
+    let lista = cursoId === 'todos' ? leads : leads.filter((l) => l.course_id === cursoId);
+    if (termo) {
+      lista = lista.filter((l) =>
+        [l.email, l.nome, l.orgao, l.whatsapp, l.cidade].join(' ').toLowerCase().includes(termo)
+      );
+    }
+    return lista;
+  }, [leads, cursoId, termo]);
 
   const contaInscricoes = (id: string) =>
     id === 'todos' ? inscricoes.length : inscricoes.filter((i) => i.course_id === id).length;
@@ -141,6 +154,36 @@ export default function LeadsClient({
             {leadsFiltrados.length} lead{leadsFiltrados.length !== 1 ? 's' : ''}
             {cursoId !== 'todos' && ' neste curso'}
           </p>
+        </div>
+
+        <div className="min-w-[300px] flex-1 max-w-md">
+          <label
+            htmlFor="busca-cliente"
+            className="block text-[11px] uppercase tracking-wide text-gray-400 font-semibold mb-1"
+          >
+            Buscar cliente
+          </label>
+          <div className="relative">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+            <input
+              id="busca-cliente"
+              type="search"
+              value={busca}
+              onChange={(e) => setBusca(e.target.value)}
+              placeholder="E-mail, nome, órgão, CNPJ ou telefone"
+              className="h-10 w-full rounded-md border border-gray-300 bg-white pl-9 pr-9 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            />
+            {busca && (
+              <button
+                type="button"
+                onClick={() => setBusca('')}
+                aria-label="Limpar busca"
+                className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-gray-400 hover:text-gray-700"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
+          </div>
         </div>
 
         <div className="min-w-[260px]">
@@ -193,9 +236,11 @@ export default function LeadsClient({
             <CardContent>
               {inscricoesFiltradas.length === 0 ? (
                 <p className="text-sm text-gray-500 py-8 text-center">
-                  {cursoId === 'todos'
-                    ? 'Nenhuma inscrição recebida ainda.'
-                    : 'Nenhuma inscrição neste curso ainda.'}
+                  {termo
+                    ? `Nenhuma inscrição encontrada para "${busca.trim()}".`
+                    : cursoId === 'todos'
+                      ? 'Nenhuma inscrição recebida ainda.'
+                      : 'Nenhuma inscrição neste curso ainda.'}
                 </p>
               ) : (
                 <div className="space-y-3">
@@ -313,9 +358,11 @@ export default function LeadsClient({
             <CardContent>
               {leadsFiltrados.length === 0 ? (
                 <p className="text-sm text-gray-500 py-8 text-center">
-                  {cursoId === 'todos'
-                    ? 'Nenhum lead capturado ainda.'
-                    : 'Nenhum lead neste curso ainda.'}
+                  {termo
+                    ? `Nenhum lead encontrado para "${busca.trim()}".`
+                    : cursoId === 'todos'
+                      ? 'Nenhum lead capturado ainda.'
+                      : 'Nenhum lead neste curso ainda.'}
                 </p>
               ) : (
                 <div className="overflow-x-auto">
