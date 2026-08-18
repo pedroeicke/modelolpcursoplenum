@@ -134,3 +134,71 @@ export async function sendPlenumAviso(d: InscricaoEmailData): Promise<boolean> {
   `);
   return send(to, `Nova inscrição — ${d.cursoTitulo} (${d.respNome})`, html);
 }
+
+// ─── Trabalhe Conosco ─────────────────────────────────────
+
+export interface VagaEmailData {
+  nome: string;
+  email: string;
+  whatsapp?: string | null;
+  interesse: string;
+  area?: string | null;
+  linkedin?: string | null;
+  mensagem?: string | null;
+  /** link temporário para baixar o currículo anexado */
+  curriculoUrl?: string | null;
+  curriculoNome?: string | null;
+}
+
+const linha = (rotulo: string, valor?: string | null) =>
+  valor
+    ? `<tr><td style="padding:6px 12px 6px 0;color:#64748b;white-space:nowrap;vertical-align:top">${rotulo}</td><td style="padding:6px 0">${valor}</td></tr>`
+    : '';
+
+/** Aviso para a Plenum de um novo interesse em vaga */
+export async function sendVagaAviso(d: VagaEmailData): Promise<boolean> {
+  const to = (process.env.PLENUM_VAGAS_EMAIL || process.env.PLENUM_NOTIFY_EMAIL || 'plenumbrasil@gmail.com')
+    .split(',')
+    .map((e) => e.trim())
+    .filter(Boolean)
+    .join(', ');
+
+  const html = wrapper(`
+    <h2 style="margin:0 0 16px">📄 Novo interesse em vaga</h2>
+    <div style="background:#f8fafc;border-left:4px solid #C9A227;padding:16px;margin:16px 0">
+      <strong style="font-size:16px">${d.nome}</strong><br/>
+      <span style="color:#64748b">${d.interesse}</span>
+    </div>
+    <table style="width:100%;font-size:14px;border-collapse:collapse">
+      ${linha('E-mail', `<a href="mailto:${d.email}">${d.email}</a>`)}
+      ${linha('WhatsApp', d.whatsapp)}
+      ${linha('Área / cargo', d.area)}
+      ${linha('LinkedIn', d.linkedin ? `<a href="${d.linkedin}">${d.linkedin}</a>` : null)}
+      ${linha('Currículo', d.curriculoUrl ? `<a href="${d.curriculoUrl}">${d.curriculoNome || 'baixar arquivo'}</a>` : 'não anexou')}
+    </table>
+    ${
+      d.mensagem
+        ? `<div style="margin-top:20px"><p style="margin:0 0 6px;color:#64748b;font-size:14px">Mensagem</p>
+           <div style="background:#f8fafc;padding:14px;border-radius:8px;font-size:14px;white-space:pre-line">${d.mensagem}</div></div>`
+        : ''
+    }
+    <p style="margin-top:24px;font-size:13px;color:#64748b">Responda direto para <a href="mailto:${d.email}">${d.email}</a>.</p>
+  `);
+
+  return send(to, `Trabalhe Conosco — ${d.nome} (${d.interesse})`, html);
+}
+
+/** Confirmação para quem se candidatou */
+export async function sendVagaConfirmacao(d: VagaEmailData): Promise<boolean> {
+  const html = wrapper(`
+    <h2 style="margin:0 0 16px">Recebemos o seu interesse! ✅</h2>
+    <p>Olá, <strong>${d.nome.split(' ')[0]}</strong>!</p>
+    <p>O seu cadastro chegou para o nosso time como <strong>${d.interesse}</strong>${
+      d.area ? ` na área de <strong>${d.area}</strong>` : ''
+    }.</p>
+    <p>Analisamos todos os currículos que recebemos e entramos em contato assim que surgir uma oportunidade com o seu perfil. O seu cadastro fica no nosso banco de talentos.</p>
+    <p style="margin-top:24px">Enquanto isso, conheça o nosso trabalho em
+      <a href="https://www.plenumbrasil.com.br">plenumbrasil.com.br</a>.</p>
+  `);
+  return send(d.email, 'Recebemos o seu interesse — Instituto Plenum Brasil', html);
+}

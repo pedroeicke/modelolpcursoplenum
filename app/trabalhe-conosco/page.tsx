@@ -1,4 +1,5 @@
-import { ArrowRight, BriefcaseBusiness, GraduationCap, Paperclip } from "lucide-react";
+import { BriefcaseBusiness, GraduationCap } from "lucide-react";
+import VagaForm from "@/components/institutional/VagaForm";
 import {
   PageHero,
   PageShell,
@@ -83,33 +84,7 @@ export default function TrabalheConoscoPage() {
             </article>
           </div>
 
-          <div className="reveal mx-auto max-w-2xl card-light p-6 lg:p-8">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#8a6e1a] mb-5">Formulário de interesse</p>
-            <form className="space-y-3">
-              <input className="w-full rounded-[14px] border border-[#030D1F]/10 bg-white px-4 py-3 text-sm outline-none transition-colors focus:border-[#C9A227]" placeholder="Nome completo" />
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <input className="w-full rounded-[14px] border border-[#030D1F]/10 bg-white px-4 py-3 text-sm outline-none transition-colors focus:border-[#C9A227]" placeholder="E-mail" />
-                <input className="w-full rounded-[14px] border border-[#030D1F]/10 bg-white px-4 py-3 text-sm outline-none transition-colors focus:border-[#C9A227]" placeholder="WhatsApp" />
-              </div>
-              <select className="w-full rounded-[14px] border border-[#C9A227]/25 bg-[#030D1F] px-4 py-3 text-sm text-white outline-none">
-                <option>Interesse: Professor / Palestrante</option>
-                <option>Interesse: Time administrativo e comercial</option>
-              </select>
-              <input className="w-full rounded-[14px] border border-[#030D1F]/10 bg-white px-4 py-3 text-sm outline-none transition-colors focus:border-[#C9A227]" placeholder="Área de especialidade ou cargo de interesse" />
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <input className="w-full rounded-[14px] border border-[#030D1F]/10 bg-white px-4 py-3 text-sm outline-none transition-colors focus:border-[#C9A227]" placeholder="LinkedIn" />
-                <button type="button" className="flex items-center justify-center gap-2 rounded-[14px] border border-[#030D1F]/10 bg-white px-4 py-3 text-sm text-[#555] transition-colors hover:border-[#C9A227]">
-                  <Paperclip className="h-4 w-4 text-[#C9A227]" />
-                  Anexar currículo
-                </button>
-              </div>
-              <textarea className="min-h-28 w-full rounded-[14px] border border-[#030D1F]/10 bg-white px-4 py-3 text-sm outline-none transition-colors focus:border-[#C9A227]" placeholder="Por que você é mão na massa?" />
-              <button type="button" className="pl-btn-primary w-full justify-center">
-                Enviar interesse
-                <ArrowRight className="w-4 h-4" />
-              </button>
-            </form>
-          </div>
+          <VagaForm />
         </div>
       </section>
 
