@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/server';
 import { sendClienteConfirmacao, sendPlenumAviso, type InscricaoEmailData } from '@/lib/email';
+import { comModalidade, LABEL_MODALIDADE, type Modalidade } from '@/lib/inscricao-modalidade';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -92,7 +93,7 @@ export async function POST(request: NextRequest) {
       resp_cpf: body.resp_cpf,
       resp_email: body.resp_email,
       resp_telefone: body.resp_telefone,
-      observacoes: body.observacoes || null,
+      observacoes: comModalidade(body.observacoes, body.modalidade),
       forma_pagamento: body.forma_pagamento,
       data_nota_fiscal: body.data_nota_fiscal || null,
       vencimento_igual_inicio: !!body.vencimento_igual_inicio,
@@ -125,6 +126,10 @@ export async function POST(request: NextRequest) {
       municipio: body.municipio,
       estado: body.estado,
       formaPagamento: body.forma_pagamento,
+      modalidade:
+        body.modalidade === 'online' || body.modalidade === 'presencial'
+          ? LABEL_MODALIDADE[body.modalidade as Modalidade]
+          : null,
     };
 
     const [clienteOk, plenumOk] = await Promise.all([

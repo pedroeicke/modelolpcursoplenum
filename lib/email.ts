@@ -75,6 +75,8 @@ export interface InscricaoEmailData {
   municipio: string;
   estado: string;
   formaPagamento: string;
+  /** Presencial | Online — como o inscrito vai participar */
+  modalidade?: string | null;
 }
 
 /** Confirmação para o cliente que se inscreveu */
@@ -85,7 +87,9 @@ export async function sendClienteConfirmacao(d: InscricaoEmailData): Promise<boo
     <p>Recebemos a sua inscrição no curso:</p>
     <div style="background:#f8fafc;border-left:4px solid #10b981;padding:16px;margin:16px 0">
       <strong style="font-size:16px">${d.cursoTitulo}</strong><br/>
-      <span style="color:#64748b">Turma: ${d.turmaLabel}</span>
+      <span style="color:#64748b">Turma: ${d.turmaLabel}</span>${
+        d.modalidade ? `<br/><span style="color:#64748b">Modalidade: <strong>${d.modalidade}</strong></span>` : ''
+      }
     </div>
     <p><strong>Inscritos (${d.numInscritos}):</strong><br/>${d.nomesInscritos.replace(/\n/g, '<br/>')}</p>
     <p>Nossa equipe entrará em contato em breve para confirmar os detalhes e o pagamento (${d.formaPagamento}).</p>
@@ -112,7 +116,9 @@ export async function sendPlenumAviso(d: InscricaoEmailData): Promise<boolean> {
     <h2 style="margin:0 0 16px">🎉 Nova inscrição recebida!</h2>
     <div style="background:#f8fafc;border-left:4px solid #3b82f6;padding:16px;margin:16px 0">
       <strong style="font-size:16px">${d.cursoTitulo}</strong><br/>
-      <span style="color:#64748b">Turma: ${d.turmaLabel}</span>
+      <span style="color:#64748b">Turma: ${d.turmaLabel}</span>${
+        d.modalidade ? `<br/><span style="color:#64748b">Modalidade: <strong>${d.modalidade}</strong></span>` : ''
+      }
     </div>
     <table style="width:100%;font-size:14px;border-collapse:collapse">
       <tr><td style="padding:6px 0;color:#64748b">Responsável</td><td style="padding:6px 0"><strong>${d.respNome}</strong></td></tr>

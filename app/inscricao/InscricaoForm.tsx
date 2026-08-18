@@ -1,12 +1,14 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { ArrowLeft, ArrowRight, CheckCircle2, Loader2 } from 'lucide-react';
+import { ArrowLeft, ArrowRight, CheckCircle2, Loader2, MapPin, Monitor } from 'lucide-react';
 
 export interface CursoOption {
   id: string;
   slug: string;
   title: string;
+  /** presencial | online | hibrido — define quais opções de participação aparecem */
+  modality: 'presencial' | 'online' | 'hibrido' | null;
   turmas: { id: string; label: string }[];
 }
 
@@ -31,10 +33,12 @@ export default function InscricaoForm({
   cursos,
   cursoSlugInicial,
   turmaIdInicial,
+  modalidadeInicial,
 }: {
   cursos: CursoOption[];
   cursoSlugInicial: string | null;
   turmaIdInicial: string | null;
+  modalidadeInicial: 'presencial' | 'online' | null;
 }) {
   const cursoInicial = cursos.find((c) => c.slug === cursoSlugInicial) || null;
 
@@ -43,6 +47,8 @@ export default function InscricaoForm({
     if (turmaIdInicial && cursoInicial?.turmas.some((t) => t.id === turmaIdInicial)) return turmaIdInicial;
     return cursoInicial?.turmas[0]?.id || '';
   });
+  // vem escolhida do botão da landing page; o inscrito ainda pode trocar aqui
+  const [modalidade, setModalidade] = useState<'presencial' | 'online'>(modalidadeInicial || 'presencial');
 
   const [form, setForm] = useState({
     tipo_instituicao: '',
@@ -75,6 +81,15 @@ export default function InscricaoForm({
 
   const cursoSelecionado = useMemo(() => cursos.find((c) => c.id === courseId) || null, [cursos, courseId]);
 
+  // curso só presencial não oferece online, e vice-versa
+  const opcoesModalidade = useMemo<Array<'presencial' | 'online'>>(() => {
+    if (cursoSelecionado?.modality === 'presencial') return ['presencial'];
+    if (cursoSelecionado?.modality === 'online') return ['online'];
+    return ['presencial', 'online'];
+  }, [cursoSelecionado]);
+
+  const modalidadeEfetiva = opcoesModalidade.includes(modalidade) ? modalidade : opcoesModalidade[0];
+
   function set(name: string, value: string | boolean) {
     setForm((f) => ({ ...f, [name]: value }));
   }
@@ -103,6 +118,7 @@ export default function InscricaoForm({
     const corpo = JSON.stringify({
       course_id: courseId,
       course_date_id: turmaId || null,
+      modalidade: modalidadeEfetiva,
       ...form,
     });
 
@@ -225,6 +241,34 @@ export default function InscricaoForm({
                 ))}
               </select>
             </div>
+          )}
+
+          {opcoesModalidade.length > 1 && (
+          <div>
+            <label className={labelCls}>Como vai participar? *</label>
+            <div className="grid grid-cols-2 gap-3">
+              {opcoesModalidade.map((m) => {
+                const ativo = modalidadeEfetiva === m;
+                return (
+                  <button
+                    key={m}
+                    type="button"
+                    onClick={() => setModalidade(m)}
+                    aria-pressed={ativo}
+                    className="flex items-center justify-center gap-2 rounded-xl border px-4 py-3 text-sm font-medium transition-all"
+                    style={{
+                      borderColor: ativo ? GOLD : '#D8DCE3',
+                      backgroundColor: ativo ? `${GOLD}14` : '#fff',
+                      color: ativo ? NAVY : '#6B7280',
+                    }}
+                  >
+                    {m === 'presencial' ? <MapPin className="w-4 h-4" /> : <Monitor className="w-4 h-4" />}
+                    {m === 'presencial' ? 'Presencial' : 'Online (ao vivo)'}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
           )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">

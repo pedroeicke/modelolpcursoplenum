@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ChevronDown } from 'lucide-react';
+import { leModalidade } from '@/lib/inscricao-modalidade';
 import {
   Table,
   TableBody,
@@ -214,6 +215,11 @@ export default function LeadsClient({
                             </span>
                             <span className="text-sm text-gray-500">
                               {i.num_inscritos} inscrito{i.num_inscritos > 1 ? 's' : ''}
+                              {leModalidade(i.observacoes).modalidade && (
+                                <span className="ml-2 rounded-full bg-gray-100 px-2 py-0.5 text-[11px] font-semibold text-gray-700">
+                                  {leModalidade(i.observacoes).modalidade}
+                                </span>
+                              )}
                             </span>
                             <span className={`justify-self-start px-2 py-0.5 rounded-full text-[11px] font-bold ${st.cls}`}>
                               {st.label}
@@ -230,6 +236,7 @@ export default function LeadsClient({
                             <p className="text-xs font-bold uppercase tracking-wider text-emerald-700 mb-2">Curso</p>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-3">
                               <Campo label="Curso" value={i.course_id ? courseMap.get(i.course_id) : '—'} />
+                              <Campo label="Modalidade" value={leModalidade(i.observacoes).modalidade} />
                               <Campo label="Tipo de instituição" value={i.tipo_instituicao} />
                               <Campo label="Município/UF" value={`${i.municipio}/${i.estado}`} />
                               <div className="md:col-span-3">
@@ -264,7 +271,7 @@ export default function LeadsClient({
                               <Campo label="E-mail" value={i.resp_email} />
                               <Campo label="Telefone" value={i.resp_telefone} />
                               <div className="md:col-span-2">
-                                <Campo label="Observações" value={i.observacoes} />
+                                <Campo label="Observações" value={leModalidade(i.observacoes).observacoes} />
                               </div>
                             </div>
                           </div>

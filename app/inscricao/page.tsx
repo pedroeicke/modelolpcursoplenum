@@ -13,15 +13,15 @@ export const revalidate = 60;
 export default async function InscricaoPage({
   searchParams,
 }: {
-  searchParams: Promise<{ curso?: string; turma?: string }>;
+  searchParams: Promise<{ curso?: string; turma?: string; modalidade?: string }>;
 }) {
-  const { curso: cursoSlug, turma: turmaId } = await searchParams;
+  const { curso: cursoSlug, turma: turmaId, modalidade } = await searchParams;
   const supabase = await createClient();
 
   // Cursos publicados
   const { data: courses } = await supabase
     .from('courses')
-    .select('id, slug, title')
+    .select('id, slug, title, modality')
     .eq('status', 'published')
     .order('title', { ascending: true });
 
@@ -51,6 +51,7 @@ export default async function InscricaoPage({
     id: c.id,
     slug: c.slug,
     title: c.title,
+    modality: c.modality,
     turmas: turmasByCourse.get(c.id) || [],
   }));
 
@@ -60,6 +61,7 @@ export default async function InscricaoPage({
         cursos={cursos}
         cursoSlugInicial={cursoSlug || null}
         turmaIdInicial={turmaId || null}
+        modalidadeInicial={modalidade === 'online' ? 'online' : modalidade === 'presencial' ? 'presencial' : null}
       />
     </main>
   );
