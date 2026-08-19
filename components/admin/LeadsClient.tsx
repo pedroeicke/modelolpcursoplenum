@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ChevronDown, Search, X } from 'lucide-react';
+import { ChevronDown, Download, Search, X } from 'lucide-react';
 import { leModalidade } from '@/lib/inscricao-modalidade';
 import {
   Table,
@@ -87,6 +87,24 @@ function Campo({ label, value }: { label: string; value: React.ReactNode }) {
   );
 }
 
+/** Excel do Brasil abre melhor com ; e precisa do BOM para os acentos. */
+const BOM = String.fromCharCode(0xfeff);          // Excel reconhece o UTF-8
+const QUEBRA = String.fromCharCode(13, 10);       // fim de linha do CSV
+const QUEBRA_LINHA = String.fromCharCode(10);     // separador dos nomes no cadastro
+
+function baixaCsv(nomeArquivo: string, linhas: string[][]) {
+  const escapa = (v: string) => `"${(v ?? '').replace(/"/g, '""')}"`;
+  const conteudo = BOM + linhas.map((l) => l.map(escapa).join(';')).join(QUEBRA);
+  const url = URL.createObjectURL(new Blob([conteudo], { type: 'text/csv;charset=utf-8;' }));
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = nomeArquivo;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
 export default function LeadsClient({
   leads,
   inscricoes,
@@ -138,6 +156,50 @@ export default function LeadsClient({
     }
     return lista;
   }, [leads, cursoId, termo]);
+
+  /** Uma linha por participante — é isso que vira lista de presença. */
+  function exportaPresenca() {
+    const linhas: string[][] = [[
+      'Curso', 'Modalidade', 'Participante', 'Órgão / Razão social',
+      'Município', 'UF', 'Responsável', 'E-mail', 'Telefone', 'Data da inscrição',
+    ]];
+    for (const i of inscricoesFiltradas) {
+      const { modalidade } = leModalidade(i.observacoes);
+      const nomes = (i.nomes_inscritos || '')
+        .split(QUEBRA_LINHA)
+        .map((n) => n.trim())
+        .filter(Boolean);
+      const participantes = nomes.length > 0 ? nomes : [i.resp_nome];
+      for (const nome of participantes) {
+        linhas.push([
+          (i.course_id && courseMap.get(i.course_id)) || '',
+          modalidade || 'não informada',
+          nome,
+          i.razao_social || '',
+          i.municipio || '',
+          i.estado || '',
+          i.resp_nome || '',
+          i.resp_email || '',
+          i.resp_telefone || '',
+          new Date(i.created_at).toLocaleDateString('pt-BR'),
+        ]);
+      }
+    }
+    const curso = cursoId === 'todos' ? 'todos-os-cursos' : (courseMap.get(cursoId) || 'curso');
+    const nomeArquivo = `lista-presenca-${curso}`
+      .normalize('NFD')
+      .replace(/[̀-ͯ]/g, '')
+      .replace(/[^a-zA-Z0-9]+/g, '-')
+      .replace(/-+$/, '')
+      .toLowerCase()
+      .slice(0, 70);
+    baixaCsv(`${nomeArquivo}.csv`, linhas);
+  }
+
+  const totalParticipantes = inscricoesFiltradas.reduce(
+    (soma, i) => soma + (i.num_inscritos || 1),
+    0
+  );
 
   const contaInscricoes = (id: string) =>
     id === 'todos' ? inscricoes.length : inscricoes.filter((i) => i.course_id === id).length;
@@ -230,8 +292,23 @@ export default function LeadsClient({
         {/* ── Aba Inscrições ── */}
         <TabsContent value="inscricoes">
           <Card>
-            <CardHeader>
-              <CardTitle>Inscrições nos cursos</CardTitle>
+            <CardHeader className="flex flex-row items-center justify-between gap-4 space-y-0">
+              <div>
+                <CardTitle>Inscrições nos cursos</CardTitle>
+                <p className="mt-1 text-sm text-gray-500">
+                  {totalParticipantes} participante{totalParticipantes === 1 ? '' : 's'} em{' '}
+                  {inscricoesFiltradas.length} inscriç{inscricoesFiltradas.length === 1 ? 'ão' : 'ões'}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={exportaPresenca}
+                disabled={inscricoesFiltradas.length === 0}
+                className="inline-flex shrink-0 items-center gap-2 rounded-md bg-emerald-600 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                <Download className="h-4 w-4" />
+                Baixar lista de presença
+              </button>
             </CardHeader>
             <CardContent>
               {inscricoesFiltradas.length === 0 ? (
