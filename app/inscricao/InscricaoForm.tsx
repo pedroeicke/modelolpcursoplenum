@@ -92,6 +92,9 @@ export default function InscricaoForm({
 
   const modalidadeEfetiva = opcoesModalidade.includes(modalidade) ? modalidade : opcoesModalidade[0];
 
+  // inscrição particular: a nota sai no nome da pessoa, não de um órgão
+  const pessoaFisica = form.tipo_instituicao === 'Particular';
+
   function set(name: string, value: string | boolean) {
     setForm((f) => ({ ...f, [name]: value }));
   }
@@ -361,15 +364,36 @@ export default function InscricaoForm({
         {/* ── Seção 2: Nota Fiscal ── */}
         <div className={sectionCls}>
           <h2 className={sectionH2Cls}>{goldDot}Dados para a Nota Fiscal</h2>
+          <p className="text-[13px] text-[#030D1F]/50 -mt-1">
+            {pessoaFisica
+              ? 'A nota sai no seu nome. Informe o seu endereço.'
+              : 'Dados do órgão ou empresa que vai receber a nota fiscal.'}
+          </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
-              <label className={labelCls}>Razão Social *</label>
-              <input type="text" name="razao_social" required value={form.razao_social} onChange={handleChange} placeholder="Prefeitura Municipal de..." className={inputCls} />
+              <label className={labelCls}>{pessoaFisica ? 'Nome completo *' : 'Razão Social *'}</label>
+              <input
+                type="text"
+                name="razao_social"
+                required
+                value={form.razao_social}
+                onChange={handleChange}
+                placeholder={pessoaFisica ? 'Seu nome completo' : 'Prefeitura Municipal de...'}
+                className={inputCls}
+              />
             </div>
             <div>
-              <label className={labelCls}>CNPJ *</label>
-              <input type="text" name="cnpj" required value={form.cnpj} onChange={handleChange} placeholder="00.000.000/0001-00" className={inputCls} />
+              <label className={labelCls}>{pessoaFisica ? 'CPF *' : 'CNPJ *'}</label>
+              <input
+                type="text"
+                name="cnpj"
+                required
+                value={form.cnpj}
+                onChange={handleChange}
+                placeholder={pessoaFisica ? '000.000.000-00' : '00.000.000/0001-00'}
+                className={inputCls}
+              />
             </div>
           </div>
 

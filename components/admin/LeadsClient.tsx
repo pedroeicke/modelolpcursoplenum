@@ -296,8 +296,14 @@ export default function LeadsClient({
                           <div className="md:col-span-3">
                             <p className="text-xs font-bold uppercase tracking-wider text-emerald-700 mb-2">Nota Fiscal</p>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-3">
-                              <Campo label="Razão social" value={i.razao_social} />
-                              <Campo label="CNPJ" value={i.cnpj} />
+                              <Campo
+                                label={i.tipo_instituicao === 'Particular' ? 'Nome completo' : 'Razão social'}
+                                value={i.razao_social}
+                              />
+                              <Campo
+                                label={i.tipo_instituicao === 'Particular' ? 'CPF' : 'CNPJ'}
+                                value={i.cnpj}
+                              />
                               <Campo label="CEP" value={i.cep} />
                               <Campo
                                 label="Endereço"
