@@ -86,7 +86,10 @@ export default function TawkChat() {
 
   return (
     <>
-      <Script id="tawk-to" strategy="lazyOnload">
+      {/* afterInteractive: o lazyOnload espera o evento load, ou seja, todas as
+          imagens da pagina — em pagina pesada o chat levava dezenas de segundos
+          para aparecer. O proprio script do Tawk ja e async. */}
+      <Script id="tawk-to" strategy="afterInteractive">
         {`
           var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
           // Esconde o widget ANTES de ele desenhar, senao a barra verde padrao
