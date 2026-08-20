@@ -64,6 +64,22 @@ export default function TawkChat() {
     };
     api.onChatHidden = () => setAberto(false);
     api.onUnreadCountChanged = (total) => setNaoLidas(total || 0);
+
+    // O onLoad do Tawk nem sempre dispara quando o widget sobe escondido, então
+    // não dá para confiar só nele: aqui esperamos os métodos aparecerem no
+    // objeto. Assim que maximize() existe, o botão pode ser mostrado.
+    const inicio = Date.now();
+    const relogio = window.setInterval(() => {
+      if (typeof window.Tawk_API?.maximize === 'function') {
+        window.Tawk_API.hideWidget?.();
+        setPronto(true);
+        window.clearInterval(relogio);
+      } else if (Date.now() - inicio > 30000) {
+        window.clearInterval(relogio);
+      }
+    }, 400);
+
+    return () => window.clearInterval(relogio);
   }, [noAdmin]);
 
   if (noAdmin) return null;
