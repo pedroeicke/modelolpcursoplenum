@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import TawkChat from '@/components/TawkChat';
 
 export const metadata: Metadata = {
   title: 'Instituto Plenum Brasil — Capacitação para o Setor Público',
@@ -14,6 +15,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="bg-[#030d1f] text-[#f5f5f5] antialiased" suppressHydrationWarning>
         {children}
+        <TawkChat />
       </body>
     </html>
   );
