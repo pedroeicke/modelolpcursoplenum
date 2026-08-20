@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Script from 'next/script';
 import { usePathname } from 'next/navigation';
-import { MessageCircle } from 'lucide-react';
+import { MessageCircleMore } from 'lucide-react';
 
 /**
  * Chat de atendimento (Tawk.to), o mesmo que a Plenum usava no site anterior.
@@ -49,7 +49,8 @@ export default function TawkChat() {
 
     const api: TawkApi = (window.Tawk_API = window.Tawk_API || {});
 
-    // Some o widget assim que ele carrega — quem aparece é o nosso botão.
+    // Quem esconde o widget é o onBeforeLoad, lá no script; aqui só liberamos
+    // o nosso botão depois que a conexão com o Tawk está de pé.
     api.onLoad = () => {
       api.hideWidget?.();
       setPronto(true);
@@ -72,6 +73,11 @@ export default function TawkChat() {
       <Script id="tawk-to" strategy="lazyOnload">
         {`
           var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
+          // Esconde o widget ANTES de ele desenhar, senao a barra verde padrao
+          // pisca na tela por um instante antes de dar lugar ao nosso botao.
+          Tawk_API.onBeforeLoad = function () {
+            if (Tawk_API.hideWidget) Tawk_API.hideWidget();
+          };
           Tawk_API.customStyle = {
             visibility: {
               desktop: { position: 'br', xOffset: 0, yOffset: 0 },
@@ -110,7 +116,7 @@ export default function TawkChat() {
           <span className="absolute inline-flex h-full w-full rounded-full bg-[#C9A227] opacity-40 animate-ping motion-reduce:hidden" />
           {/* botão */}
           <span className="relative flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-[#E8C455] to-[#C9A227] text-[#030D1F] shadow-[0_10px_34px_rgba(201,162,39,0.55)] ring-1 ring-white/30 transition-all duration-300 group-hover:scale-105 group-hover:shadow-[0_14px_44px_rgba(201,162,39,0.75)] group-active:scale-95">
-            <MessageCircle className="h-7 w-7" strokeWidth={2.2} />
+            <MessageCircleMore className="h-8 w-8 transition-transform duration-300 group-hover:-rotate-6" strokeWidth={2} />
           </span>
           {naoLidas > 0 && (
             <span className="absolute -right-0.5 -top-0.5 z-10 flex h-6 min-w-[24px] items-center justify-center rounded-full bg-[#030D1F] px-1.5 text-[12px] font-bold text-[#C9A227] ring-2 ring-[#C9A227]">
