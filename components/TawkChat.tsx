@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Script from 'next/script';
 import { usePathname } from 'next/navigation';
 import { MessageCircleMore } from 'lucide-react';
@@ -23,6 +23,7 @@ const ID_WIDGET = '1je6u17qe';
 type TawkApi = {
   hideWidget?: () => void;
   maximize?: () => void;
+  minimize?: () => void;
   onLoad?: () => void;
   onChatMaximized?: () => void;
   onChatMinimized?: () => void;
@@ -44,6 +45,12 @@ export default function TawkChat() {
   const [aberto, setAberto] = useState(false);
   const [naoLidas, setNaoLidas] = useState(0);
 
+  // A conta do Tawk tem um gatilho que escancara a janela assim que o visitante
+  // chega. Só deixamos abrir quando ele clica no botão — a saudação continua
+  // chegando, mas discreta, como número em cima do botão.
+  const abriuPeloBotao = useRef(false);
+  const vezesQueBarramos = useRef(0);
+
   useEffect(() => {
     if (noAdmin) return;
 
@@ -55,12 +62,19 @@ export default function TawkChat() {
       api.hideWidget?.();
       setPronto(true);
     };
-    api.onChatMaximized = () => setAberto(true);
+    api.onChatMaximized = () => {
+      if (!abriuPeloBotao.current && vezesQueBarramos.current < 3) {
+        vezesQueBarramos.current += 1;
+        api.minimize?.();
+        return;
+      }
+      setAberto(true);
+    };
     // Ao minimizar, o Tawk traz a bolha dele de volta; escondemos outra vez.
     api.onChatMinimized = () => {
       api.hideWidget?.();
       setAberto(false);
-      setNaoLidas(0);
+      abriuPeloBotao.current = false;
     };
     api.onChatHidden = () => setAberto(false);
     api.onUnreadCountChanged = (total) => setNaoLidas(total || 0);
@@ -117,7 +131,11 @@ export default function TawkChat() {
 
       <button
         type="button"
-        onClick={() => window.Tawk_API?.maximize?.()}
+        onClick={() => {
+          abriuPeloBotao.current = true;
+          setNaoLidas(0);
+          window.Tawk_API?.maximize?.();
+        }}
         aria-label="Abrir o chat de atendimento"
         className={`group fixed bottom-5 right-5 z-[60] flex items-center transition-all duration-300 ${
           pronto && !aberto
