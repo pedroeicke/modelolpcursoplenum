@@ -12,7 +12,6 @@ import Instagram from "@/components/sections/Instagram";
 import Enderecos from "@/components/sections/Enderecos";
 import WhatsappFinal from "@/components/sections/WhatsappFinal";
 import Footer from "@/components/sections/Footer";
-import WhatsAppFloat from "@/components/sections/WhatsAppFloat";
 import { getInstagramPosts } from "@/lib/instagram";
 import { fetchSiteCourses, fetchHomeBanner } from "@/lib/courses-db";
 
@@ -62,7 +61,6 @@ export default async function Home() {
         <WhatsappFinal />
         <Footer />
       </div>
-      <WhatsAppFloat />
     </main>
   );
 }

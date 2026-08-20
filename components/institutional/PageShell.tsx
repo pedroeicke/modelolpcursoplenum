@@ -1,5 +1,4 @@
 import Link from "next/link";
-import WhatsAppFloat from "@/components/sections/WhatsAppFloat";
 import { ArrowRight, ArrowUpRight, MapPin } from "lucide-react";
 import Header from "@/components/sections/Header";
 import Footer from "@/components/sections/Footer";
@@ -13,7 +12,6 @@ export function PageShell({ children }: { children: React.ReactNode }) {
       {children}
       <Footer />
       <ScrollReveal />
-      <WhatsAppFloat />
     </main>
   );
 }

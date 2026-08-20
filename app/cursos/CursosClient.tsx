@@ -4,7 +4,6 @@ import { useSearchParams } from "next/navigation";
 import { ArrowRight, Calendar, ChevronDown, ChevronLeft, ChevronRight, MapPin, Search, SlidersHorizontal } from "lucide-react";
 import Header from "@/components/sections/Header";
 import Footer from "@/components/sections/Footer";
-import WhatsAppFloat from "@/components/sections/WhatsAppFloat";
 import { AUDIENCES, COURSE_AREAS } from "@/lib/plenum-content";
 import type { SiteCourse } from "@/lib/courses-db";
 
@@ -229,7 +228,6 @@ function CursosContent({ courses }: { courses: SiteCourse[] }) {
                 <div className="pb-10" />
             </div>
             <Footer />
-            <WhatsAppFloat />
         </main>
     );
 }
