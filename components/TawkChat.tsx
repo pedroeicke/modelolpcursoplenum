@@ -6,8 +6,11 @@ import { usePathname } from 'next/navigation';
 /**
  * Chat de atendimento (Tawk.to), o mesmo que a Plenum usava no site anterior.
  *
- * Fica no canto inferior ESQUERDO de propósito: o botão do WhatsApp já ocupa o
- * canto direito em todas as páginas, e os dois no mesmo lugar se sobrepõem.
+ * Fica empilhado LOGO ACIMA do botão do WhatsApp, no canto direito. O WhatsApp
+ * é um círculo de 56px com 20px de margem (components/sections/WhatsAppFloat.tsx),
+ * então o chat começa em 90px de altura para não encostar nele. Os dois no mesmo
+ * canto ocupam uma coluna só e deixam o resto da tela livre — no canto esquerdo
+ * o chat passava por cima dos botões do formulário.
  * Não carrega no painel administrativo.
  */
 const ID_PROPRIEDADE = '695b9dda14578f197fc14d8e';
@@ -23,8 +26,8 @@ export default function TawkChat() {
         var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
         Tawk_API.customStyle = {
           visibility: {
-            desktop: { position: 'bl', xOffset: 20, yOffset: 20 },
-            mobile:  { position: 'bl', xOffset: 12, yOffset: 80 }
+            desktop: { position: 'br', xOffset: 20, yOffset: 90 },
+            mobile:  { position: 'br', xOffset: 16, yOffset: 88 }
           }
         };
         (function () {
