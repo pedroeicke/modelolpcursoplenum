@@ -8,10 +8,15 @@ import { MessageCircleMore } from 'lucide-react';
 /**
  * Chat de atendimento (Tawk.to), o mesmo que a Plenum usava no site anterior.
  *
- * A bolha verde padrão do Tawk é escondida (hideWidget) e no lugar dela entra o
- * botão daqui, no navy/dourado da Plenum. O visual de dentro da janela de
- * conversa não dá para mudar por código: é um iframe de outro domínio. As cores
- * de lá se ajustam no painel do Tawk (Administração › Aparência do widget).
+ * A bolha verde padrão do Tawk é escondida e no lugar dela entra o botão daqui,
+ * no navy/dourado da Plenum. O visual de dentro da janela de conversa não dá
+ * para mudar por código: é um iframe de outro domínio. As cores de lá se
+ * ajustam no painel do Tawk (Administração › Aparência do widget).
+ *
+ * Esta versão do widget não dispara os callbacks documentados (onLoad,
+ * onChatMaximized e companhia), então nada aqui depende deles: um relógio
+ * consulta o estado real do chat a cada 400ms. É barato e é o único jeito
+ * confiável de saber se a janela está aberta.
  *
  * O botão flutuante do WhatsApp foi retirado do site para não disputar espaço —
  * o contato por WhatsApp segue no cabeçalho, no rodapé e na faixa de contato.
@@ -20,14 +25,14 @@ import { MessageCircleMore } from 'lucide-react';
 const ID_PROPRIEDADE = '695b9dda14578f197fc14d8e';
 const ID_WIDGET = '1je6u17qe';
 
+/** Quantas vezes no máximo barramos a abertura automática, para nunca entrar em laço. */
+const LIMITE_DE_BLOQUEIOS = 5;
+
 type TawkApi = {
   hideWidget?: () => void;
   maximize?: () => void;
   minimize?: () => void;
-  onLoad?: () => void;
-  onChatMaximized?: () => void;
-  onChatMinimized?: () => void;
-  onChatHidden?: () => void;
+  isChatMaximized?: () => boolean;
   onUnreadCountChanged?: (total: number) => void;
 };
 
@@ -46,51 +51,40 @@ export default function TawkChat() {
   const [naoLidas, setNaoLidas] = useState(0);
 
   // A conta do Tawk tem um gatilho que escancara a janela assim que o visitante
-  // chega. Só deixamos abrir quando ele clica no botão — a saudação continua
-  // chegando, mas discreta, como número em cima do botão.
+  // chega. Só deixamos abrir depois do clique — a saudação continua chegando,
+  // mas discreta, como número em cima do botão.
   const abriuPeloBotao = useRef(false);
-  const vezesQueBarramos = useRef(0);
+  const bloqueios = useRef(0);
+  const escondeu = useRef(false);
 
   useEffect(() => {
     if (noAdmin) return;
 
     const api: TawkApi = (window.Tawk_API = window.Tawk_API || {});
-
-    // Quem esconde o widget é o onBeforeLoad, lá no script; aqui só liberamos
-    // o nosso botão depois que a conexão com o Tawk está de pé.
-    api.onLoad = () => {
-      api.hideWidget?.();
-      setPronto(true);
-    };
-    api.onChatMaximized = () => {
-      if (!abriuPeloBotao.current && vezesQueBarramos.current < 3) {
-        vezesQueBarramos.current += 1;
-        api.minimize?.();
-        return;
-      }
-      setAberto(true);
-    };
-    // Ao minimizar, o Tawk traz a bolha dele de volta; escondemos outra vez.
-    api.onChatMinimized = () => {
-      api.hideWidget?.();
-      setAberto(false);
-      abriuPeloBotao.current = false;
-    };
-    api.onChatHidden = () => setAberto(false);
     api.onUnreadCountChanged = (total) => setNaoLidas(total || 0);
 
-    // O onLoad do Tawk nem sempre dispara quando o widget sobe escondido, então
-    // não dá para confiar só nele: aqui esperamos os métodos aparecerem no
-    // objeto. Assim que maximize() existe, o botão pode ser mostrado.
-    const inicio = Date.now();
     const relogio = window.setInterval(() => {
-      if (typeof window.Tawk_API?.maximize === 'function') {
-        window.Tawk_API.hideWidget?.();
+      const tawk = window.Tawk_API;
+      if (typeof tawk?.maximize !== 'function') return; // ainda carregando
+
+      if (!escondeu.current) {
+        tawk.hideWidget?.();
+        escondeu.current = true;
         setPronto(true);
-        window.clearInterval(relogio);
-      } else if (Date.now() - inicio > 30000) {
-        window.clearInterval(relogio);
       }
+
+      const maximizado = tawk.isChatMaximized?.() ?? false;
+
+      // Abriu sem o visitante pedir: fecha de volta.
+      if (maximizado && !abriuPeloBotao.current && bloqueios.current < LIMITE_DE_BLOQUEIOS) {
+        bloqueios.current += 1;
+        tawk.minimize?.();
+        tawk.hideWidget?.();
+        return;
+      }
+
+      if (!maximizado) abriuPeloBotao.current = false;
+      setAberto(maximizado);
     }, 400);
 
     return () => window.clearInterval(relogio);
@@ -101,13 +95,13 @@ export default function TawkChat() {
   return (
     <>
       {/* afterInteractive: o lazyOnload espera o evento load, ou seja, todas as
-          imagens da pagina — em pagina pesada o chat levava dezenas de segundos
-          para aparecer. O proprio script do Tawk ja e async. */}
+          imagens da página — em página pesada o chat levava dezenas de segundos
+          para aparecer. O próprio script do Tawk já é async. */}
       <Script id="tawk-to" strategy="afterInteractive">
         {`
           var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
-          // Esconde o widget ANTES de ele desenhar, senao a barra verde padrao
-          // pisca na tela por um instante antes de dar lugar ao nosso botao.
+          // Esconde o widget antes de ele desenhar, para a barra verde padrão
+          // não piscar na tela antes de dar lugar ao nosso botão.
           Tawk_API.onBeforeLoad = function () {
             if (Tawk_API.hideWidget) Tawk_API.hideWidget();
           };
