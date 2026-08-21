@@ -15,6 +15,8 @@ export interface FooterProps {
   logoUrl?: string;
   description?: string;
   columns?: FooterColumn[];
+  /** Curso sem turma vigente: o rodapé troca "Inscrição" por "Próxima turma". */
+  encerrado?: boolean;
 }
 
 // ─── Defaults ──────────────────────────────────────────
@@ -47,6 +49,7 @@ export default function Footer({
   // de um curso específico como se fosse o daquela página
   description = 'Capacitação e consultoria para gestores públicos em todo o Brasil.',
   columns = defaultColumns,
+  encerrado = false,
 }: FooterProps) {
   const year = new Date().getFullYear();
 
@@ -54,7 +57,11 @@ export default function Footer({
   const pathname = usePathname();
   const slugMatch = pathname?.match(/^\/cursos\/([^/]+)/);
   const inscricaoHref = slugMatch ? `/inscricao?curso=${slugMatch[1]}` : '/inscricao';
-  const resolveHref = (href: string) => (href === '#inscricao' ? inscricaoHref : href);
+  // Curso encerrado: o rodapé não pode continuar oferecendo inscrição.
+  const resolveHref = (href: string) =>
+    href === '#inscricao' ? (encerrado ? '#notificacao' : inscricaoHref) : href;
+  const resolveLabel = (label: string, href: string) =>
+    encerrado && href === '#inscricao' ? 'Próxima turma' : label;
 
   // Derive contact links from company data
   const websiteUrl = company.website || 'https://www.plenumbrasil.com.br';
@@ -94,7 +101,7 @@ export default function Footer({
                 {col.links.map((link) => (
                   <li key={link.label}>
                     <a href={resolveHref(link.href)} className="text-white/40 text-sm hover:text-white transition-colors">
-                      {link.label}
+                      {resolveLabel(link.label, link.href)}
                     </a>
                   </li>
                 ))}

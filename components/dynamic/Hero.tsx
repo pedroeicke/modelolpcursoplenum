@@ -23,6 +23,9 @@ export interface HeroProps {
   whatsappUrl?: string;
   folderPdfUrl?: string | null;
   ctaText?: string;
+  /** Destino alternativo do botão. Usado quando a turma já passou: em vez de
+   *  mandar para a inscrição, leva para o formulário de aviso de nova turma. */
+  ctaHref?: string;
 }
 
 // ─── Component ────────────────────────────────────────
@@ -36,6 +39,7 @@ export default function Hero({
   frameExt = '.jpg',
   folderPdfUrl,
   ctaText = 'Quero me inscrever',
+  ctaHref,
 }: HeroProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -49,9 +53,11 @@ export default function Hero({
   // ── Link para a página de inscrição com curso/turma atuais ──
   const pathname = usePathname();
   const slugMatch = pathname?.match(/^\/cursos\/([^/]+)/);
-  const inscricaoHref = slugMatch
-    ? `/inscricao?curso=${slugMatch[1]}${courseDateId ? `&turma=${courseDateId}` : ''}`
-    : '/inscricao';
+  const inscricaoHref =
+    ctaHref ||
+    (slugMatch
+      ? `/inscricao?curso=${slugMatch[1]}${courseDateId ? `&turma=${courseDateId}` : ''}`
+      : '/inscricao');
 
   const actualFrameCount = frameCount || 192;
   const actualFramesPath = framesPath || '/frames/frame_';

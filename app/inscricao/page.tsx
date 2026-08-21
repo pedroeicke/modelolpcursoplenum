@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import InscricaoForm, { type CursoOption } from './InscricaoForm';
+import { turmaVigente } from '@/lib/turma-vigente';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -28,12 +29,15 @@ export default async function InscricaoPage({
   // Turmas abertas de todos os cursos
   const { data: dates } = await supabase
     .from('course_dates')
-    .select('id, course_id, label, start_date, status')
+    .select('id, course_id, label, start_date, end_date, status')
     .eq('status', 'open')
     .order('start_date', { ascending: true });
 
+  // Turma que já aconteceu não entra na lista: sem isso, um link antigo
+  // (Google, WhatsApp, folder impresso) ainda inscrevia gente em curso passado.
+  const agora = Date.now();
   const turmasByCourse = new Map<string, { id: string; label: string }[]>();
-  for (const d of (dates || []) as any[]) {
+  for (const d of ((dates || []) as any[]).filter((d) => turmaVigente(d, agora))) {
     if (!turmasByCourse.has(d.course_id)) turmasByCourse.set(d.course_id, []);
     turmasByCourse.get(d.course_id)!.push({
       id: d.id,

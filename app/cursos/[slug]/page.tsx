@@ -20,6 +20,7 @@ import SocialProof from '@/components/dynamic/SocialProof';
 import Relevance from '@/components/dynamic/Relevance';
 import GeneralInfo from '@/components/dynamic/GeneralInfo';
 import Footer from '@/components/dynamic/Footer';
+import { turmaVigente } from '@/lib/turma-vigente';
 
 // ─── ISR ───────────────────────────────────────────────
 export const revalidate = 3600; // Revalidate every hour
@@ -73,6 +74,18 @@ export default async function CoursePage({
     redirect(externalSite);
   }
 
+  // Nenhuma turma vigente = o curso já aconteceu. A página continua no ar (o
+  // Google e os links antigos apontam para ela), mas para de vender: o botão
+  // deixa de levar à inscrição e passa a captar interesse na próxima turma.
+  const encerrado =
+    !!course.dates?.length && !course.dates.some((d) => turmaVigente(d));
+
+  const heroBadges = encerrado
+    ? (course.hero_badges || []).map((b) =>
+        b.value === 'dropdown' ? { ...b, label: 'Turma', value: 'Encerrada' } : b
+      )
+    : course.hero_badges;
+
   const designSystem = course.design_system;
   if (!designSystem) {
     notFound();
@@ -102,12 +115,14 @@ export default async function CoursePage({
 
   return (
     <DesignSystemProvider designSystem={designSystem}>
-      <TurmaProvider dates={course.dates} heroBadges={course.hero_badges}>
+      <TurmaProvider dates={course.dates} heroBadges={heroBadges}>
         <main className="min-h-screen w-full flex flex-col relative" style={{ backgroundColor: 'var(--ds-background)' }}>
           <Header
             logoUrl={company.logo_url || '/logo-plenum-aberta2.png'}
             logoDarkUrl={company.logo_dark_url || '/logo.svg'}
             navItems={navItems}
+            ctaText={encerrado ? 'Próxima turma' : 'Quero me inscrever'}
+            ctaHref={encerrado ? '#notificacao' : '#inscricao'}
           />
 
           <Hero
@@ -119,7 +134,8 @@ export default async function CoursePage({
             frameCount={course.hero_frame_count || designSystem.hero_frame_count}
             frameExt={course.hero_frame_ext || designSystem.hero_frame_ext}
             folderPdfUrl={course.folder_pdf_url}
-            ctaText="Quero me inscrever"
+            ctaText={encerrado ? 'Avise-me sobre a próxima turma' : 'Quero me inscrever'}
+            ctaHref={encerrado ? '#notificacao' : undefined}
           />
 
           <About
@@ -203,6 +219,7 @@ export default async function CoursePage({
           <Footer
             company={company}
             logoUrl={company.logo_url || '/logo-plenum-aberta2.png'}
+            encerrado={encerrado}
           />
 
         </main>

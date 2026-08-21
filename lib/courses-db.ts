@@ -1,6 +1,9 @@
 // Cursos reais do Supabase (mesmo banco do admin/landing pages).
 // Leitura pública (anon key) via REST — cadastrou curso no admin, aparece aqui.
 
+
+import { turmaVigente } from "@/lib/turma-vigente";
+
 const SUPABASE_URL =
   process.env.NEXT_PUBLIC_SUPABASE_URL || "https://jyackmnjhsdllfqqxund.supabase.co";
 // chave anon é pública por design (mesma exposta no navegador pela LP)
@@ -167,14 +170,10 @@ export async function fetchSiteCourses(): Promise<SiteCourse[]> {
   const nameById = new Map<string, string>(instructors.map((i: any) => [i.id, i.name]));
 
   // Turma encerrada sai do ar sozinha: no dia seguinte ao último dia do curso.
-  // (usa fim do dia do end_date, então durante o evento o curso continua visível)
+  // A regra vive em lib/turma-vigente.ts, compartilhada com a landing page do
+  // curso e com o formulário de inscrição.
   const agora = Date.now();
-  const aindaVale = (d: any) => {
-    const fim = new Date(d.end_date || d.start_date);
-    fim.setHours(23, 59, 59, 999);
-    return fim.getTime() >= agora;
-  };
-  const vigentes = dates.filter(aindaVale);
+  const vigentes = dates.filter((d: any) => turmaVigente(d, agora));
 
   // próxima turma vigente de cada curso (as já realizadas foram descartadas acima)
   const turmaByCourse = new Map<string, any>();
