@@ -56,6 +56,27 @@ export default async function PaginaDoCurso({
       )
     : course.hero_badges;
 
+  // Consultores responsáveis por este curso. Sem isso a página mostrava sempre
+  // os contatos globais da empresa, mesmo quando quem atende o curso é outro.
+  const contatosDoCurso = (course.section_backgrounds as any)?.contatos as
+    | { nome: string; numero: string; cargo?: string }[]
+    | undefined;
+
+  const empresa = contatosDoCurso?.length
+    ? {
+        ...company,
+        phones: [
+          ...contatosDoCurso.map((c) => ({
+            label: `WhatsApp · ${c.nome}`,
+            number: c.numero,
+          })),
+          ...(company.phones || []).filter(
+            (p) => !String(p.label || '').toLowerCase().includes('whatsapp')
+          ),
+        ],
+      }
+    : company;
+
   const designSystem = course.design_system;
   if (!designSystem) {
     notFound();
@@ -170,13 +191,13 @@ export default async function PaginaDoCurso({
           {/* Location — only render for presencial/hibrido (visibility handled by component via context) */}
           {course.modality !== 'online' && (
             <Location
-              phones={company.phones}
+              phones={empresa.phones}
             />
           )}
 
           <SocialProof
             testimonials={course.testimonials}
-            company={company}
+            company={empresa}
             courseId={course.id}
             whatsappUrl={whatsappUrl}
             grainientColors={shaderColors.grainient}
@@ -187,7 +208,7 @@ export default async function PaginaDoCurso({
           )}
 
           <Footer
-            company={company}
+            company={empresa}
             logoUrl={company.logo_url || '/logo-plenum-aberta2.png'}
             encerrado={encerrado}
           />
