@@ -30,7 +30,7 @@ export default async function PaginaDoCurso({
   ignorarStatus?: boolean;
 }) {
   const [course, company] = await Promise.all([
-    getCourseBySlug(slug),
+    getCourseBySlug(slug, ignorarStatus),
     getCompanySettings(),
   ]);
 

@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server';
+import { createClient, createServiceClient } from '@/lib/supabase/server';
 import type { Course, CourseWithRelations, CourseDateWithInstructor, Instructor } from '@/types/course';
 import type { DesignSystem } from '@/types/design-system';
 
@@ -6,8 +6,13 @@ import type { DesignSystem } from '@/types/design-system';
  * Get a single course by slug (with design system and course dates + instructors).
  * Used by the dynamic page: app/cursos/[slug]/page.tsx
  */
-export async function getCourseBySlug(slug: string): Promise<CourseWithRelations | null> {
-  const supabase = await createClient();
+export async function getCourseBySlug(
+  slug: string,
+  /** Prévia: o RLS esconde rascunho da chave pública, então usamos a de serviço.
+   *  Só a rota de prévia, protegida por token, passa true aqui. */
+  incluirRascunho = false
+): Promise<CourseWithRelations | null> {
+  const supabase = incluirRascunho ? createServiceClient() : await createClient();
 
   // 1. Fetch the course
   const { data: courseData, error: courseError } = await supabase
