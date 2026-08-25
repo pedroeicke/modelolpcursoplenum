@@ -5,6 +5,7 @@ import { CheckCircle2, Clock, ChevronUp } from 'lucide-react';
 import ColorBends from '@/components/ColorBends';
 import type { ShaderColors } from '@/types/design-system';
 import { useTurma } from '@/hooks/use-turma';
+import { corrigeDiaDaSemana } from '@/lib/dia-da-semana';
 
 // ─── Props ─────────────────────────────────────────────
 export interface ProgramProps {
@@ -19,7 +20,7 @@ export default function Program({
   description = '',
   shaderColors = ['#007bff', '#4097bf'] as [string, string],
 }: ProgramProps) {
-  const { programDays, courseDateId } = useTurma();
+  const { programDays, courseDateId, activeCourseDate } = useTurma();
 
   const [openSet, setOpenSet] = useState<Set<number>>(
     new Set(programDays.map((_, i) => i))
@@ -92,7 +93,8 @@ export default function Program({
                   <div className="flex items-center justify-between sm:contents">
                     {/* Day pill */}
                     <span className="shrink-0 text-[11px] sm:text-[12px] font-semibold border border-white/[0.15] rounded-full px-2.5 py-1 sm:px-3 text-white/60 tracking-wide">
-                      {day.tag}
+                      {/* o dia da semana vem calculado da data, não do que foi digitado */}
+                      {corrigeDiaDaSemana(day.tag, activeCourseDate?.start_date)}
                     </span>
 
                     {/* Time — visible on mobile next to pill, hidden on sm+ */}
