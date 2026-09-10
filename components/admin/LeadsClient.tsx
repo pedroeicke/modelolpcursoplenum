@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ChevronDown, Download, Search, X } from 'lucide-react';
+import { Check, ChevronDown, Download, Pencil, Search, X } from 'lucide-react';
 import { leModalidade } from '@/lib/inscricao-modalidade';
 import {
   Table,
@@ -87,6 +87,32 @@ function Campo({ label, value }: { label: string; value: React.ReactNode }) {
   );
 }
 
+/** Mesmo visual do Campo, mas editável — usado no modo de correção. */
+function CampoEdit({
+  label,
+  value,
+  onChange,
+  multiline = false,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  multiline?: boolean;
+}) {
+  const comum =
+    'mt-0.5 w-full rounded border border-gray-300 px-2 py-1 text-sm text-gray-900 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500';
+  return (
+    <div>
+      <p className="text-[11px] uppercase tracking-wide text-gray-400 font-semibold">{label}</p>
+      {multiline ? (
+        <textarea rows={3} className={comum} value={value} onChange={(e) => onChange(e.target.value)} />
+      ) : (
+        <input type="text" className={comum} value={value} onChange={(e) => onChange(e.target.value)} />
+      )}
+    </div>
+  );
+}
+
 /** Excel do Brasil abre melhor com ; e precisa do BOM para os acentos. */
 const BOM = String.fromCharCode(0xfeff);          // Excel reconhece o UTF-8
 const QUEBRA = String.fromCharCode(13, 10);       // fim de linha do CSV
@@ -116,6 +142,51 @@ export default function LeadsClient({
 }) {
   const [cursoId, setCursoId] = useState('todos');
   const [busca, setBusca] = useState('');
+
+  // Correção de inscrição: qual está aberta, o rascunho e o que já foi salvo.
+  const [editandoId, setEditandoId] = useState<string | null>(null);
+  const [rascunho, setRascunho] = useState<Partial<InscricaoRow>>({});
+  const [salvando, setSalvando] = useState(false);
+  const [erroEdicao, setErroEdicao] = useState<string | null>(null);
+  const [corrigidas, setCorrigidas] = useState<Record<string, InscricaoRow>>({});
+
+  function abreEdicao(i: InscricaoRow) {
+    setEditandoId(i.id);
+    setErroEdicao(null);
+    setRascunho({
+      num_inscritos: i.num_inscritos, nomes_inscritos: i.nomes_inscritos,
+      municipio: i.municipio, estado: i.estado,
+      razao_social: i.razao_social, cnpj: i.cnpj, cep: i.cep,
+      endereco: i.endereco, numero: i.numero, complemento: i.complemento, bairro: i.bairro,
+      cidade: i.cidade, uf: i.uf,
+      resp_nome: i.resp_nome, resp_cpf: i.resp_cpf,
+      resp_email: i.resp_email, resp_telefone: i.resp_telefone,
+    });
+  }
+
+  async function salvaEdicao(id: string) {
+    setSalvando(true);
+    setErroEdicao(null);
+    try {
+      const r = await fetch(`/api/inscricoes/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(rascunho),
+      });
+      const dados = await r.json();
+      if (!r.ok) throw new Error(dados?.error || 'Não foi possível salvar');
+      setCorrigidas((antes) => ({ ...antes, [id]: dados.inscricao }));
+      setEditandoId(null);
+    } catch (e) {
+      setErroEdicao(e instanceof Error ? e.message : 'Não foi possível salvar');
+    } finally {
+      setSalvando(false);
+    }
+  }
+
+  const campo = (k: keyof InscricaoRow) => String(rascunho[k] ?? '');
+  const mudaCampo = (k: keyof InscricaoRow) => (v: string) =>
+    setRascunho((r) => ({ ...r, [k]: v }));
 
   const courseMap = useMemo(
     () => new Map(cursos.map((c) => [c.id, c.title])),
@@ -321,7 +392,9 @@ export default function LeadsClient({
                 </p>
               ) : (
                 <div className="space-y-3">
-                  {inscricoesFiltradas.map((i) => {
+                  {inscricoesFiltradas.map((original) => {
+                    const i = corrigidas[original.id] || original;
+                    const editando = editandoId === i.id;
                     const st = statusMap[i.status] || statusMap.nova;
                     return (
                       <details
@@ -354,18 +427,72 @@ export default function LeadsClient({
                         </summary>
 
                         <div className="border-t border-gray-100 px-5 py-5 grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-5 bg-gray-50/50">
+                          {/* Correção dos dados: o vendedor digita por telefone e erra de vez em quando */}
+                          <div className="md:col-span-3 flex items-center justify-end gap-2">
+                            {erroEdicao && editando && (
+                              <span className="mr-auto text-sm text-red-600">{erroEdicao}</span>
+                            )}
+                            {editando ? (
+                              <>
+                                <button
+                                  type="button"
+                                  onClick={() => { setEditandoId(null); setErroEdicao(null); }}
+                                  disabled={salvando}
+                                  className="inline-flex items-center gap-1.5 rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                                >
+                                  <X className="h-3.5 w-3.5" />
+                                  Cancelar
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => salvaEdicao(i.id)}
+                                  disabled={salvando}
+                                  className="inline-flex items-center gap-1.5 rounded-md bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
+                                >
+                                  <Check className="h-3.5 w-3.5" />
+                                  {salvando ? 'Salvando...' : 'Salvar'}
+                                </button>
+                              </>
+                            ) : (
+                              <button
+                                type="button"
+                                onClick={() => abreEdicao(i)}
+                                className="inline-flex items-center gap-1.5 rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                              >
+                                <Pencil className="h-3.5 w-3.5" />
+                                Corrigir dados
+                              </button>
+                            )}
+                          </div>
+
                           <div className="md:col-span-3">
                             <p className="text-xs font-bold uppercase tracking-wider text-emerald-700 mb-2">Curso</p>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-3">
                               <Campo label="Curso" value={i.course_id ? courseMap.get(i.course_id) : '—'} />
                               <Campo label="Modalidade" value={leModalidade(i.observacoes).modalidade} />
                               <Campo label="Tipo de instituição" value={i.tipo_instituicao} />
-                              <Campo label="Município/UF" value={`${i.municipio}/${i.estado}`} />
+                              {editando ? (
+                                <>
+                                  <CampoEdit label="Município" value={campo('municipio')} onChange={mudaCampo('municipio')} />
+                                  <CampoEdit label="UF" value={campo('estado')} onChange={mudaCampo('estado')} />
+                                </>
+                              ) : (
+                                <Campo label="Município/UF" value={`${i.municipio}/${i.estado}`} />
+                              )}
                               <div className="md:col-span-3">
-                                <Campo
-                                  label={`Inscritos (${i.num_inscritos})`}
-                                  value={<span className="whitespace-pre-line">{i.nomes_inscritos}</span>}
-                                />
+                                {editando ? (
+                                  <CampoEdit
+                                    label="Inscritos (um por linha)"
+                                    value={campo('nomes_inscritos')}
+                                    onChange={mudaCampo('nomes_inscritos')}
+                                    multiline
+                                  />
+                                ) : (
+                                  <Campo
+                                    label={`Inscritos (${i.num_inscritos})`}
+                                    value={<span className="whitespace-pre-line">{i.nomes_inscritos}</span>}
+                                  />
+                                )}
                               </div>
                             </div>
                           </div>
@@ -373,31 +500,64 @@ export default function LeadsClient({
                           <div className="md:col-span-3">
                             <p className="text-xs font-bold uppercase tracking-wider text-emerald-700 mb-2">Nota Fiscal</p>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-3">
-                              <Campo
-                                label={i.tipo_instituicao === 'Particular' ? 'Nome completo' : 'Razão social'}
-                                value={i.razao_social}
-                              />
-                              <Campo
-                                label={i.tipo_instituicao === 'Particular' ? 'CPF' : 'CNPJ'}
-                                value={i.cnpj}
-                              />
-                              <Campo label="CEP" value={i.cep} />
-                              <Campo
-                                label="Endereço"
-                                value={`${i.endereco}, ${i.numero}${i.complemento ? ` — ${i.complemento}` : ''}`}
-                              />
-                              <Campo label="Bairro" value={i.bairro} />
-                              <Campo label="Cidade/UF" value={`${i.cidade}/${i.uf}`} />
+                              {editando ? (
+                                <>
+                                  <CampoEdit
+                                    label={i.tipo_instituicao === 'Particular' ? 'Nome completo' : 'Razão social'}
+                                    value={campo('razao_social')} onChange={mudaCampo('razao_social')}
+                                  />
+                                  <CampoEdit
+                                    label={i.tipo_instituicao === 'Particular' ? 'CPF' : 'CNPJ'}
+                                    value={campo('cnpj')} onChange={mudaCampo('cnpj')}
+                                  />
+                                  <CampoEdit label="CEP" value={campo('cep')} onChange={mudaCampo('cep')} />
+                                  <CampoEdit label="Endereço" value={campo('endereco')} onChange={mudaCampo('endereco')} />
+                                  <CampoEdit label="Número" value={campo('numero')} onChange={mudaCampo('numero')} />
+                                  <CampoEdit label="Complemento" value={campo('complemento')} onChange={mudaCampo('complemento')} />
+                                  <CampoEdit label="Bairro" value={campo('bairro')} onChange={mudaCampo('bairro')} />
+                                  <CampoEdit label="Cidade" value={campo('cidade')} onChange={mudaCampo('cidade')} />
+                                  <CampoEdit label="UF" value={campo('uf')} onChange={mudaCampo('uf')} />
+                                </>
+                              ) : (
+                                <>
+                                  <Campo
+                                    label={i.tipo_instituicao === 'Particular' ? 'Nome completo' : 'Razão social'}
+                                    value={i.razao_social}
+                                  />
+                                  <Campo
+                                    label={i.tipo_instituicao === 'Particular' ? 'CPF' : 'CNPJ'}
+                                    value={i.cnpj}
+                                  />
+                                  <Campo label="CEP" value={i.cep} />
+                                  <Campo
+                                    label="Endereço"
+                                    value={`${i.endereco}, ${i.numero}${i.complemento ? ` — ${i.complemento}` : ''}`}
+                                  />
+                                  <Campo label="Bairro" value={i.bairro} />
+                                  <Campo label="Cidade/UF" value={`${i.cidade}/${i.uf}`} />
+                                </>
+                              )}
                             </div>
                           </div>
 
                           <div className="md:col-span-3">
                             <p className="text-xs font-bold uppercase tracking-wider text-emerald-700 mb-2">Responsável</p>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-3">
-                              <Campo label="Nome" value={i.resp_nome} />
-                              <Campo label="CPF" value={i.resp_cpf} />
-                              <Campo label="E-mail" value={i.resp_email} />
-                              <Campo label="Telefone" value={i.resp_telefone} />
+                              {editando ? (
+                                <>
+                                  <CampoEdit label="Nome" value={campo('resp_nome')} onChange={mudaCampo('resp_nome')} />
+                                  <CampoEdit label="CPF" value={campo('resp_cpf')} onChange={mudaCampo('resp_cpf')} />
+                                  <CampoEdit label="E-mail" value={campo('resp_email')} onChange={mudaCampo('resp_email')} />
+                                  <CampoEdit label="Telefone" value={campo('resp_telefone')} onChange={mudaCampo('resp_telefone')} />
+                                </>
+                              ) : (
+                                <>
+                                  <Campo label="Nome" value={i.resp_nome} />
+                                  <Campo label="CPF" value={i.resp_cpf} />
+                                  <Campo label="E-mail" value={i.resp_email} />
+                                  <Campo label="Telefone" value={i.resp_telefone} />
+                                </>
+                              )}
                               <div className="md:col-span-2">
                                 <Campo label="Observações" value={leModalidade(i.observacoes).observacoes} />
                               </div>
