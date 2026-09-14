@@ -14,10 +14,13 @@ import { createClient, createServiceClient } from '@/lib/supabase/server';
 
 /** O que o vendedor pode corrigir. Curso, turma, datas e status ficam de fora. */
 const CAMPOS_EDITAVEIS = [
+  'tipo_instituicao',
   'num_inscritos', 'nomes_inscritos', 'municipio', 'estado',
   'razao_social', 'cnpj', 'cep', 'endereco', 'numero', 'complemento', 'bairro', 'cidade', 'uf',
   'resp_nome', 'resp_cpf', 'resp_email', 'resp_telefone',
 ] as const;
+
+const TIPOS_INSTITUICAO = ['Órgão Público', 'Particular', 'Empresa'];
 
 export async function PATCH(
   request: NextRequest,
@@ -42,6 +45,13 @@ export async function PATCH(
           : v;
       }
     }
+    // Mesmas opções do formulário público: qualquer outra coisa quebraria os
+    // rótulos da tela (Particular troca Razão social/CNPJ por Nome/CPF).
+    if ('tipo_instituicao' in mudancas &&
+        !TIPOS_INSTITUICAO.includes(mudancas.tipo_instituicao as string)) {
+      return NextResponse.json({ error: 'Tipo de instituição inválido' }, { status: 400 });
+    }
+
     if (Object.keys(mudancas).length === 0) {
       return NextResponse.json({ error: 'Nada para alterar' }, { status: 400 });
     }

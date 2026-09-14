@@ -15,6 +15,9 @@ import {
   TableRow,
 } from '@/components/ui/table';
 
+/** Mesmas opções do formulário público de inscrição (app/inscricao/InscricaoForm.tsx). */
+const TIPOS_INSTITUICAO = ['Órgão Público', 'Particular', 'Empresa'];
+
 const formTypeMap: Record<string, { label: string; variant: 'default' | 'secondary' | 'outline' }> = {
   folder: { label: 'Folder', variant: 'default' },
   in_company: { label: 'In Company', variant: 'secondary' },
@@ -154,6 +157,7 @@ export default function LeadsClient({
     setEditandoId(i.id);
     setErroEdicao(null);
     setRascunho({
+      tipo_instituicao: i.tipo_instituicao,
       num_inscritos: i.num_inscritos, nomes_inscritos: i.nomes_inscritos,
       municipio: i.municipio, estado: i.estado,
       razao_social: i.razao_social, cnpj: i.cnpj, cep: i.cep,
@@ -470,7 +474,22 @@ export default function LeadsClient({
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-3">
                               <Campo label="Curso" value={i.course_id ? courseMap.get(i.course_id) : '—'} />
                               <Campo label="Modalidade" value={leModalidade(i.observacoes).modalidade} />
-                              <Campo label="Tipo de instituição" value={i.tipo_instituicao} />
+                              {editando ? (
+                                <div>
+                                  <p className="text-[11px] uppercase tracking-wide text-gray-400 font-semibold">Tipo de instituição</p>
+                                  <select
+                                    className="mt-0.5 w-full rounded border border-gray-300 bg-white px-2 py-1 text-sm text-gray-900 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                                    value={campo('tipo_instituicao')}
+                                    onChange={(e) => mudaCampo('tipo_instituicao')(e.target.value)}
+                                  >
+                                    {TIPOS_INSTITUICAO.map((t) => (
+                                      <option key={t} value={t}>{t}</option>
+                                    ))}
+                                  </select>
+                                </div>
+                              ) : (
+                                <Campo label="Tipo de instituição" value={i.tipo_instituicao} />
+                              )}
                               {editando ? (
                                 <>
                                   <CampoEdit label="Município" value={campo('municipio')} onChange={mudaCampo('municipio')} />
@@ -503,11 +522,11 @@ export default function LeadsClient({
                               {editando ? (
                                 <>
                                   <CampoEdit
-                                    label={i.tipo_instituicao === 'Particular' ? 'Nome completo' : 'Razão social'}
+                                    label={campo('tipo_instituicao') === 'Particular' ? 'Nome completo' : 'Razão social'}
                                     value={campo('razao_social')} onChange={mudaCampo('razao_social')}
                                   />
                                   <CampoEdit
-                                    label={i.tipo_instituicao === 'Particular' ? 'CPF' : 'CNPJ'}
+                                    label={campo('tipo_instituicao') === 'Particular' ? 'CPF' : 'CNPJ'}
                                     value={campo('cnpj')} onChange={mudaCampo('cnpj')}
                                   />
                                   <CampoEdit label="CEP" value={campo('cep')} onChange={mudaCampo('cep')} />
