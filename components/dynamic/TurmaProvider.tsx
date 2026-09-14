@@ -8,6 +8,7 @@ import type {
   Instructor,
   LocationExtra,
 } from '@/types/course';
+import { turmaVigente } from '@/lib/turma-vigente';
 
 // ─── Context value type ─────────────────────────────────
 export interface TurmaContextValue {
@@ -62,8 +63,12 @@ export default function TurmaProvider({ dates, heroBadges, children }: TurmaProv
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const value = useMemo<TurmaContextValue>(() => {
-    // Filter only open dates for the dropdown
-    const openDates = dates.filter((d) => d.status === 'open');
+    // Dropdown: turmas abertas que ainda não passaram. Uma turma vencida continua
+    // "open" no banco e abria a página com a programação antiga. Se todas já
+    // passaram (curso encerrado), mantém as abertas para a página não ficar vazia.
+    const abertas = dates.filter((d) => d.status === 'open');
+    const vigentes = abertas.filter((d) => turmaVigente(d));
+    const openDates = vigentes.length ? vigentes : abertas;
     const turmaLabels = openDates.map(formatDateLabel);
 
     // Active course date based on selection
