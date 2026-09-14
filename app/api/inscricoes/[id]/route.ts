@@ -14,13 +14,14 @@ import { createClient, createServiceClient } from '@/lib/supabase/server';
 
 /** O que o vendedor pode corrigir. Curso, turma, datas e status ficam de fora. */
 const CAMPOS_EDITAVEIS = [
-  'tipo_instituicao',
+  'tipo_instituicao', 'forma_pagamento',
   'num_inscritos', 'nomes_inscritos', 'municipio', 'estado',
   'razao_social', 'cnpj', 'cep', 'endereco', 'numero', 'complemento', 'bairro', 'cidade', 'uf',
   'resp_nome', 'resp_cpf', 'resp_email', 'resp_telefone',
 ] as const;
 
 const TIPOS_INSTITUICAO = ['Órgão Público', 'Particular', 'Empresa'];
+const FORMAS_PAGAMENTO = ['PIX', 'Transferência bancária', 'Boleto', 'Link de cartão de crédito'];
 
 export async function PATCH(
   request: NextRequest,
@@ -50,6 +51,11 @@ export async function PATCH(
     if ('tipo_instituicao' in mudancas &&
         !TIPOS_INSTITUICAO.includes(mudancas.tipo_instituicao as string)) {
       return NextResponse.json({ error: 'Tipo de instituição inválido' }, { status: 400 });
+    }
+
+    if ('forma_pagamento' in mudancas &&
+        !FORMAS_PAGAMENTO.includes(mudancas.forma_pagamento as string)) {
+      return NextResponse.json({ error: 'Forma de pagamento inválida' }, { status: 400 });
     }
 
     if (Object.keys(mudancas).length === 0) {

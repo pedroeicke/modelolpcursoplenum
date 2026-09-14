@@ -18,6 +18,9 @@ import {
 /** Mesmas opções do formulário público de inscrição (app/inscricao/InscricaoForm.tsx). */
 const TIPOS_INSTITUICAO = ['Órgão Público', 'Particular', 'Empresa'];
 
+/** Opções definidas pelo comercial para a correção da inscrição. */
+const FORMAS_PAGAMENTO = ['PIX', 'Transferência bancária', 'Boleto', 'Link de cartão de crédito'];
+
 const formTypeMap: Record<string, { label: string; variant: 'default' | 'secondary' | 'outline' }> = {
   folder: { label: 'Folder', variant: 'default' },
   in_company: { label: 'In Company', variant: 'secondary' },
@@ -586,7 +589,33 @@ export default function LeadsClient({
                           <div className="md:col-span-3">
                             <p className="text-xs font-bold uppercase tracking-wider text-emerald-700 mb-2">Pagamento</p>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-3">
-                              <Campo label="Forma de pagamento" value={i.forma_pagamento} />
+                              {editando ? (
+                                <div>
+                                  <p className="text-[11px] uppercase tracking-wide text-gray-400 font-semibold">Forma de pagamento</p>
+                                  <select
+                                    className="mt-0.5 w-full rounded border border-gray-300 bg-white px-2 py-1 text-sm text-gray-900 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                                    value={rascunho.forma_pagamento ?? i.forma_pagamento ?? ''}
+                                    onChange={(e) => {
+                                      const v = e.target.value;
+                                      // Só envia quando muda: inscrições antigas têm opções que não
+                                      // existem mais ("Cartão de Crédito", "Cheque"...) e continuam valendo.
+                                      setRascunho((r) => {
+                                        const { forma_pagamento: _, ...resto } = r;
+                                        return v === i.forma_pagamento ? resto : { ...resto, forma_pagamento: v };
+                                      });
+                                    }}
+                                  >
+                                    {i.forma_pagamento && !FORMAS_PAGAMENTO.includes(i.forma_pagamento) && (
+                                      <option value={i.forma_pagamento}>{i.forma_pagamento}</option>
+                                    )}
+                                    {FORMAS_PAGAMENTO.map((f) => (
+                                      <option key={f} value={f}>{f}</option>
+                                    ))}
+                                  </select>
+                                </div>
+                              ) : (
+                                <Campo label="Forma de pagamento" value={i.forma_pagamento} />
+                              )}
                               <Campo
                                 label="Data para NF"
                                 value={i.data_nota_fiscal ? new Date(i.data_nota_fiscal + 'T12:00:00').toLocaleDateString('pt-BR') : '—'}
