@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useMemo, useState } from 'react';
+import React, { createContext, useEffect, useMemo, useState } from 'react';
 import type {
   CourseDateWithInstructor,
   HeroBadge,
@@ -61,6 +61,17 @@ function formatDateLabel(d: CourseDateWithInstructor): string {
 // ─── Provider component ─────────────────────────────────
 export default function TurmaProvider({ dates, heroBadges, children }: TurmaProviderProps) {
   const [selectedIndex, setSelectedIndex] = useState(0);
+
+  // Link da listagem traz ?turma=<id>: a página abre direto nessa data.
+  // Lido depois de montar porque a página é estática (ISR) e não recebe a query no servidor.
+  useEffect(() => {
+    const id = new URLSearchParams(window.location.search).get('turma');
+    if (!id) return;
+    const abertas = dates.filter((d) => d.status === 'open');
+    const vigentes = abertas.filter((d) => turmaVigente(d));
+    const i = (vigentes.length ? vigentes : abertas).findIndex((d) => d.id === id);
+    if (i > 0) setSelectedIndex(i);
+  }, [dates]);
 
   const value = useMemo<TurmaContextValue>(() => {
     // Dropdown: turmas abertas que ainda não passaram. Uma turma vencida continua

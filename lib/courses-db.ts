@@ -162,7 +162,7 @@ export async function fetchSiteCourses(): Promise<SiteCourse[]> {
       "courses?status=eq.published&select=id,slug,title,subtitle,modality,nucleo,workload,tipo,banner_image_url,cover_image_url,og_image_url,background_image_url,section_backgrounds,audience_cards"
     ),
     rest(
-      "course_dates?status=eq.open&select=course_id,label,start_date,end_date,location_venue,instructor_ids&order=start_date.asc"
+      "course_dates?status=eq.open&select=id,course_id,label,start_date,end_date,location_venue,instructor_ids&order=start_date.asc"
     ),
     rest("instructors?select=id,name"),
   ]);
@@ -175,14 +175,23 @@ export async function fetchSiteCourses(): Promise<SiteCourse[]> {
   const agora = Date.now();
   const vigentes = dates.filter((d: any) => turmaVigente(d, agora));
 
-  // próxima turma vigente de cada curso (as já realizadas foram descartadas acima)
-  const turmaByCourse = new Map<string, any>();
+  // Cada turma vigente vira um card: o mesmo curso em duas datas aparece duas
+  // vezes, cada card com a sua data, a sua capa (section_backgrounds.capas_turma)
+  // e o link que abre a página já nessa turma.
+  const turmasByCourse = new Map<string, any[]>();
   for (const d of vigentes) {
-    if (!turmaByCourse.has(d.course_id)) turmaByCourse.set(d.course_id, d);
+    if (!turmasByCourse.has(d.course_id)) turmasByCourse.set(d.course_id, []);
+    turmasByCourse.get(d.course_id)!.push(d);
   }
 
-  const mapped: SiteCourse[] = courses.map((c: any) => {
-    const turma = turmaByCourse.get(c.id) || null;
+  const mapped: SiteCourse[] = courses.flatMap((c: any) => {
+    const turmas = turmasByCourse.get(c.id) || [null];
+    return turmas.map((turma: any) => cardDoCurso(c, turma, turmas.length > 1));
+  });
+
+  function cardDoCurso(c: any, turma: any, variasTurmas: boolean): SiteCourse {
+    const capaDaTurma: string | undefined = turma && c.section_backgrounds?.capas_turma?.[turma.id];
+    const capa: string | undefined = capaDaTurma || c.cover_image_url;
     const city = turma ? cityFromVenue(turma.location_venue) : "";
     const professores: string = turma
       ? ((turma.instructor_ids || []) as string[])
@@ -192,7 +201,7 @@ export async function fetchSiteCourses(): Promise<SiteCourse[]> {
       : "";
 
     return {
-      id: c.id,
+      id: variasTurmas ? `${c.id}-${turma.id}` : c.id,
       title: c.title,
       area: c.nucleo || "",
       modality: MODALITY_LABEL[c.modality] || c.modality || "Presencial",
@@ -204,20 +213,20 @@ export async function fetchSiteCourses(): Promise<SiteCourse[]> {
       professor: professores || "Equipe Plenum",
       description: c.subtitle || "",
       audiences: audiencesFromCards(c.audience_cards, c.nucleo || ""),
-      image: c.cover_image_url || c.og_image_url || c.background_image_url || FALLBACK_IMAGE,
+      image: capa || c.og_image_url || c.background_image_url || FALLBACK_IMAGE,
       url:
         (c.section_backgrounds && c.section_backgrounds.banner_link) ||
-        `${LP_BASE}/cursos/${c.slug}`,
+        `${LP_BASE}/cursos/${c.slug}${variasTurmas ? `?turma=${turma.id}` : ''}`,
       startDate: turma ? turma.start_date : null,
       tipo: c.tipo || "curso",
-      hasCover: !!c.cover_image_url,
+      hasCover: !!capa,
       hasBannerArt: !!c.banner_image_url,
       bannerLink: (c.section_backgrounds && c.section_backgrounds.banner_link) || "",
       destaqueHome: !!(c.section_backgrounds && c.section_backgrounds.destaque_home),
       bannerImage:
-        c.banner_image_url || c.cover_image_url || c.background_image_url || c.og_image_url || FALLBACK_IMAGE,
+        c.banner_image_url || capa || c.background_image_url || c.og_image_url || FALLBACK_IMAGE,
     };
-  });
+  }
 
   // curso sem nenhuma turma vigente não aparece no site
   const comTurma = mapped.filter((c) => c.startDate);
