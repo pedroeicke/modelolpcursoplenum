@@ -12,13 +12,19 @@ import { createClient, createServiceClient } from '@/lib/supabase/server';
  * o RLS da tabela não libera escrita para a chave pública.
  */
 
-/** O que o vendedor pode corrigir. Curso, turma, datas e status ficam de fora. */
+/** O que o vendedor pode corrigir. Curso, turma e datas ficam de fora; status vai à parte. */
 const CAMPOS_EDITAVEIS = [
   'tipo_instituicao', 'forma_pagamento',
   'num_inscritos', 'nomes_inscritos', 'municipio', 'estado',
   'razao_social', 'cnpj', 'cep', 'endereco', 'numero', 'complemento', 'bairro', 'cidade', 'uf',
   'resp_nome', 'resp_cpf', 'resp_email', 'resp_telefone',
 ] as const;
+
+/**
+ * Status que o painel pode gravar: cancelar (inscrição duplicada ou desistência)
+ * e reativar. Os demais status ficam para quando houver fluxo de atendimento.
+ */
+const STATUS_PERMITIDOS = ['nova', 'cancelada'];
 
 const TIPOS_INSTITUICAO = ['Órgão Público', 'Particular', 'Empresa'];
 const FORMAS_PAGAMENTO = ['PIX', 'Transferência bancária', 'Boleto', 'Link de cartão de crédito'];
@@ -46,6 +52,13 @@ export async function PATCH(
           : v;
       }
     }
+    if ('status' in body) {
+      if (!STATUS_PERMITIDOS.includes(body.status)) {
+        return NextResponse.json({ error: 'Status inválido' }, { status: 400 });
+      }
+      mudancas.status = body.status;
+    }
+
     // Mesmas opções do formulário público: qualquer outra coisa quebraria os
     // rótulos da tela (Particular troca Razão social/CNPJ por Nome/CPF).
     if ('tipo_instituicao' in mudancas &&

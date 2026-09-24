@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Check, ChevronDown, Download, Pencil, Search, X } from 'lucide-react';
+import { Ban, Check, ChevronDown, Download, Pencil, RotateCcw, Search, X } from 'lucide-react';
 import { leModalidade } from '@/lib/inscricao-modalidade';
 import {
   Table,
@@ -191,6 +191,32 @@ export default function LeadsClient({
     }
   }
 
+  // Cancelamento: inscrição duplicada ou desistência. Não apaga — só muda o
+  // status, e dá para reativar se cancelou a errada.
+  const [mudandoStatus, setMudandoStatus] = useState<string | null>(null);
+
+  async function mudaStatus(i: InscricaoRow, status: 'cancelada' | 'nova') {
+    const pergunta = status === 'cancelada'
+      ? `Cancelar a inscrição de ${i.resp_nome}? Ela sai da contagem e da lista de presença.`
+      : `Reativar a inscrição de ${i.resp_nome}?`;
+    if (!window.confirm(pergunta)) return;
+    setMudandoStatus(i.id);
+    try {
+      const r = await fetch(`/api/inscricoes/${i.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status }),
+      });
+      const dados = await r.json();
+      if (!r.ok) throw new Error(dados?.error || 'Não foi possível salvar');
+      setCorrigidas((antes) => ({ ...antes, [i.id]: dados.inscricao }));
+    } catch (e) {
+      window.alert(e instanceof Error ? e.message : 'Não foi possível salvar');
+    } finally {
+      setMudandoStatus(null);
+    }
+  }
+
   const campo = (k: keyof InscricaoRow) => String(rascunho[k] ?? '');
   const mudaCampo = (k: keyof InscricaoRow) => (v: string) =>
     setRascunho((r) => ({ ...r, [k]: v }));
@@ -235,13 +261,17 @@ export default function LeadsClient({
     return lista;
   }, [leads, cursoId, termo]);
 
-  /** Uma linha por participante — é isso que vira lista de presença. */
+  // status atual: o que foi salvo nesta tela vale mais que o carregado da página
+  const cancelada = (i: InscricaoRow) => (corrigidas[i.id] || i).status === 'cancelada';
+  const inscricoesAtivas = inscricoesFiltradas.filter((i) => !cancelada(i));
+
+  /** Uma linha por participante — é isso que vira lista de presença. Cancelada fica de fora. */
   function exportaPresenca() {
     const linhas: string[][] = [[
       'Curso', 'Modalidade', 'Participante', 'Órgão / Razão social',
       'Município', 'UF', 'Responsável', 'E-mail', 'Telefone', 'Data da inscrição',
     ]];
-    for (const i of inscricoesFiltradas) {
+    for (const i of inscricoesAtivas.map((x) => corrigidas[x.id] || x)) {
       const { modalidade } = leModalidade(i.observacoes);
       const nomes = (i.nomes_inscritos || '')
         .split(QUEBRA_LINHA)
@@ -274,7 +304,7 @@ export default function LeadsClient({
     baixaCsv(`${nomeArquivo}.csv`, linhas);
   }
 
-  const totalParticipantes = inscricoesFiltradas.reduce(
+  const totalParticipantes = inscricoesAtivas.reduce(
     (soma, i) => soma + (i.num_inscritos || 1),
     0
   );
@@ -375,13 +405,15 @@ export default function LeadsClient({
                 <CardTitle>Inscrições nos cursos</CardTitle>
                 <p className="mt-1 text-sm text-gray-500">
                   {totalParticipantes} participante{totalParticipantes === 1 ? '' : 's'} em{' '}
-                  {inscricoesFiltradas.length} inscriç{inscricoesFiltradas.length === 1 ? 'ão' : 'ões'}
+                  {inscricoesAtivas.length} inscriç{inscricoesAtivas.length === 1 ? 'ão' : 'ões'}
+                  {inscricoesAtivas.length < inscricoesFiltradas.length &&
+                    ` · ${inscricoesFiltradas.length - inscricoesAtivas.length} cancelada${inscricoesFiltradas.length - inscricoesAtivas.length === 1 ? '' : 's'}`}
                 </p>
               </div>
               <button
                 type="button"
                 onClick={exportaPresenca}
-                disabled={inscricoesFiltradas.length === 0}
+                disabled={inscricoesAtivas.length === 0}
                 className="inline-flex shrink-0 items-center gap-2 rounded-md bg-emerald-600 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-40"
               >
                 <Download className="h-4 w-4" />
@@ -406,7 +438,7 @@ export default function LeadsClient({
                     return (
                       <details
                         key={i.id}
-                        className="group rounded-lg border border-gray-200 open:shadow-sm"
+                        className={`group rounded-lg border border-gray-200 open:shadow-sm ${i.status === 'cancelada' ? 'opacity-60' : ''}`}
                       >
                         <summary className="flex items-center gap-4 px-4 py-3 cursor-pointer list-none [&::-webkit-details-marker]:hidden">
                           <ChevronDown className="w-4 h-4 text-gray-400 transition-transform group-open:rotate-180 shrink-0" />
@@ -461,14 +493,37 @@ export default function LeadsClient({
                                 </button>
                               </>
                             ) : (
-                              <button
-                                type="button"
-                                onClick={() => abreEdicao(i)}
-                                className="inline-flex items-center gap-1.5 rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
-                              >
-                                <Pencil className="h-3.5 w-3.5" />
-                                Corrigir dados
-                              </button>
+                              <>
+                                {i.status === 'cancelada' ? (
+                                  <button
+                                    type="button"
+                                    onClick={() => mudaStatus(i, 'nova')}
+                                    disabled={mudandoStatus === i.id}
+                                    className="inline-flex items-center gap-1.5 rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                                  >
+                                    <RotateCcw className="h-3.5 w-3.5" />
+                                    {mudandoStatus === i.id ? 'Salvando...' : 'Reativar inscrição'}
+                                  </button>
+                                ) : (
+                                  <button
+                                    type="button"
+                                    onClick={() => mudaStatus(i, 'cancelada')}
+                                    disabled={mudandoStatus === i.id}
+                                    className="inline-flex items-center gap-1.5 rounded-md border border-red-200 bg-white px-3 py-1.5 text-sm font-medium text-red-600 hover:bg-red-50 disabled:opacity-50"
+                                  >
+                                    <Ban className="h-3.5 w-3.5" />
+                                    {mudandoStatus === i.id ? 'Cancelando...' : 'Cancelar inscrição'}
+                                  </button>
+                                )}
+                                <button
+                                  type="button"
+                                  onClick={() => abreEdicao(i)}
+                                  className="inline-flex items-center gap-1.5 rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                                >
+                                  <Pencil className="h-3.5 w-3.5" />
+                                  Corrigir dados
+                                </button>
+                              </>
                             )}
                           </div>
 
