@@ -9,6 +9,7 @@ import type { Testimonial } from '@/types/course';
 import type { CompanySettings } from '@/types/company';
 import type { ShaderColors } from '@/types/design-system';
 import { useTurma } from '@/hooks/use-turma';
+import { evento } from '@/lib/analytics';
 
 // ─── Props ─────────────────────────────────────────────
 export interface SocialProofProps {
@@ -60,6 +61,7 @@ export default function SocialProof({
         });
         const data = await res.json();
         if (data.success) {
+          evento('pedido_in_company', { curso_id: courseId || '' });
           setCtaSubmitted(true);
         }
       } catch {

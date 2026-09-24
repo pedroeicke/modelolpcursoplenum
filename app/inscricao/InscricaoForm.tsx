@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import { ArrowLeft, ArrowRight, CheckCircle2, Loader2, MapPin, Monitor } from 'lucide-react';
+import { evento } from '@/lib/analytics';
 
 export interface CursoOption {
   id: string;
@@ -179,6 +180,10 @@ export default function InscricaoForm({
           window.scrollTo({ top: 0, behavior: 'smooth' });
           return;
         }
+        evento('inscricao_enviada', {
+          curso: cursos.find((c) => c.id === courseId)?.slug || '',
+          inscritos: Number(form.num_inscritos) || 1,
+        });
         setEnviado(true);
         setEnviando(false);
         window.scrollTo({ top: 0, behavior: 'smooth' });

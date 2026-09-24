@@ -5,6 +5,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Download, CheckCircle2 } from 'lucide-react';
 import { useTurma } from '@/hooks/use-turma';
+import { evento } from '@/lib/analytics';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -84,6 +85,7 @@ export default function FolderForm({
       });
       const data = await res.json();
       if (data.success) {
+        evento('folder_baixado', { curso_id: courseId || '' });
         setSubmitted(true);
         // Allow PDF download whether lead is new or existing
         if (activePdfUrl) {
