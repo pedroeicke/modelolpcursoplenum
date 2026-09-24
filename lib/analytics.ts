@@ -18,6 +18,12 @@ export const GA_ID = 'G-LYX5T9ESB7';
  */
 export const GTM_ID = 'GTM-TQ9KWB37';
 
+/**
+ * Microsoft Clarity (mapas de calor e gravações): projeto "Site Institucional"
+ * no dev.ia. Mascara campos de formulário por padrão (CPF, CNPJ, e-mail da inscrição).
+ */
+export const CLARITY_ID = 'ync2rbop14';
+
 type Parametros = Record<string, string | number | boolean | null | undefined>;
 
 declare global {
