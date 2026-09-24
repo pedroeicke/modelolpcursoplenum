@@ -11,6 +11,13 @@
  */
 export const GA_ID = 'G-LYX5T9ESB7';
 
+/**
+ * Google Tag Manager (conta "Plenum Brasil", contêiner www.plenumbrasil.com.br,
+ * no dev.ia). Serve para as outras ferramentas (Clarity, pixel etc.). O GA4 NÃO
+ * entra por ele — já vem direto pelo gtag.js; uma tag GA4 no GTM contaria em dobro.
+ */
+export const GTM_ID = 'GTM-TQ9KWB37';
+
 type Parametros = Record<string, string | number | boolean | null | undefined>;
 
 declare global {

@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import Script from 'next/script';
 import { usePathname } from 'next/navigation';
-import { GA_ID, evento } from '@/lib/analytics';
+import { GA_ID, GTM_ID, evento } from '@/lib/analytics';
 
 /**
  * Google Analytics 4 no site inteiro, com o código padrão do Google.
@@ -18,6 +18,8 @@ import { GA_ID, evento } from '@/lib/analytics';
  * - "clique" em todo link e botão, com o texto e o destino — é o ranking de cliques;
  * - "clique_inscricao", "clique_folder" e "clique_whatsapp" nos três que o
  *   comercial acompanha.
+ *
+ * O Google Tag Manager carrega junto, para as ferramentas que vierem por ele.
  *
  * Não carrega no painel administrativo.
  */
@@ -65,6 +67,21 @@ function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', '${GA_ID}');`}
       </Script>
+      <Script id="gtm" strategy="afterInteractive">
+        {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','${GTM_ID}');`}
+      </Script>
+      <noscript>
+        <iframe
+          src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
+          height="0"
+          width="0"
+          style={{ display: 'none', visibility: 'hidden' }}
+        />
+      </noscript>
     </>
   );
 }
