@@ -8,8 +8,8 @@ import { GA_ID, evento } from '@/lib/analytics';
 /**
  * Google Analytics 4 no site inteiro, com o código padrão do Google.
  *
- * Antes o site não tinha GA (o G-03XW3FWG7L que aparecia era da integração do
- * chat Tawk.to, numa conta antiga). Com o gtag.js o GA4 registra
+ * Antes o site novo não tinha GA; o site antigo usava esta mesma propriedade
+ * (G-LYX5T9ESB7), então o histórico continua nela. Com o gtag.js o GA4 registra
  * visitas, páginas vistas (inclusive na navegação interna, pela medição
  * otimizada) e a origem de cada visita pelos utm_ dos links das campanhas.
  *
