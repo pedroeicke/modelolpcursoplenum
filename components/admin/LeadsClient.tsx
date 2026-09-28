@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Ban, Check, ChevronDown, Download, Pencil, RotateCcw, Search, X } from 'lucide-react';
+import { Ban, Check, ChevronDown, Clock, Download, Pencil, RotateCcw, Search, X } from 'lucide-react';
 import { leModalidade } from '@/lib/inscricao-modalidade';
 import {
   Table,
@@ -29,6 +29,7 @@ const formTypeMap: Record<string, { label: string; variant: 'default' | 'seconda
 
 const statusMap: Record<string, { label: string; cls: string }> = {
   nova: { label: 'Nova', cls: 'bg-emerald-100 text-emerald-800' },
+  aguardando_confirmacao: { label: 'Aguardando confirmação', cls: 'bg-orange-100 text-orange-800' },
   em_atendimento: { label: 'Em atendimento', cls: 'bg-amber-100 text-amber-800' },
   confirmada: { label: 'Confirmada', cls: 'bg-blue-100 text-blue-800' },
   cancelada: { label: 'Cancelada', cls: 'bg-gray-200 text-gray-600' },
@@ -82,6 +83,20 @@ export interface InscricaoRow {
 export interface CursoOpcao {
   id: string;
   title: string;
+}
+
+export interface TurmaOpcao {
+  id: string;
+  label: string | null;
+  start_date: string | null;
+}
+
+/** "27 a 30 de outubro de 2026" — o rótulo da turma já vem pronto; sem ele, monta pela data. */
+function dataDaTurma(t: TurmaOpcao | undefined): string {
+  if (!t) return '';
+  if (t.label) return t.label;
+  if (!t.start_date) return '';
+  return new Date(t.start_date).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
 }
 
 function Campo({ label, value }: { label: string; value: React.ReactNode }) {
@@ -141,10 +156,12 @@ export default function LeadsClient({
   leads,
   inscricoes,
   cursos,
+  turmas,
 }: {
   leads: LeadRow[];
   inscricoes: InscricaoRow[];
   cursos: CursoOpcao[];
+  turmas: TurmaOpcao[];
 }) {
   const [cursoId, setCursoId] = useState('todos');
   const [busca, setBusca] = useState('');
@@ -195,11 +212,13 @@ export default function LeadsClient({
   // status, e dá para reativar se cancelou a errada.
   const [mudandoStatus, setMudandoStatus] = useState<string | null>(null);
 
-  async function mudaStatus(i: InscricaoRow, status: 'cancelada' | 'nova') {
+  async function mudaStatus(i: InscricaoRow, status: 'cancelada' | 'nova' | 'aguardando_confirmacao') {
     const pergunta = status === 'cancelada'
       ? `Cancelar a inscrição de ${i.resp_nome}? Ela sai da contagem e da lista de presença.`
-      : `Reativar a inscrição de ${i.resp_nome}?`;
-    if (!window.confirm(pergunta)) return;
+      : status === 'nova' && i.status === 'cancelada'
+        ? `Reativar a inscrição de ${i.resp_nome}?`
+        : '';
+    if (pergunta && !window.confirm(pergunta)) return;
     setMudandoStatus(i.id);
     try {
       const r = await fetch(`/api/inscricoes/${i.id}`, {
@@ -225,6 +244,8 @@ export default function LeadsClient({
     () => new Map(cursos.map((c) => [c.id, c.title])),
     [cursos]
   );
+
+  const turmaMap = useMemo(() => new Map(turmas.map((t) => [t.id, t])), [turmas]);
 
   // só lista no dropdown os cursos que realmente têm inscrição ou lead
   const cursosComRegistro = useMemo(() => {
@@ -505,6 +526,26 @@ export default function LeadsClient({
                                     {mudandoStatus === i.id ? 'Salvando...' : 'Reativar inscrição'}
                                   </button>
                                 ) : (
+                                  <>
+                                    <button
+                                      type="button"
+                                      onClick={() =>
+                                        mudaStatus(i, i.status === 'aguardando_confirmacao' ? 'nova' : 'aguardando_confirmacao')
+                                      }
+                                      disabled={mudandoStatus === i.id}
+                                      className={`inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-sm font-medium disabled:opacity-50 ${
+                                        i.status === 'aguardando_confirmacao'
+                                          ? 'border-orange-300 bg-orange-50 text-orange-700 hover:bg-orange-100'
+                                          : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
+                                      }`}
+                                    >
+                                      <Clock className="h-3.5 w-3.5" />
+                                      {mudandoStatus === i.id
+                                        ? 'Salvando...'
+                                        : i.status === 'aguardando_confirmacao'
+                                          ? 'Marcar como nova'
+                                          : 'Aguardando confirmação'}
+                                    </button>
                                   <button
                                     type="button"
                                     onClick={() => mudaStatus(i, 'cancelada')}
@@ -514,6 +555,7 @@ export default function LeadsClient({
                                     <Ban className="h-3.5 w-3.5" />
                                     {mudandoStatus === i.id ? 'Cancelando...' : 'Cancelar inscrição'}
                                   </button>
+                                  </>
                                 )}
                                 <button
                                   type="button"
@@ -531,6 +573,7 @@ export default function LeadsClient({
                             <p className="text-xs font-bold uppercase tracking-wider text-emerald-700 mb-2">Curso</p>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-3">
                               <Campo label="Curso" value={i.course_id ? courseMap.get(i.course_id) : '—'} />
+                              <Campo label="Turma" value={dataDaTurma(turmaMap.get(i.course_date_id || ''))} />
                               <Campo label="Modalidade" value={leModalidade(i.observacoes).modalidade} />
                               {editando ? (
                                 <div>

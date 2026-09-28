@@ -21,10 +21,10 @@ const CAMPOS_EDITAVEIS = [
 ] as const;
 
 /**
- * Status que o painel pode gravar: cancelar (inscrição duplicada ou desistência)
- * e reativar. Os demais status ficam para quando houver fluxo de atendimento.
+ * Status que o painel pode gravar: aguardando confirmação (contato feito, falta
+ * o cliente confirmar), cancelar (duplicada ou desistência) e voltar para nova.
  */
-const STATUS_PERMITIDOS = ['nova', 'cancelada'];
+const STATUS_PERMITIDOS = ['nova', 'aguardando_confirmacao', 'cancelada'];
 
 const TIPOS_INSTITUICAO = ['Órgão Público', 'Particular', 'Empresa'];
 const FORMAS_PAGAMENTO = ['PIX', 'Transferência bancária', 'Boleto', 'Link de cartão de crédito'];
