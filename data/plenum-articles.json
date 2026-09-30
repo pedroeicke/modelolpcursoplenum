@@ -1,1 +1,112 @@
-[]
+[
+  {
+    "slug": "tcu-auditoria-siope-interoperabilidade-sistemas-educacao",
+    "title": "TCU audita o Siope e nao encontra interoperabilidade entre os sistemas da educacao",
+    "subtitle": "Das 18 exigencias examinadas, 15 tiveram algum grau de atendimento; ja a integracao entre Siope, Siconfi, Siafi e Siafic foi considerada inexistente",
+    "category": "CONTROLE EXTERNO",
+    "categoryColor": "#059669",
+    "topic": "tecnologia",
+    "author": {
+      "name": "Equipe Plenum",
+      "role": "Controle externo",
+      "avatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=100"
+    },
+    "date": "30 Set 2026",
+    "readTime": "4 min",
+    "heroImage": "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&q=80&w=1400",
+    "heroCaption": "Auditoria do TCU avaliou as regras de negocio do Siope e sua interacao com Siconfi, Siafi e Siafic.",
+    "content": [
+      {
+        "type": "axiom",
+        "label": "Por que importa",
+        "text": "Quem responde por contabilidade, prestacao de contas ou controle interno na area de educacao costuma declarar a mesma informacao em mais de um sistema. A auditoria do TCU coloca exatamente esse ponto no centro: sem comunicacao automatizada entre as bases, o dado que chega ao controle perde consistencia, comparabilidade e rastreabilidade."
+      },
+      {
+        "type": "paragraph",
+        "text": "O Tribunal de Contas da Uniao concluiu auditoria sobre os sistemas centralizados mantidos pela Uniao para monitorar e avaliar a politica nacional de educacao. O trabalho teve relatoria do ministro Odair Cunha e resultou no Acordao 2594/2026 - Plenario, no processo TC 012.707/2022-8, apreciado na sessao de 23 de setembro de 2026."
+      },
+      {
+        "type": "heading",
+        "text": "Por que o foco ficou na educacao"
+      },
+      {
+        "type": "paragraph",
+        "text": "Conforme explicou o relator, a fiscalizacao nasceu com escopo mais amplo: alcancaria sistemas ligados as politicas de saude, educacao, previdencia e gestao fiscal. A elevada materialidade dos recursos da educacao levou a priorizar o Sistema de Informacoes sobre Orcamentos Publicos em Educacao (Siope) e sua interacao com as demais bases."
+      },
+      {
+        "type": "bullets",
+        "label": "Os sistemas que aparecem na analise",
+        "items": [
+          "Siafic - Sistemas Unicos e Integrados de Execucao Orcamentaria, Administracao Financeira e Controle, mantidos por estados, municipios e DF; segundo a auditoria, sao a fonte primaria dos registros contabeis desses entes.",
+          "Siconfi - Sistema de Informacoes Contabeis e Fiscais do Setor Publico Brasileiro, que recebe esses dados para a consolidacao fiscal e contabil nacional.",
+          "Siope - coleta as informacoes especificas da funcao educacao, necessarias a verificacao da aplicacao dos recursos e a avaliacao da politica educacional.",
+          "Siafi - Sistema Integrado de Administracao Financeira do Governo Federal."
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Tres perguntas, tres respostas"
+      },
+      {
+        "type": "paragraph",
+        "text": "A primeira pergunta era se as regras de negocio implantadas no Siope estao em conformidade com a legislacao. A resposta foi predominantemente positiva, com ressalvas: das 18 funcionalidades ou exigencias normativas examinadas, 11 foram consideradas integralmente atendidas, tres atendidas com ressalva e uma parcialmente atendida, somando 15 itens com algum grau de atendimento, ou 83,3% do universo analisado. Tres funcionalidades foram consideradas nao atendidas. A noticia do Tribunal nao detalha quais itens ficaram de fora nem o teor de cada ressalva."
+      },
+      {
+        "type": "paragraph",
+        "text": "A segunda pergunta era se existe interoperabilidade entre Siope, Siafi, Siconfi e Siafic. A resposta foi negativa: houve iniciativas pontuais para automatizar o fluxo de dados entre Siconfi e Siope, mas nao se constatou interoperabilidade efetiva. A terceira tratava da suficiencia dos controles do Siope e do Siconfi para assegurar fidedignidade, comparabilidade e rastreabilidade das informacoes ao longo dos principais processos e das interacoes entre os sistemas; tambem foi respondida de forma negativa."
+      },
+      {
+        "type": "quote",
+        "text": "A ausencia de comunicacao automatizada e padronizada entre essas bases, portanto, nao representa apenas deficiencia tecnologica, mas fragilidade que pode repercutir sobre a consistencia, a comparabilidade, a circularizacao e a rastreabilidade das informacoes publicas",
+        "author": "Ministro Odair Cunha, relator"
+      },
+      {
+        "type": "heading",
+        "text": "Os quatro achados"
+      },
+      {
+        "type": "bullets",
+        "label": "O que a fiscalizacao apontou",
+        "items": [
+          "Inexistencia de interoperabilidade entre os sistemas analisados.",
+          "Nao atendimento, pelo Siope, de funcionalidades relevantes previstas na legislacao.",
+          "Ausencia de acompanhamento, pela Uniao, da implantacao dos Siafic e do atendimento ao padrao minimo de qualidade estabelecido pelo orgao central de contabilidade.",
+          "Fragilidades na governanca e na gestao de tecnologia da informacao do Siope."
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "O que o Tribunal determinou"
+      },
+      {
+        "type": "bullets",
+        "label": "Determinacoes com prazo de 180 dias",
+        "items": [
+          "A Secretaria do Tesouro Nacional: estabelecer requisitos minimos de interoperabilidade aplicaveis aos Siafic, precedidos dos estudos tecnicos que a propria STN considerar necessarios, para assegurar integracao com os sistemas estruturantes pertinentes e transmissao padronizada, segura, integra, rastreavel e, sempre que tecnicamente possivel, automatizada das informacoes contabeis, orcamentarias e fiscais ao Siconfi.",
+          "Ao Fundo Nacional de Desenvolvimento da Educacao: adotar as providencias necessarias para assegurar a efetiva interoperabilidade e integracao do Siope com os sistemas eletronicos de dados contabeis, orcamentarios e fiscais pertinentes, em articulacao com a STN, com a Secretaria de Orcamento Federal e com os demais orgaos competentes.",
+          "Tambem ao FNDE: apresentar cronograma para a reducao progressiva das duplicidades de declaracao e das intervencoes manuais nos fluxos de dados."
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Como os Siafic sao mantidos por estados, municipios e DF, o que a STN vier a definir como requisito minimo de interoperabilidade tende a alcancar os sistemas usados por esses entes - e, com isso, a rotina de quem alimenta o Siope e o Siconfi. O detalhamento das determinacoes, das ressalvas e dos itens considerados nao atendidos esta na integra da decisao, leitura recomendada para equipes de contabilidade, prestacao de contas e controle interno da area de educacao."
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "type": "bullets",
+        "label": "Fonte",
+        "items": [
+          "TCU: Sistemas informatizados da politica nacional de educacao passam por auditoria (30/09/2026)",
+          "https://portal.tcu.gov.br/imprensa/noticias/sistemas-informatizados-da-politica-nacional-de-educacao-passam-por-auditoria"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Conteúdo produzido a partir de informação pública oficial. Consulte a íntegra na fonte antes de aplicar a qualquer caso concreto."
+      }
+    ],
+    "relatedSlugs": []
+  }
+]
