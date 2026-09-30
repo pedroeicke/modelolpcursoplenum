@@ -1,3 +1,5 @@
+import managedArticles from "@/data/plenum-articles.json";
+
 export type BlogTopic = "geral" | "tecnologia";
 
 export interface BlogPost {
@@ -30,6 +32,9 @@ export type ContentBlock =
     | { type: "divider" };
 
 export const BLOG_POSTS: BlogPost[] = [
+    // Artigos publicados pelo agente (data/plenum-articles.json) vêm primeiro, do mais novo para o mais antigo:
+    // o primeiro vira o destaque do /blog e os três primeiros aparecem na home.
+    ...[...(managedArticles as BlogPost[])].reverse(),
     {
         slug: "o-que-muda-nas-contratacoes-em-2026",
         title: "O que muda nas contratações em 2026",
