@@ -172,10 +172,17 @@ export default function LeadsClient({
   const [salvando, setSalvando] = useState(false);
   const [erroEdicao, setErroEdicao] = useState<string | null>(null);
   const [corrigidas, setCorrigidas] = useState<Record<string, InscricaoRow>>({});
+  // A modalidade não tem coluna própria (vai marcada nas observações), por isso
+  // fica num rascunho separado e só é enviada se mudar.
+  const [modalidadeOriginal, setModalidadeOriginal] = useState('');
+  const [modalidadeRascunho, setModalidadeRascunho] = useState('');
 
   function abreEdicao(i: InscricaoRow) {
     setEditandoId(i.id);
     setErroEdicao(null);
+    const modalidade = (leModalidade(i.observacoes).modalidade || '').toLowerCase();
+    setModalidadeOriginal(modalidade);
+    setModalidadeRascunho(modalidade);
     setRascunho({
       tipo_instituicao: i.tipo_instituicao,
       num_inscritos: i.num_inscritos, nomes_inscritos: i.nomes_inscritos,
@@ -195,7 +202,11 @@ export default function LeadsClient({
       const r = await fetch(`/api/inscricoes/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(rascunho),
+        body: JSON.stringify(
+          modalidadeRascunho && modalidadeRascunho !== modalidadeOriginal
+            ? { ...rascunho, modalidade: modalidadeRascunho }
+            : rascunho
+        ),
       });
       const dados = await r.json();
       if (!r.ok) throw new Error(dados?.error || 'Não foi possível salvar');
@@ -574,7 +585,22 @@ export default function LeadsClient({
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-3">
                               <Campo label="Curso" value={i.course_id ? courseMap.get(i.course_id) : '—'} />
                               <Campo label="Turma" value={dataDaTurma(turmaMap.get(i.course_date_id || ''))} />
-                              <Campo label="Modalidade" value={leModalidade(i.observacoes).modalidade} />
+                              {editando ? (
+                                <div>
+                                  <p className="text-[11px] uppercase tracking-wide text-gray-400 font-semibold">Modalidade</p>
+                                  <select
+                                    className="mt-0.5 w-full rounded border border-gray-300 bg-white px-2 py-1 text-sm text-gray-900 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                                    value={modalidadeRascunho}
+                                    onChange={(e) => setModalidadeRascunho(e.target.value)}
+                                  >
+                                    {!modalidadeRascunho && <option value="">Não informada</option>}
+                                    <option value="presencial">Presencial</option>
+                                    <option value="online">Online</option>
+                                  </select>
+                                </div>
+                              ) : (
+                                <Campo label="Modalidade" value={leModalidade(i.observacoes).modalidade} />
+                              )}
                               {editando ? (
                                 <div>
                                   <p className="text-[11px] uppercase tracking-wide text-gray-400 font-semibold">Tipo de instituição</p>
@@ -601,12 +627,25 @@ export default function LeadsClient({
                               )}
                               <div className="md:col-span-3">
                                 {editando ? (
-                                  <CampoEdit
-                                    label="Inscritos (um por linha)"
-                                    value={campo('nomes_inscritos')}
-                                    onChange={mudaCampo('nomes_inscritos')}
-                                    multiline
-                                  />
+                                  <div className="grid grid-cols-1 md:grid-cols-[160px_1fr] gap-x-6 gap-y-3">
+                                    <div>
+                                      <p className="text-[11px] uppercase tracking-wide text-gray-400 font-semibold">Quantidade de inscritos</p>
+                                      <input
+                                        type="number"
+                                        min={1}
+                                        max={200}
+                                        className="mt-0.5 w-full rounded border border-gray-300 px-2 py-1 text-sm text-gray-900 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                                        value={campo('num_inscritos')}
+                                        onChange={(e) => mudaCampo('num_inscritos')(e.target.value)}
+                                      />
+                                    </div>
+                                    <CampoEdit
+                                      label="Inscritos (um por linha)"
+                                      value={campo('nomes_inscritos')}
+                                      onChange={mudaCampo('nomes_inscritos')}
+                                      multiline
+                                    />
+                                  </div>
                                 ) : (
                                   <Campo
                                     label={`Inscritos (${i.num_inscritos})`}
