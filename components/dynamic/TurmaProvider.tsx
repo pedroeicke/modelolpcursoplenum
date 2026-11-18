@@ -82,8 +82,10 @@ export default function TurmaProvider({ dates, heroBadges, children }: TurmaProv
     const openDates = vigentes.length ? vigentes : abertas;
     const turmaLabels = openDates.map(formatDateLabel);
 
-    // Active course date based on selection
-    const activeCourseDate = openDates[selectedIndex] || openDates[0] || dates[0] || null;
+    // Active course date based on selection. Sem turma aberta (inscrições
+    // encerradas), mostra a turma que ainda vai acontecer, não uma antiga.
+    const activeCourseDate =
+      openDates[selectedIndex] || openDates[0] || dates.find((d) => turmaVigente(d)) || dates[0] || null;
 
     // Derived data from active course date
     const programDays = activeCourseDate?.program_days || [];

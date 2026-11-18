@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import InscricaoForm, { type CursoOption } from './InscricaoForm';
-import { turmaVigente } from '@/lib/turma-vigente';
+import { inscricoesEncerradas, turmaVigente } from '@/lib/turma-vigente';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -26,18 +26,25 @@ export default async function InscricaoPage({
     .eq('status', 'published')
     .order('title', { ascending: true });
 
-  // Turmas abertas de todos os cursos
+  // Turmas abertas e encerradas de todos os cursos (as encerradas só para saber
+  // quais cursos estão com as inscrições encerradas)
   const { data: dates } = await supabase
     .from('course_dates')
     .select('id, course_id, label, start_date, end_date, status')
-    .eq('status', 'open')
+    .in('status', ['open', 'closed'])
     .order('start_date', { ascending: true });
+
+  const agora = Date.now();
+  const turmasDoCurso = new Map<string, any[]>();
+  for (const d of (dates || []) as any[]) {
+    if (!turmasDoCurso.has(d.course_id)) turmasDoCurso.set(d.course_id, []);
+    turmasDoCurso.get(d.course_id)!.push(d);
+  }
 
   // Turma que já aconteceu não entra na lista: sem isso, um link antigo
   // (Google, WhatsApp, folder impresso) ainda inscrevia gente em curso passado.
-  const agora = Date.now();
   const turmasByCourse = new Map<string, { id: string; label: string }[]>();
-  for (const d of ((dates || []) as any[]).filter((d) => turmaVigente(d, agora))) {
+  for (const d of ((dates || []) as any[]).filter((d) => d.status === 'open' && turmaVigente(d, agora))) {
     if (!turmasByCourse.has(d.course_id)) turmasByCourse.set(d.course_id, []);
     turmasByCourse.get(d.course_id)!.push({
       id: d.id,
@@ -51,13 +58,16 @@ export default async function InscricaoPage({
     });
   }
 
-  const cursos: CursoOption[] = ((courses || []) as any[]).map((c) => ({
-    id: c.id,
-    slug: c.slug,
-    title: c.title,
-    modality: c.modality,
-    turmas: turmasByCourse.get(c.id) || [],
-  }));
+  // Curso com as inscrições encerradas não é oferecido (nem por link com ?curso=)
+  const cursos: CursoOption[] = ((courses || []) as any[])
+    .filter((c) => !inscricoesEncerradas(turmasDoCurso.get(c.id) || [], agora))
+    .map((c) => ({
+      id: c.id,
+      slug: c.slug,
+      title: c.title,
+      modality: c.modality,
+      turmas: turmasByCourse.get(c.id) || [],
+    }));
 
   return (
     <main className="min-h-screen bg-[#F4F5F7] text-[#030D1F]">

@@ -18,7 +18,7 @@ import SocialProof from '@/components/dynamic/SocialProof';
 import Relevance from '@/components/dynamic/Relevance';
 import GeneralInfo from '@/components/dynamic/GeneralInfo';
 import Footer from '@/components/dynamic/Footer';
-import { turmaVigente } from '@/lib/turma-vigente';
+import { inscricoesEncerradas, turmaVigente } from '@/lib/turma-vigente';
 
 // ─── Página do curso (usada pela rota pública e pela prévia) ──
 export default async function PaginaDoCurso({
@@ -47,12 +47,19 @@ export default async function PaginaDoCurso({
   // Nenhuma turma vigente = o curso já aconteceu. A página continua no ar (o
   // Google e os links antigos apontam para ela), mas para de vender: o botão
   // deixa de levar à inscrição e passa a captar interesse na próxima turma.
+  // Turma "Encerrada" no admin antes da data faz o mesmo (inscrições encerradas).
+  const fechadoParaInscricao = inscricoesEncerradas(course.dates || []);
   const encerrado =
-    !!course.dates?.length && !course.dates.some((d) => turmaVigente(d));
+    fechadoParaInscricao ||
+    (!!course.dates?.length && !course.dates.some((d) => turmaVigente(d)));
 
   const heroBadges = encerrado
     ? (course.hero_badges || []).map((b) =>
-        b.value === 'dropdown' ? { ...b, label: 'Turma', value: 'Encerrada' } : b
+        b.value === 'dropdown'
+          ? fechadoParaInscricao
+            ? { ...b, label: 'Inscrições', value: 'Encerradas' }
+            : { ...b, label: 'Turma', value: 'Encerrada' }
+          : b
       )
     : course.hero_badges;
 

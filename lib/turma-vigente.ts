@@ -15,3 +15,17 @@ export function turmaVigente(
   fim.setHours(23, 59, 59, 999);
   return fim.getTime() >= agora;
 }
+
+/**
+ * Inscrições encerradas: o curso tem turma "Encerrada" no admin (status closed)
+ * que ainda não aconteceu e nenhuma turma aberta vigente. Ele continua no site,
+ * na vitrine com a capa e com a página no ar, mas para de vender: os botões
+ * levam ao "avise-me", o formulário não oferece o curso e a API recusa.
+ */
+export function inscricoesEncerradas(
+  turmas: { status?: string | null; start_date: string; end_date?: string | null }[],
+  agora: number = Date.now()
+): boolean {
+  const vigentes = turmas.filter((t) => turmaVigente(t, agora));
+  return vigentes.some((t) => t.status === 'closed') && !vigentes.some((t) => t.status === 'open');
+}

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/server';
 import { sendClienteConfirmacao, sendPlenumAviso, type InscricaoEmailData } from '@/lib/email';
 import { comModalidade, LABEL_MODALIDADE, type Modalidade } from '@/lib/inscricao-modalidade';
+import { inscricoesEncerradas } from '@/lib/turma-vigente';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -56,6 +57,27 @@ export async function POST(request: NextRequest) {
       .single();
     if (!course) {
       return NextResponse.json({ error: 'Curso não encontrado' }, { status: 400 });
+    }
+
+    // Inscrições encerradas (turma "Encerrada" no admin): a página e o formulário
+    // já não oferecem o curso, mas um formulário aberto antes ainda enviaria.
+    const { data: turmasDoCurso } = await supabase
+      .from('course_dates')
+      .select('id, status, start_date, end_date')
+      .eq('course_id', body.course_id);
+    const turmas = (turmasDoCurso || []) as any[];
+    const turmaEscolhida = turmas.find((t) => t.id === body.course_date_id);
+    if (inscricoesEncerradas(turmas)) {
+      return NextResponse.json(
+        { error: 'As inscrições deste curso estão encerradas.' },
+        { status: 409 }
+      );
+    }
+    if (turmaEscolhida?.status === 'closed') {
+      return NextResponse.json(
+        { error: 'As inscrições desta turma estão encerradas. Escolha outra turma.' },
+        { status: 409 }
+      );
     }
 
     let turmaLabel = 'A definir';

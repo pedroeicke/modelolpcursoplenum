@@ -162,7 +162,7 @@ export async function fetchSiteCourses(): Promise<SiteCourse[]> {
       "courses?status=eq.published&select=id,slug,title,subtitle,modality,nucleo,workload,tipo,banner_image_url,cover_image_url,og_image_url,background_image_url,section_backgrounds,audience_cards"
     ),
     rest(
-      "course_dates?status=eq.open&select=id,course_id,label,start_date,end_date,location_venue,instructor_ids&order=start_date.asc"
+      "course_dates?status=in.(open,closed)&select=id,course_id,label,start_date,end_date,location_venue,instructor_ids,status&order=start_date.asc"
     ),
     rest("instructors?select=id,name"),
   ]);
@@ -172,8 +172,17 @@ export async function fetchSiteCourses(): Promise<SiteCourse[]> {
   // Turma encerrada sai do ar sozinha: no dia seguinte ao último dia do curso.
   // A regra vive em lib/turma-vigente.ts, compartilhada com a landing page do
   // curso e com o formulário de inscrição.
+  // Turma "Encerrada" (inscrições encerradas) que ainda não aconteceu continua na
+  // vitrine com a capa até a data passar, mas só quando o curso não tem turma
+  // aberta: se tem, aparece só a aberta.
   const agora = Date.now();
-  const vigentes = dates.filter((d: any) => turmaVigente(d, agora));
+  const todasVigentes = dates.filter((d: any) => turmaVigente(d, agora));
+  const comAberta = new Set(
+    todasVigentes.filter((d: any) => d.status === "open").map((d: any) => d.course_id)
+  );
+  const vigentes = todasVigentes.filter(
+    (d: any) => d.status === "open" || !comAberta.has(d.course_id)
+  );
 
   // Cada turma vigente vira um card: o mesmo curso em duas datas aparece duas
   // vezes, cada card com a sua data, a sua capa (section_backgrounds.capas_turma)
