@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { CheckCircle2, Clock, ChevronUp } from 'lucide-react';
 import ColorBends from '@/components/ColorBends';
 import type { ShaderColors } from '@/types/design-system';
+import type { ProgramDay } from '@/types/course';
 import { useTurma } from '@/hooks/use-turma';
 import { corrigeDiaDaSemana } from '@/lib/dia-da-semana';
 
@@ -12,6 +13,13 @@ export interface ProgramProps {
   heading?: string;
   description?: string;
   shaderColors?: ShaderColors['colorbends'];
+}
+
+// Descrição do bloco (campo "Descrição" do admin). Igual ao título não conta: só repetiria o que já aparece.
+function descricaoDoDia(day: ProgramDay): string {
+  const texto = (day.description ?? '').trim();
+  const normaliza = (s: string) => s.toLowerCase().replace(/[\s.]+/g, ' ').trim();
+  return texto && normaliza(texto) !== normaliza(day.title ?? '') ? texto : '';
 }
 
 // ─── Component ────────────────────────────────────────
@@ -67,7 +75,65 @@ export default function Program({
         {/* ── List ── */}
         <div className="flex flex-col gap-4">
           {programDays.map((day, i) => {
-            const isOpen = openSet.has(i);
+            const topicos = day.topics ?? [];
+            const descricao = descricaoDoDia(day);
+            // Bloco sem tópicos e sem descrição (credenciamento, almoço, oficina) não abre: antes abria uma caixa vazia.
+            const temConteudo = topicos.length > 0 || descricao !== '';
+            const isOpen = temConteudo && openSet.has(i);
+
+            const linha = (
+              <>
+                <div className="flex items-center justify-between sm:contents">
+                  {/* Day pill */}
+                  <span className="shrink-0 text-[11px] sm:text-[12px] font-semibold border border-white/[0.15] rounded-full px-2.5 py-1 sm:px-3 text-white/60 tracking-wide">
+                    {/* o dia da semana vem calculado da data, não do que foi digitado */}
+                    {corrigeDiaDaSemana(day.tag, activeCourseDate?.start_date)}
+                  </span>
+
+                  {/* Time — visible on mobile next to pill, hidden on sm+ */}
+                  {day.time && (
+                    <span className="flex sm:hidden items-center gap-1 text-white/35 text-[11px] shrink-0">
+                      <Clock className="w-3 h-3" />
+                      {day.time}
+                    </span>
+                  )}
+
+                  {/* Chevron — visible on mobile next to pill (sem conteúdo: só o espaço, para alinhar) */}
+                  {temConteudo ? (
+                    <ChevronUp
+                      className={`w-4 h-4 sm:hidden text-white/35 shrink-0 transition-transform duration-300 ${
+                        isOpen ? '' : 'rotate-180'
+                      }`}
+                    />
+                  ) : (
+                    <span className="w-4 h-4 sm:hidden shrink-0" aria-hidden="true" />
+                  )}
+                </div>
+
+                {/* Title */}
+                <span className="flex-1 text-white/90 text-base sm:text-lg md:text-xl font-semibold leading-snug">
+                  {day.title}
+                </span>
+
+                {/* Time — desktop only */}
+                <span className="hidden sm:flex items-center gap-1.5 text-white/35 text-[12px] shrink-0">
+                  <Clock className="w-3.5 h-3.5" />
+                  {day.time}
+                </span>
+
+                {/* Chevron — desktop only (sem conteúdo: só o espaço, para alinhar) */}
+                {temConteudo ? (
+                  <ChevronUp
+                    className={`w-5 h-5 text-white/35 shrink-0 transition-transform duration-300 hidden sm:block ${
+                      isOpen ? '' : 'rotate-180'
+                    }`}
+                  />
+                ) : (
+                  <span className="w-5 h-5 shrink-0 hidden sm:block" aria-hidden="true" />
+                )}
+              </>
+            );
+            const classesLinha = 'w-full text-left flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 px-4 py-4 sm:px-6 sm:py-5';
 
             return (
               <div
@@ -80,81 +146,55 @@ export default function Program({
                 }}
               >
                 {/* ── Header row ── */}
-                <button
-                  onClick={() => {
-                    setOpenSet(prev => {
-                      const next = new Set(prev);
-                      next.has(i) ? next.delete(i) : next.add(i);
-                      return next;
-                    });
-                  }}
-                  className="w-full text-left flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 px-4 py-4 sm:px-6 sm:py-5 cursor-pointer"
-                >
-                  <div className="flex items-center justify-between sm:contents">
-                    {/* Day pill */}
-                    <span className="shrink-0 text-[11px] sm:text-[12px] font-semibold border border-white/[0.15] rounded-full px-2.5 py-1 sm:px-3 text-white/60 tracking-wide">
-                      {/* o dia da semana vem calculado da data, não do que foi digitado */}
-                      {corrigeDiaDaSemana(day.tag, activeCourseDate?.start_date)}
-                    </span>
-
-                    {/* Time — visible on mobile next to pill, hidden on sm+ */}
-                    {day.time && (
-                      <span className="flex sm:hidden items-center gap-1 text-white/35 text-[11px] shrink-0">
-                        <Clock className="w-3 h-3" />
-                        {day.time}
-                      </span>
-                    )}
-
-                    {/* Chevron — visible on mobile next to pill */}
-                    <ChevronUp
-                      className={`w-4 h-4 sm:hidden text-white/35 shrink-0 transition-transform duration-300 ${
-                        isOpen ? '' : 'rotate-180'
-                      }`}
-                    />
-                  </div>
-
-                  {/* Title */}
-                  <span className="flex-1 text-white/90 text-base sm:text-lg md:text-xl font-semibold leading-snug">
-                    {day.title}
-                  </span>
-
-                  {/* Time — desktop only */}
-                  <span className="hidden sm:flex items-center gap-1.5 text-white/35 text-[12px] shrink-0">
-                    <Clock className="w-3.5 h-3.5" />
-                    {day.time}
-                  </span>
-
-                  {/* Chevron — desktop only */}
-                  <ChevronUp
-                    className={`w-5 h-5 text-white/35 shrink-0 transition-transform duration-300 hidden sm:block ${
-                      isOpen ? '' : 'rotate-180'
-                    }`}
-                  />
-                </button>
+                {temConteudo ? (
+                  <button
+                    type="button"
+                    aria-expanded={isOpen}
+                    onClick={() => {
+                      setOpenSet(prev => {
+                        const next = new Set(prev);
+                        next.has(i) ? next.delete(i) : next.add(i);
+                        return next;
+                      });
+                    }}
+                    className={`${classesLinha} cursor-pointer`}
+                  >
+                    {linha}
+                  </button>
+                ) : (
+                  <div className={classesLinha}>{linha}</div>
+                )}
 
                 {/* ── Expanded content ── */}
                 {isOpen && (
                   <div className="px-4 pb-4 sm:px-6 sm:pb-6 border-t border-white/[0.07] pt-4 sm:pt-5">
-                    <div className="flex flex-col gap-2.5 sm:gap-3">
-                      {day.topics.map((topic, j) => (
-                        <div key={j}>
-                          <div className="flex items-start gap-2.5 sm:gap-3">
-                            <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[var(--ds-primary-light)] shrink-0 mt-0.5" />
-                            <span className="text-white/75 text-base sm:text-lg leading-relaxed">{topic.text}</span>
-                          </div>
-                          {topic.children && topic.children.length > 0 && (
-                            <div className="ml-7 mt-2 flex flex-col gap-1.5 pl-3 border-l border-white/[0.07]">
-                              {topic.children.map((child, k) => (
-                                <div key={k} className="flex items-start gap-2">
-                                  <span className="text-[var(--ds-primary-light)] text-[10px] mt-1.5">●</span>
-                                  <span className="text-white/50 text-[15px] leading-relaxed">{child}</span>
-                                </div>
-                              ))}
+                    {descricao && (
+                      <p className={`text-white/60 text-base sm:text-lg leading-relaxed ${topicos.length > 0 ? 'mb-3 sm:mb-4' : ''}`}>
+                        {descricao}
+                      </p>
+                    )}
+                    {topicos.length > 0 && (
+                      <div className="flex flex-col gap-2.5 sm:gap-3">
+                        {topicos.map((topic, j) => (
+                          <div key={j}>
+                            <div className="flex items-start gap-2.5 sm:gap-3">
+                              <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[var(--ds-primary-light)] shrink-0 mt-0.5" />
+                              <span className="text-white/75 text-base sm:text-lg leading-relaxed">{topic.text}</span>
                             </div>
-                          )}
-                        </div>
-                      ))}
-                    </div>
+                            {topic.children && topic.children.length > 0 && (
+                              <div className="ml-7 mt-2 flex flex-col gap-1.5 pl-3 border-l border-white/[0.07]">
+                                {topic.children.map((child, k) => (
+                                  <div key={k} className="flex items-start gap-2">
+                                    <span className="text-[var(--ds-primary-light)] text-[10px] mt-1.5">●</span>
+                                    <span className="text-white/50 text-[15px] leading-relaxed">{child}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
